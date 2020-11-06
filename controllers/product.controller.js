@@ -13,5 +13,13 @@ module.exports.filterProducts = (req, res) => {
 
 module.exports.getProductDetails = (req, res) => {
   const product = products.find((product) => product.id === req.params.id);
-  res.render("pages/productDetail", { product });
+
+  let relatedProducts = [];
+
+  if (product)
+    relatedProducts = products.filter(
+      (item) => item.type === product.type && item.id !== product.id
+    );
+
+  res.render("pages/productDetail", { product, relatedProducts });
 };

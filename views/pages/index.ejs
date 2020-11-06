@@ -209,12 +209,14 @@
               </div>
               <div class="product-image">
                 <a href="/products">
-                  <img src="<%= product.thumbnail %>" alt="Product Image" />
+                  <img src="<%= computer.thumbnail[0] %>" alt="Product Image" />
                 </a>
                 <div class="product-action">
                   <a href="#"><i class="fa fa-cart-plus"></i></a>
                   <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="#"><i class="fa fa-search"></i></a>
+                  <a href="/products/<%= computer.id %>"
+                    ><i class="fa fa-search"></i
+                  ></a>
                 </div>
               </div>
               <div class="product-price">
@@ -254,12 +256,14 @@
               </div>
               <div class="product-image">
                 <a href="/products">
-                  <img src="<%= laptop.thumbnail %>" alt="Product Image" />
+                  <img src="<%= laptop.thumbnail[0] %>" alt="Product Image" />
                 </a>
                 <div class="product-action">
                   <a href="#"><i class="fa fa-cart-plus"></i></a>
                   <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="#"><i class="fa fa-search"></i></a>
+                  <a href="/products/<%= laptop.id %>"
+                    ><i class="fa fa-search"></i
+                  ></a>
                 </div>
               </div>
               <div class="product-price">
@@ -299,12 +303,14 @@
               </div>
               <div class="product-image">
                 <a href="/products">
-                  <img src="<%= mobile.thumbnail %>" alt="Product Image" />
+                  <img src="<%= mobile.thumbnail[0] %>" alt="Product Image" />
                 </a>
                 <div class="product-action">
                   <a href="#"><i class="fa fa-cart-plus"></i></a>
                   <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="#"><i class="fa fa-search"></i></a>
+                  <a href="/products/<%= mobile.id %>"
+                    ><i class="fa fa-search"></i
+                  ></a>
                 </div>
               </div>
               <div class="product-price">
