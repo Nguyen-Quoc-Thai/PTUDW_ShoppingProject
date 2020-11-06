@@ -4,12 +4,14 @@ module.exports.getProducts = (req, res) => {
   res.render("pages/products", { products });
 };
 
-module.exports.getProductDetails = (req, res) => {
-  console.log(req.params.id, typeof req.params.id);
+module.exports.filterProducts = (req, res) => {
+  const type = req.query.type;
+  const productArray = products.filter((product) => product.type === type);
+  console.log(productArray);
+  res.render("pages/products", { products: productArray });
+};
 
-  console.log(products);
-  const product = products.find(
-    (product) => product.id.toString() === req.params.id
-  );
+module.exports.getProductDetails = (req, res) => {
+  const product = products.find((product) => product.id === req.params.id);
   res.render("pages/productDetail", { product });
 };
