@@ -1,6 +1,10 @@
 /**********************************/
 /********** General CSS ***********/
 /**********************************/
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   color: #353535;
   font-family: "Open Sans", sans-serif;
@@ -9,7 +13,8 @@ body {
 }
 
 a {
-  color: #ff6f61;
+  color: #000000;
+  font-weight: bold;
 }
 
 a:hover,
@@ -721,12 +726,16 @@ h2 {
 }
 
 .product-item .product-image a {
+  width: 100%;
+  height: 100%;
   display: block;
   background: #ffffff;
   transition: 0.3s;
 }
 
 .product-item .product-image img {
+  width: 100%;
+  height: 100%;
   transition: all 0.3s;
 }
 
@@ -2343,7 +2352,9 @@ h2 {
 }
 
 .footer-bottom .copyright p,
-.footer-bottom .template-by p {
+.footer-bottom .copyright a,
+.footer-bottom .template-by p,
+.footer-bottom .template-by a {
   color: #ffffff;
   font-weight: 400;
   margin: 0;
