@@ -245,6 +245,14 @@ h2 {
   }
 }
 
+.nav-scroll {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .nav .navbar {
   height: 100%;
   padding: 0;
@@ -424,8 +432,8 @@ h2 {
 }
 
 .header .navbar li {
-  padding: 0 30px;
-  border-bottom: 1px solid #f3f6ff;
+  padding: 10px 30px;
+  border-bottom: 2px solid #f3f6ff;
 }
 
 .header .navbar li:last-child {
