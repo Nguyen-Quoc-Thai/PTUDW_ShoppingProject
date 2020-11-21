@@ -4,6 +4,10 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
+require('dotenv').config()
+
+const connectDB = require('./config/db')
+
 const indexRouter = require("./routes/index.route");
 const userRouter = require("./routes/user.route");
 const productRouter = require("./routes/product.route");
@@ -11,6 +15,9 @@ const cartRouter = require("./routes/cart.route");
 const contactRouter = require("./routes/contact.route");
 
 const app = express();
+
+// Connect DB
+connectDB()
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

@@ -10,4 +10,8 @@ router.get("/checkout", userController.getCheckout);
 
 router.get("/auth", userController.getAuth);
 
+router.post("/register", userController.signUp);
+
+router.post("/login", userController.signIn);
+
 module.exports = router;
