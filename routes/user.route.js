@@ -23,7 +23,7 @@ router.get("/recovery", checkNotAuthenticated, userController.getRecovery);
 router.post("/recovery", checkNotAuthenticated, userController.postRecovery);
 router.get("/reset/:token", checkNotAuthenticated, userController.getReset);
 router.post("/reset/:token", checkNotAuthenticated, userController.postReset);
-router.patch("/update", checkAuthenticated, userController.postUpdate);
+router.patch("/:id", checkAuthenticated, userController.patchUpdate);
 router.get("/", checkAuthenticated, userController.getAll);
 router.get("/:id", checkAuthenticated, userController.getOne);
 router.delete("/:id", checkAuthenticated, userController.delete);

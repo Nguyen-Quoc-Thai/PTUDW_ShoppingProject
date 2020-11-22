@@ -63,6 +63,8 @@ const userScheme = mongoose.Schema({
     },
     password: {
         type: String,
+        minlength: [6, 'Min length of password must be greater than 6'],
+        maxlength: [20, 'Max length of password must be lesser than 20'],
         required: [true, 'Password is required!']
     },
     passwordResetToken: {

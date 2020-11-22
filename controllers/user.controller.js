@@ -28,9 +28,15 @@ module.exports.getAuth = (req, res) => {
 };
 
 module.exports.signUp = async (req, res, next) => {
-  const { firstName, lastName, email, phone, password } = req.body;
+  const { firstName, lastName, email, phone, password, retypePassword } = req.body;
 
   try {
+    if (password !== retypePassword)
+      return res.render('pages/auth', {
+        msg: 'ValidatorError',
+        retypePassword: 'Password retype does not match!'
+      })
+
     const encryptedPassword = await bcrypt.hash(password, 10);
     const passwordResetToken = crypto.randomBytes(16).toString("hex");
 
@@ -107,23 +113,41 @@ module.exports.signIn = async (req, res, next) => {
       return res.render("pages/auth", respond);
     }
 
-    req.logIn(user, function (err) {
-      if (err) {
-        return next(err);
-      }
-
-      console.log(user);
-      return res.render("pages/dashboard", {
-        msg: "success",
-        user: "Sign in successful!",
-        data: user,
+    if (!user.isVerified) {
+      return res.render("pages/auth", { // render page co nut resend email confirm acc
+        msg: "ValidatorError",
+        user: "Your account has not been verified!"
       });
-    });
+    }
+
+    if(user.status) {
+      req.logIn(user, function (err) {
+        if (err) {
+          return next(err);
+        }
+
+        console.log(user);
+        return res.render("pages/dashboard", {
+          msg: "success",
+          user: "Sign in successful!",
+          data: user,
+        });
+      });
+    }
+    else {
+      res.render("pages/login", {
+        msg: "ValidatorError",
+        user: "Your account has been blocked!"
+      });
+    }
+
   })(req, res, next);
 };
 
 module.exports.signOut = (req, res, next) => {
   req.logout();
+  req.session.cart = null;
+  req.user = null;
   res.redirect("user/login");
 };
 
@@ -336,7 +360,7 @@ module.exports.postReset = async (req, res, next) => {
 //   res.render('pages/info') //   render page info insert san thong tin co ban va cho phep sua
 // }
 
-module.exports.postUpdate = async (req, res, next) => {
+module.exports.patchUpdate = async (req, res, next) => {
   const acceptUserFields = [
     "firstName",
     "lastName",
@@ -345,16 +369,19 @@ module.exports.postUpdate = async (req, res, next) => {
     "password",
   ];
 
+  const {id} = req.params
   const { user } = req;
+  const keys = Object.keys(req.body)
   let hasPassword = false;
   let newUser = {};
 
   try {
-    for (const ops of req.body) {
-      if (acceptUserFields.includes(ops.propName)) {
-        newUser[ops.propName] = ops.value;
-      } else {
-        return res.render("pages/info", {
+    for (const ops of keys) {
+      if (acceptUserFields.includes(ops)) {
+        newUser[ops] = req.body.ops;
+      }
+      else {
+        return res.render("pages/info", { // render page info
           msg: "ValidatorError",
           user:
             "You are only allowed to change the {firstName}, {lastName}, {phone}, {address}, {password}!",
@@ -362,9 +389,44 @@ module.exports.postUpdate = async (req, res, next) => {
         });
       }
 
-      if (ops.propName === "password") {
+      if (ops === "password") {
         hasPassword = true;
       }
+    }
+
+    if (hasPassword) {
+      if (!newUser.oldPassword)
+        return res.render("pages/info", { // render page info
+          msg: "ValidatorError",
+          user:  "Old password is required!",
+          data: user,
+        });
+
+      else {
+        const isMatched = bcrypt.compare(newUser.oldPassword, user.password)
+        if (!isMatched)
+          return res.render("pages/info", { // render page info
+            msg: "ValidatorError",
+            user:  "Old password is invalid!",
+            data: user,
+          });
+      }
+    }
+
+    if (hasPassword && !newUser.retypePassword) {
+      return res.render("pages/info", { // render page info
+        msg: "ValidatorError",
+        user:  "Retypepassword is required!",
+        data: user,
+      });
+    }
+
+    if (hasPassword && newUser.retypePassword && newUser.password !== newUser.retypePassword) {
+      return res.render("pages/info", { // render page info
+        msg: "ValidatorError",
+        user: "Password and retypepassword does not match!",
+        data: user,
+      });
     }
 
     if (hasPassword) {
@@ -372,7 +434,14 @@ module.exports.postUpdate = async (req, res, next) => {
       user.password = encryptedPassword;
     }
 
-    const result = await User.updateOne({ _id: user._id }, { $set: user });
+    const result = await User.updateOne({ _id: id }, { $set: user }, {runValidators: true});
+    if (!result) {
+      return res.render("pages/info", { // render page info
+        msg: "ValidatorError",
+        user: "Phone number already exist!",
+        data: user,
+      });
+    }
 
     res.render("pages/info", {
       msg: "success",
@@ -393,7 +462,7 @@ module.exports.getAll = (req, res, next) => {
   const { user } = req;
 
   if (user.role != "admin") {
-    res.render("pages/admin", {
+    return res.render("pages/admin", {
       msg: "ValidatorError",
       user: `You don't have the permission!`,
       data: user,
@@ -486,42 +555,44 @@ module.exports.delete = (req, res, next) => {
   const { user } = req;
 
   if (user.role != "admin") {
-    res.render("pages/admin", {
+    return res.render("pages/admin", {
       msg: "ValidatorError",
       user: `You don't have the permission!`,
       data: user,
     });
   }
 
-  User.findById(_id)
-    .then((user) => {
-      if (!user) {
-        res.render("pages/admin", {
-          msg: "ValidatorError",
-          user: `User not found!`,
-        });
-      }
-
-      User.deleteOne({ _id })
-        .then(async (result) => {
-          res.render("pages/admin", {
-            msg: "ValidatorError",
-            user: `Delete successful!`,
-          });
-        })
-        .catch((error) => {
-          res.render("pages/admin", {
-            msg: "ValidatorError",
-            user: `Fail to delete!`,
-          });
-        });
-    })
-    .catch((error) => {
-      res.render("pages/admin", {
-        msg: "ValidatorError",
-        user: `Fail to delete!`,
-      });
+  User.deleteOne({ _id })
+  .then(async (result) => {
+    res.render("pages/admin", {
+      msg: "ValidatorError",
+      user: `Delete successful!`,
     });
+  })
+  .catch((error) => {
+    res.render("pages/admin", {
+      msg: "ValidatorError",
+      user: `Fail to delete!`,
+    });
+  });
 };
 
-//
+module.exports.postToggleBlock = async (req, res, next) => {
+  const {userId} = req.body
+  const user = await User.findById(userId)
+
+  if (user.role != "admin") {
+    return res.render("pages/admin", {
+      msg: "ValidatorError",
+      user: `You don't have the permission!`
+    });
+  }
+
+  user.status = !user.status
+  await User.updateOne({_id: userId}, {$set: user})
+
+  res.render("pages/admin", {
+    msg: "success",
+    user: `Update success: ${user.status}!`
+  });
+}
