@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 const slug = require('mongoose-slug-updater')
 
 const enumType = {
-    values: ['user', 'admin'],
-    message: `Roles must be 'user' or 'admin'!`
+    values: ['computer', 'laptop', 'phone'],
+    message: `Product type must be 'computer', 'laptop' or 'mobile'!`
 }
 
 const productSchema = mongoose.Schema({

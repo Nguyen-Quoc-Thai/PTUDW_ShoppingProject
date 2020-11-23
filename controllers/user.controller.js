@@ -27,7 +27,11 @@ module.exports.getAuth = (req, res) => {
   res.render("pages/auth");
 };
 
-module.exports.signUp = async (req, res, next) => {
+module.exports.getSignUp = (req, res, next) => {
+  res.render('pages/auth')
+}
+
+module.exports.postSignUp = async (req, res, next) => {
   const { firstName, lastName, email, phone, password, retypePassword } = req.body;
 
   try {
@@ -76,28 +80,11 @@ module.exports.signUp = async (req, res, next) => {
   }
 };
 
-module.exports.signIn = async (req, res, next) => {
-  // const { email, password } = req.body;
+module.exports.getSignIn = (req, res, next) => {
+  res.render('pages/auth')
+}
 
-  // try {
-  //   const validUser = await User.findOne({ email });
-  //   if (!validUser) throw new Error("Email not found!");
-
-  //   const isMatchedPassword = await bcrypt.compare(
-  //     password,
-  //     validUser.password
-  //   );
-  //   if (!isMatchedPassword) throw new Error("Password does not match!");
-
-  //   validUser.msg = "success";
-  //   console.log(validUser);
-  //   res.render("pages/auth", { validUser });
-  // } catch (error) {
-  //   let respond = { msg: "ValidatorError" };
-  //   respond[error.message.split(' ')[0].toLowerCase()] = error.message;
-  //   console.log(respond);
-  //   res.render("pages/auth", { respond });
-  // }
+module.exports.postSignIn = async (req, res, next) => {
 
   passport.authenticate("local", function (err, user, info) {
     if (err) {
@@ -144,14 +131,14 @@ module.exports.signIn = async (req, res, next) => {
   })(req, res, next);
 };
 
-module.exports.signOut = (req, res, next) => {
+module.exports.postSignOut = (req, res, next) => {
   req.logout();
   req.session.cart = null;
   req.user = null;
   res.redirect("user/login");
 };
 
-module.exports.confirm = async (req, res, next) => {
+module.exports.getConfirm = async (req, res, next) => {
   const { token } = req.params;
 
   try {
@@ -188,7 +175,7 @@ module.exports.confirm = async (req, res, next) => {
   }
 };
 
-exports.resend = async (req, res, next) => {
+exports.postResend = async (req, res, next) => {
   // cai nay can 1 cai nut resend la dc ui
   const { email } = req.body;
 
@@ -356,9 +343,9 @@ module.exports.postReset = async (req, res, next) => {
   }
 };
 
-// module.exports.getUpdate = (req, res, next) => {
-//   res.render('pages/info') //   render page info insert san thong tin co ban va cho phep sua
-// }
+module.exports.getInfo = (req, res, next) => {
+  res.render('pages/info') //   render page info insert san thong tin co ban va cho phep sua
+}
 
 module.exports.patchUpdate = async (req, res, next) => {
   const acceptUserFields = [
@@ -550,7 +537,7 @@ module.exports.getOne = (req, res, next) => {
     });
 };
 
-module.exports.delete = (req, res, next) => {
+module.exports.deleteOne = (req, res, next) => {
   const { id: _id } = req.params;
   const { user } = req;
 

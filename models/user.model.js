@@ -57,7 +57,7 @@ const userScheme = mongoose.Schema({
         type: String,
         default: ''
     },
-    like: {
+    likes: {
         type: Array,
         default: []
     },
