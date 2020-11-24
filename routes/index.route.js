@@ -3,6 +3,7 @@ var router = express.Router();
 const indexController = require("../controllers/index.controller");
 const productController = require("./../controllers/product.controller");
 const cartController = require("./../controllers/cart.controller");
+const checkoutController = require("./../controllers/checkout.controller");
 
 const upload = require('./../config/multer')
 
@@ -19,11 +20,17 @@ router.post("/products", upload.array('thumbnail', 5), productController.postCre
 router.patch("/products/:id", productController.patchUpdate);
 router.delete("products/:id", productController.deleteOne);
 
-router.get("products/:id/comments", productController.getAllComment);
-router.post("products/:id/comments", productController.postComment);
-router.post("products/:id/likes", productController.postLike);
+router.get("/products/:id/comments", productController.getAllComment);
+router.post("/products/:id/comments", productController.postComment);
+router.post("/products/:id/likes", productController.postLike);
 
-router.get('cart', cartController.getCart)
-router.post('cart/:itemId', cartController.addToCart)
+router.get('/cart', cartController.getCart)
+// API
+router.post('/cart/:itemId', cartController.addToCart)
+router.patch('/cart/update', cartController.patchUpdate)
+
+router.get('/checkout', checkoutController.getCheckout)
+router.post('/checkout', checkoutController.getCheckout)
+router.patch('/checkout/:checkoutId', checkoutController.patchUpdate)
 
 module.exports = router;

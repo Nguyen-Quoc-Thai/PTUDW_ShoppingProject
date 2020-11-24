@@ -23,6 +23,14 @@ module.exports.index = async (req, res, next) => {
     })
   ])
 
+  req.session.cart = {
+    userId: null,
+    status: "waiting",
+    items: [],
+    totalQuantity: 0,
+    totalCost: 0,
+  };
+
   res.render("pages/index", {
     msg: 'success',
     laptops,

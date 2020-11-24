@@ -36,6 +36,7 @@ module.exports.getAllComputer = async (req, res, next) => {
 
   res.render("pages/product.computers", {
     msg: 'success',
+    user: 'Get all computers successful!',
     data: result
   });
 };
@@ -47,6 +48,7 @@ module.exports.getAllLaptop = async (req, res, next) => {
 
   res.render("pages/product.laptops", {
     msg: 'success',
+    user: 'Get all laptops successful!',
     data: result
   });
 };
@@ -58,6 +60,7 @@ module.exports.getAllMobile = async (req, res, next) => {
 
   res.render("pages/product.mobiles", {
     msg: 'success',
+    user: 'Get all mobiles successful!',
     data: result
   });
 };
@@ -170,7 +173,7 @@ module.exports.getAll = (req, res, next) => {
       console.log(error);
       res.render("pages/auth", {
         msg: "ValidatorError",
-        user: `Fail to fetch!`,
+        user: error.message,
       });
     });
 };
@@ -200,11 +203,12 @@ module.exports.getOne = (req, res, next) => {
       console.log(error);
       res.render("pages/info", {
         msg: "ValidatorError",
-        user: `Fail to fetch!`,
+        user: error.message,
       });
     });
 };
 
+// AJAX
 module.exports.postCreate = async (req, res, next) => {
   const {
     name,
@@ -232,10 +236,10 @@ module.exports.postCreate = async (req, res, next) => {
       producer,
       thumbnail: arrThumbnail
     });
-    const result = product.save();
 
-    console.log(result);
-    res.render("pages/index", {
+    const result = await product.save();
+
+    res.status(201).json({
       msg: "success",
       user: "Create a new product successful!",
       data: result,
@@ -252,6 +256,7 @@ module.exports.postCreate = async (req, res, next) => {
   }
 };
 
+// AJAX
 module.exports.patchUpdate = async (req, res, next) => {
   const acceptUserFields = [
     "name",
@@ -276,12 +281,7 @@ module.exports.patchUpdate = async (req, res, next) => {
       if (acceptUserFields.includes(ops)) {
         newProduct[ops] = req.body.ops;
       } else {
-        return res.render("pages/info", {
-          msg: "ValidatorError",
-          user:
-            "You are only allowed to change the {name}, {price}, {type}, {quantity}, {details}, {descriptions}, {producer}, {tags}, {video}!",
-          data: user,
-        });
+        throw new Error("You are only allowed to change the {name}, {price}, {type}, {quantity}, {details}, {descriptions}, {producer}, {tags}, {video}!")
       }
 
       if (ops === "price") {
@@ -300,49 +300,40 @@ module.exports.patchUpdate = async (req, res, next) => {
       { runValidators: true }
     );
 
-    res.render("pages/info", {
+    res.status(200).json({
       msg: "success",
       user: "Product updated!",
       data: result,
     });
   } catch (error) {
     console.log(error),
-      res.render("pages/info", {
-        msg: "ValidatorError",
-        user: "Update failed!",
-        data: user,
-      });
+    res.status(205).json({
+      msg: "ValidatorError",
+      user: error.message
+    });
   }
 };
 
-module.exports.deleteOne = (req, res, next) => {
+// AJAX
+module.exports.deleteOne = async (req, res, next) => {
   const _id = req.params.id;
 
-  Product.findById(_id)
-    .then(async (product) => {
-      if (!product) {
-        res.render("pages/info", {
-          msg: "ValidatorError",
-          user: `Product not found!`,
-        });
-      } else {
-        product.countView++;
-        await Product.updateOne({ _id });
+  try {
+    const result = await Product.deleteOne({_id})
+    const respond = await Product.find()
 
-        res.render("pages/info", {
-          msg: "success",
-          user: `Fetch successful!`,
-          data: product,
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/info", {
-        msg: "ValidatorError",
-        user: `Fail to fetch!`,
-      });
+    res.status(200).json({
+      msg: "success",
+      user: 'Delete product successful!',
+      data: respond
     });
+  } catch (error) {
+    console.log(error)
+    res.status(205).json({
+      msg: "ValidatorError",
+      user: error.message
+    });
+  }
 };
 
 module.exports.getRelative = async (req, res, next) => {
@@ -370,7 +361,7 @@ module.exports.getRelative = async (req, res, next) => {
     ],
   });
 
-  return res.render("pages/auth", {
+  res.render("pages/auth", {
     msg: "success",
     user: `Get relative product successful!`,
     data: result,

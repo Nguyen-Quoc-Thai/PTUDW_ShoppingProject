@@ -6,8 +6,8 @@ const enumUser = {
 }
 
 const enumStatus = {
-    values: ['active', 'block'],
-    message: `Status must be 'active' or 'block'!`
+    values: ['active', 'disable'],
+    message: `Status must be 'active' or 'disable'!`
 }
 
 const userScheme = mongoose.Schema({

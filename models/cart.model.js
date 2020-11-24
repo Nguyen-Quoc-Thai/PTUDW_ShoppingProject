@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 const enumStatus = {
-    values: ['waiting', 'paid'],
-    message: `Status must be 'waiting' or 'paid'!`
+    values: ['waiting', 'staging', 'paid'],
+    message: `Status must be 'waiting', 'staging' or 'paid'!`
 }
 
 const cartSchema = mongoose.Schema({
