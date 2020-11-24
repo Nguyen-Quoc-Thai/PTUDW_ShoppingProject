@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const slug = require('mongoose-slug-updater')
 
 const enumType = {
-    values: ['computer', 'laptop', 'phone'],
+    values: ['computer', 'laptop', 'mobile'],
     message: `Product type must be 'computer', 'laptop' or 'mobile'!`
 }
 

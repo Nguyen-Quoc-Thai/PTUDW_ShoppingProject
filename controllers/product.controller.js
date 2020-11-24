@@ -30,38 +30,47 @@ module.exports.getProductDetails = (req, res) => {
 };
 
 module.exports.getAllComputer = async (req, res, next) => {
+  const { producer } = req.params || "";
+
   const result = await Product.find({
     type: "computer",
+    producer,
   });
 
   res.render("pages/product.computers", {
-    msg: 'success',
-    user: 'Get all computers successful!',
-    data: result
+    msg: "success",
+    user: "Get all computers successful!",
+    data: result,
   });
 };
 
 module.exports.getAllLaptop = async (req, res, next) => {
+  const { producer } = req.params || "";
+
   const result = await Product.find({
     type: "laptop",
+    producer,
   });
 
   res.render("pages/product.laptops", {
-    msg: 'success',
-    user: 'Get all laptops successful!',
-    data: result
+    msg: "success",
+    user: "Get all laptops successful!",
+    data: result,
   });
 };
 
 module.exports.getAllMobile = async (req, res, next) => {
+  const { producer } = req.params || "";
+
   const result = await Product.find({
     type: "mobile",
+    producer,
   });
 
   res.render("pages/product.mobiles", {
-    msg: 'success',
-    user: 'Get all mobiles successful!',
-    data: result
+    msg: "success",
+    user: "Get all mobiles successful!",
+    data: result,
   });
 };
 
@@ -178,6 +187,7 @@ module.exports.getAll = (req, res, next) => {
     });
 };
 
+// Product details
 module.exports.getOne = (req, res, next) => {
   const _id = req.params.id;
 
@@ -209,6 +219,41 @@ module.exports.getOne = (req, res, next) => {
 };
 
 // AJAX
+module.exports.getStatisticProducer = async (req, res, next) => {
+  const validType = ["computer", "laptop", "mobile"];
+  const { type } = req.params;
+
+  try {
+    if (!validType.includes(type))
+      throw new Error("Invalid value of param type!");
+
+    const result = await Product.find({ type });
+    if (!result) throw new Error("No item found for this resource!");
+
+    const producer = result.map((product) => {
+      product.producer;
+    });
+
+    const statisticProducer = Array.from(new Set(producer)).map((pro) => ({
+      pro: producer.filter((pro2) => pro2 === pro).length,
+    }));
+    console.log(statisticProducer);
+
+    res.status(200).json({
+      msg: "success",
+      user: "Fetch statistic producers base on type successful!",
+      data: statisticProducer,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(205).json({
+      msg: "ValidatorError",
+      user: error.message,
+    });
+  }
+};
+
+// AJAX
 module.exports.postCreate = async (req, res, next) => {
   const {
     name,
@@ -220,10 +265,10 @@ module.exports.postCreate = async (req, res, next) => {
     producer,
   } = req.body;
 
-  let arrThumbnail = req.files.length ? req.files : []
-  arrThumbnail = arrThumbnail.map(thumbnail => {
-    req.hostname + '/' + thumbnail.path.replace(/\\/g,'/').replace('..', '')
-  })
+  let arrThumbnail = req.files.length ? req.files : [];
+  arrThumbnail = arrThumbnail.map((thumbnail) => {
+    req.hostname + "/" + thumbnail.path.replace(/\\/g, "/").replace("..", "");
+  });
 
   try {
     const product = new Product({
@@ -234,7 +279,7 @@ module.exports.postCreate = async (req, res, next) => {
       details,
       description,
       producer,
-      thumbnail: arrThumbnail
+      thumbnail: arrThumbnail,
     });
 
     const result = await product.save();
@@ -245,14 +290,17 @@ module.exports.postCreate = async (req, res, next) => {
       data: result,
     });
   } catch (error) {
-    let respond = { msg: "ValidatorError" };
-    error.errors &&
-      Object.keys(error.errors).forEach(
-        (err) => (respond[err] = error.errors[err].message)
-      );
+    // let respond = { msg: "ValidatorError" };
+    // error.errors &&
+    //   Object.keys(error.errors).forEach(
+    //     (err) => (respond[err] = error.errors[err].message)
+    //   );
 
-    console.log(respond);
-    res.render("pages/auth", { respond });
+    console.log(error);
+    res.status(205).json({
+      msg: "ValidatorError",
+      user: error.message,
+    });
   }
 };
 
@@ -277,11 +325,16 @@ module.exports.patchUpdate = async (req, res, next) => {
   let newProduct = {};
 
   try {
+    if (user.role !== "admin")
+      throw new Error(`You don't have the permission!`);
+
     for (const ops of keys) {
       if (acceptUserFields.includes(ops)) {
         newProduct[ops] = req.body.ops;
       } else {
-        throw new Error("You are only allowed to change the {name}, {price}, {type}, {quantity}, {details}, {descriptions}, {producer}, {tags}, {video}!")
+        throw new Error(
+          "You are only allowed to change the {name}, {price}, {type}, {quantity}, {details}, {descriptions}, {producer}, {tags}, {video}!"
+        );
       }
 
       if (ops === "price") {
@@ -307,10 +360,10 @@ module.exports.patchUpdate = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error),
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message
-    });
+      res.status(205).json({
+        msg: "ValidatorError",
+        user: error.message,
+      });
   }
 };
 
@@ -319,62 +372,71 @@ module.exports.deleteOne = async (req, res, next) => {
   const _id = req.params.id;
 
   try {
-    const result = await Product.deleteOne({_id})
-    const respond = await Product.find()
+    await Product.deleteOne({ _id });
 
     res.status(200).json({
       msg: "success",
-      user: 'Delete product successful!',
-      data: respond
+      user: "Delete product successful!",
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(205).json({
       msg: "ValidatorError",
-      user: error.message
+      user: error.message,
     });
   }
 };
 
+// AJAX
 module.exports.getRelative = async (req, res, next) => {
   const { id } = req.params;
-  const product = await Product.findById(id);
-  const { type, tags, producer } = product;
 
-  const result = await Product.find({
-    $or: [
-      {
-        type: {
-          $in: type,
-        },
-      },
-      {
-        producer: {
-          $in: producer,
-        },
-      },
-      {
-        tags: {
-          $in: tags,
-        },
-      },
-    ],
-  });
+  try {
+    const product = await Product.findById(id);
+    const { type, tags, producer } = product;
 
-  res.render("pages/auth", {
-    msg: "success",
-    user: `Get relative product successful!`,
-    data: result,
-  });
+    const result = await Product.find({
+      $or: [
+        {
+          type: {
+            $in: type,
+          },
+        },
+        {
+          producer: {
+            $in: producer,
+          },
+        },
+        {
+          tags: {
+            $in: tags,
+          },
+        },
+      ],
+    });
+
+    res.status(200).json({
+      msg: "success",
+      user: `Get relative product successful!`,
+      data: result,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(205).json({
+      msg: 'ValidatorError',
+      user: error.message
+    })
+  }
 };
 
+// AJAX
 module.exports.getAllComment = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const items_per_page = parseInt(req.query.limit) || 100;
 
   if (page < 1) page = 1;
 
-  Product.find({})
+  await Product.find({})
     .sort(sortObj)
     .skip((page - 1) * items_per_page)
     .limit(items_per_page)
@@ -399,42 +461,45 @@ module.exports.getAllComment = async (req, res, next) => {
         };
       }
 
-      const respond = {
+      res.status(200).json({
         msg: "success",
-        user: "Fetch successful!",
+        user: "Fetch comments successful!",
         data: products.comments,
-      };
-
-      res.render("pages/auth", respond);
+      });
     })
     .catch((error) => {
       console.log(error);
-      res.render("pages/auth", {
+      res.status(205).json({
         msg: "ValidatorError",
-        user: `Fail to fetch!`,
+        user: error.message,
       });
     });
 };
 
+// AJAX
 module.exports.postComment = async (req, res, next) => {
   const { id } = req.params;
   const { content, rating } = req.body;
-  let { _id } = req.user;
-  let { name } = req.body;
+  const {user} = req
 
   try {
-    if (!_id) {
-      _id = mongoose.Types.ObjectId();
-    } else {
-      name = req.user.name;
+    let _id = mongoose.Types.ObjectId();
+    let name = ''
+
+    if (!user) {
+      if (!req.body.name) throw new Error('You are not login so the field {name} is required!')
+      name = req.body.name
+    }
+    else {
+      _id = user._id
+      name = user.firstName + user.lastName
     }
 
-    if (!name || !content || !rating) {
-      return res.render("pages/auth", {
-        // render page product detail
-        msg: "ValidatorError",
-        user: `Fill in all field to comment!`,
-      });
+    if (!content || !rating) {
+      return res.status(205).json({
+        mag: 'ValidatorError',
+        user: 'Content and rating is required!'
+      })
     }
 
     const product = await Product.findById(id);
@@ -445,58 +510,91 @@ module.exports.postComment = async (req, res, next) => {
       rating: parseInt(rating),
     };
 
-    Product.updateOne({_id: id}, {
-      $push: {
-        comments: comment,
-      },
-    });
+    const newProduct = await Product.updateOne(
+      { _id: id },
+      {
+        $push: {
+          comments: comment,
+        },
+        $set: {
+          countRating: product.countRating + 1
+        }
+      }
+    );
 
-    console.log(error);
-    res.render("pages/auth", {
+    res.status(201).json({
       msg: "success",
       user: `Your comment has been public!`,
-      data: product
+      data: newProduct,
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
-    res.render("pages/auth", {
+    res.status(205).json({
       msg: "ValidatorError",
-      user: `Fail to comment!`,
+      user: error.message,
     });
   }
 };
 
+// AJAX
 module.exports.postLike = async (req, res, next) => {
   const { id } = req.params;
-  const { _id } = req.user;
+  const {user} = req
 
   try {
     const product = await Product.findById(id);
-    const {name, price, thumbnail} = product
+    const { name, price, thumbnail } = product;
 
-    product.countLike++
-    Product.updateOne({_id: id}, {
-      $set: product
-    })
-    User.updateOne({_id}, {
-      $push: {
-        likes: {
-          productId: id,
-          name: name,
-          price: price,
-          thumbnail: thumbnail,
+    if (!user) {
+      req.session.like.push({
+        productId: id,
+        name: name,
+        price: price,
+        thumbnail: thumbnail,
+      })
+
+      return res.status(200).json({
+        msg: 'success',
+        user: 'Add to like resources successful!'
+      })
+    }
+
+    const {_id} = user
+
+    // Bug: check 2 likes ???
+    product.countLike++;
+
+    await Promise.all([
+      Product.updateOne(
+        { _id: id },
+        {
+          $set: product,
         }
-      }
-    })
+      ),
+      User.updateOne(
+        { _id },
+        {
+          $push: {
+            likes: {
+              productId: id,
+              name: name,
+              price: price,
+              thumbnail: thumbnail,
+            },
+          },
+        }
+      )
+    ])
 
-    // res.render('pages/product_detail', {}) // page product detail
-  }
-  catch (error) {
+    res.status(200).json({
+      msg: 'success',
+      user: 'Like product successful!'
+    })
+  } catch (error) {
     console.log(error);
-    res.render("pages/auth", {
+    res.status(205).json({
       msg: "ValidatorError",
-      user: `Fail to like!`,
+      user: error.message,
     });
   }
 };

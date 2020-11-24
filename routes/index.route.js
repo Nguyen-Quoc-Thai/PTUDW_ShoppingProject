@@ -13,12 +13,15 @@ router.get("/", indexController.get);
 router.get("/products/computers", productController.getAllComputer);
 router.get("/products/laptops", productController.getAllLaptop);
 router.get("/products/mobiles", productController.getAllMobile);
-
 router.get("/products", productController.getAll);
 router.get("/products/:id", productController.getOne);
 router.post("/products", upload.array('thumbnail', 5), productController.postCreate);
+// API
 router.patch("/products/:id", productController.patchUpdate);
-router.delete("products/:id", productController.deleteOne);
+router.delete("/products/:id", productController.deleteOne);
+router.get("/products/:id/relative", productController.getRelative);
+router.get("/products/statistic", productController.getStatisticProducer);
+
 
 router.get("/products/:id/comments", productController.getAllComment);
 router.post("/products/:id/comments", productController.postComment);
