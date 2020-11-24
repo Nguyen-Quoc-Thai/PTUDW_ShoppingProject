@@ -6,8 +6,8 @@ const enumUser = {
 }
 
 const enumStatus = {
-    values: ['active', 'block'],
-    message: `Status must be 'active' or 'block'!`
+    values: ['active', 'disable'],
+    message: `Status must be 'active' or 'disable'!`
 }
 
 const userScheme = mongoose.Schema({
@@ -57,12 +57,14 @@ const userScheme = mongoose.Schema({
         type: String,
         default: ''
     },
-    like: {
+    likes: {
         type: Array,
         default: []
     },
     password: {
         type: String,
+        minlength: [6, 'Min length of password must be greater than 6'],
+        maxlength: [20, 'Max length of password must be lesser than 20'],
         required: [true, 'Password is required!']
     },
     passwordResetToken: {
