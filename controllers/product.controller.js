@@ -3,10 +3,33 @@ const mongoose = require("mongoose");
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
 
-const products = require("../models/products.model");
+const { allCategory } = require("./../utils/constant");
 
-module.exports.getProducts = (req, res) => {
-  res.render("pages/products", { products });
+module.exports.getResourceProducts = async (req, res, next) => {
+  const { resourceName } = req.params;
+  const validResourceName = allCategory.map((cate) => cate.slugName);
+
+  if (!validResourceName.includes(resourceName)) {
+    const error = new Error("Invalid url");
+    return res.render("error", {
+      message: "Resource not found!",
+      error,
+    }); // not found!
+  }
+
+  const objQuery = allCategory.filter((cate) => cate.slugName === resourceName);
+
+  const result = await Product.find({
+    type: objQuery[0].name,
+  }).limit(12);
+
+  console.log(result);
+
+  res.render("pages/products", {
+    msg: "success",
+    categories: allCategory || [],
+    data: result || [],
+  });
 };
 
 module.exports.filterProducts = (req, res) => {
@@ -421,11 +444,11 @@ module.exports.getRelative = async (req, res, next) => {
       data: result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(205).json({
-      msg: 'ValidatorError',
-      user: error.message
-    })
+      msg: "ValidatorError",
+      user: error.message,
+    });
   }
 };
 
@@ -480,26 +503,26 @@ module.exports.getAllComment = async (req, res, next) => {
 module.exports.postComment = async (req, res, next) => {
   const { id } = req.params;
   const { content, rating } = req.body;
-  const {user} = req
+  const { user } = req;
 
   try {
     let _id = mongoose.Types.ObjectId();
-    let name = ''
+    let name = "";
 
     if (!user) {
-      if (!req.body.name) throw new Error('You are not login so the field {name} is required!')
-      name = req.body.name
-    }
-    else {
-      _id = user._id
-      name = user.firstName + user.lastName
+      if (!req.body.name)
+        throw new Error("You are not login so the field {name} is required!");
+      name = req.body.name;
+    } else {
+      _id = user._id;
+      name = user.firstName + user.lastName;
     }
 
     if (!content || !rating) {
       return res.status(205).json({
-        mag: 'ValidatorError',
-        user: 'Content and rating is required!'
-      })
+        mag: "ValidatorError",
+        user: "Content and rating is required!",
+      });
     }
 
     const product = await Product.findById(id);
@@ -517,8 +540,8 @@ module.exports.postComment = async (req, res, next) => {
           comments: comment,
         },
         $set: {
-          countRating: product.countRating + 1
-        }
+          countRating: product.countRating + 1,
+        },
       }
     );
 
@@ -539,7 +562,7 @@ module.exports.postComment = async (req, res, next) => {
 // AJAX
 module.exports.postLike = async (req, res, next) => {
   const { id } = req.params;
-  const {user} = req
+  const { user } = req;
 
   try {
     const product = await Product.findById(id);
@@ -551,15 +574,15 @@ module.exports.postLike = async (req, res, next) => {
         name: name,
         price: price,
         thumbnail: thumbnail,
-      })
+      });
 
       return res.status(200).json({
-        msg: 'success',
-        user: 'Add to like resources successful!'
-      })
+        msg: "success",
+        user: "Add to like resources successful!",
+      });
     }
 
-    const {_id} = user
+    const { _id } = user;
 
     // Bug: check 2 likes ???
     product.countLike++;
@@ -583,13 +606,13 @@ module.exports.postLike = async (req, res, next) => {
             },
           },
         }
-      )
-    ])
+      ),
+    ]);
 
     res.status(200).json({
-      msg: 'success',
-      user: 'Like product successful!'
-    })
+      msg: "success",
+      user: "Like product successful!",
+    });
   } catch (error) {
     console.log(error);
     res.status(205).json({

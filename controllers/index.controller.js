@@ -1,27 +1,15 @@
 const products = require("../models/products.model");
-const Product = require('./../models/product.model')
+const Product = require("./../models/product.model");
 
-module.exports.get = (req, res) => {
-  const laptops = products.filter((product) => product.type === "laptop");
-  const mobiles = products.filter((product) => product.type === "mobile");
-  const computers = products.filter((product) => product.type === "computer");
-
-  res.render("pages/index", { laptops, mobiles, computers });
-};
-
+const { allCategory } = require("./../utils/constant");
 
 module.exports.index = async (req, res, next) => {
-  const [computers, laptops, mobiles] = await Promise.all([
-    Product.find({
-      type: 'computer'
-    }),
-    Product.find({
-      type: 'laptop'
-    }),
-    Product.find({
-      type: 'mobile'
-    })
-  ])
+  const result = {};
+  for (const key of allCategory) {
+    result[key.name] = await Product.find({
+      type: key.name,
+    }).limit(10);
+  }
 
   req.session.cart = {
     userId: null,
@@ -32,9 +20,8 @@ module.exports.index = async (req, res, next) => {
   };
 
   res.render("pages/index", {
-    msg: 'success',
-    laptops,
-    mobiles,
-    computers
+    msg: "success",
+    categories: allCategory || [],
+    data: result || [],
   });
-}
+};

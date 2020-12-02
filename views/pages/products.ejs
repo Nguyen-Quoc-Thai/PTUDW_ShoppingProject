@@ -21,8 +21,8 @@
     <div class="product-view">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-8">
-            <% if (products.length) { %>
+          <div class="col-lg-9">
+            <% if (data.length) { %>
             <div class="row">
               <div class="col-md-12">
                 <div class="product-view-top">
@@ -72,7 +72,7 @@
                 </div>
               </div>
 
-              <% products.forEach(product => { %>
+              <% data.forEach(product => { %>
               <div class="col-md-4">
                 <div class="product-item">
                   <div class="product-title">
@@ -87,21 +87,18 @@
                   </div>
                   <div class="product-image">
                     <a href="#">
-                      <img
-                        src="<%= product.thumbnail[0] %>"
-                        alt="Product Image"
-                      />
+                      <img src="<%= product.images[0] %>" alt="Product Image" />
                     </a>
                     <div class="product-action">
                       <a href="#"><i class="fa fa-cart-plus"></i></a>
                       <a href="#"><i class="fa fa-heart"></i></a>
-                      <a href="/products/<%= product.id %>"
+                      <a href="/products/<%= product._id %>"
                         ><i class="fa fa-search"></i
                       ></a>
                     </div>
                   </div>
                   <div class="product-price">
-                    <h3><span>$</span><%= product.salePrice %></h3>
+                    <h3><span>$</span><%= product.price %></h3>
                     <a class="btn" href=""
                       ><i class="fa fa-shopping-cart"></i>Buy Now</a
                     >
@@ -132,11 +129,11 @@
             <!-- Pagination Start -->
 
             <% } else { %>
-            <h1>NO PRODUCTS</h1>
+            <h1>No product found!</h1>
             <% } %>
           </div>
 
-          <%- include('../partials/productSidebar'); %>
+          <%- include('../partials/productSidebar', {col: 3, categories}); %>
         </div>
       </div>
     </div>

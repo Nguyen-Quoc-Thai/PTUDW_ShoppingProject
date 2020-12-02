@@ -1,10 +1,17 @@
 <!-- Side Bar Start -->
-<div class="col-lg-4 sidebar">
+<div class="col-lg-<%=col%> sidebar">
   <div class="sidebar-widget category">
     <h2 class="title">Category</h2>
     <nav class="navbar bg-light">
       <ul class="navbar-nav">
+        <% categories.forEach(cate => { %>
         <li class="nav-item">
+          <a class="nav-link" href="/products/<%=cate.slugName%>"
+            ><i class="fa fa-<%=cate.icon%>"></i><%=cate.name%></a
+          >
+        </li>
+        <%})%>
+        <!-- <li class="nav-item">
           <a class="nav-link" href="/products/filter?type=computer"
             ><i class="fa fa-mobile-alt"></i>Computers</a
           >
@@ -23,7 +30,7 @@
           <a class="nav-link" href="/products/filter?type=accessory"
             ><i class="fa fa-microchip"></i>Accessories</a
           >
-        </li>
+        </li> -->
       </ul>
     </nav>
   </div>
