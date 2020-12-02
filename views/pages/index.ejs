@@ -15,7 +15,9 @@
               <ul class="navbar-nav">
                 <% categories.forEach(cate => { %>
                 <li class="nav-item">
-                  <a class="nav-link" href="/products/<%=cate.slugName%>"
+                  <a
+                    class="nav-link"
+                    href="/products/resource/<%=cate.slugName%>"
                     ><i class="fa fa-<%=cate.icon%>"></i><%=cate.name%></a
                   >
                 </li>
@@ -178,7 +180,7 @@
     <div class="featured-product product" id="computers-index">
       <div class="container-fluid">
         <div class="section-header">
-          <a href="/products/<%=categories[index].slugName%>"
+          <a href="/products/resource/<%=categories[index].slugName%>"
             ><h4><%=cate%></h4></a
           >
         </div>
@@ -187,7 +189,7 @@
           <div class="col-lg-3">
             <div class="product-item">
               <div class="product-title">
-                <a href="#"><%= cat.name %></a>
+                <a href="/products/<%=cat.slugName%>"><%= cat.name %></a>
                 <div class="ratting">
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
@@ -197,13 +199,13 @@
                 </div>
               </div>
               <div class="product-image">
-                <a href="/products">
+                <a href="/products/<%=cat.slugName%>">
                   <img src="<%= cat.images[0] %>" alt="Product Image" />
                 </a>
                 <div class="product-action">
                   <a href="#"><i class="fa fa-cart-plus"></i></a>
                   <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="/products/<%= cat._id %>"
+                  <a href="/products/<%= cat.slugName %>"
                     ><i class="fa fa-search"></i
                   ></a>
                 </div>

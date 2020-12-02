@@ -7,29 +7,94 @@ const { allCategory } = require("./../utils/constant");
 
 module.exports.getResourceProducts = async (req, res, next) => {
   const { resourceName } = req.params;
+  const { producer } = req.query;
   const validResourceName = allCategory.map((cate) => cate.slugName);
 
-  if (!validResourceName.includes(resourceName)) {
-    const error = new Error("Invalid url");
-    return res.render("error", {
-      message: "Resource not found!",
+  try {
+    if (!validResourceName.includes(resourceName)) {
+      throw new Error("Invalid url");
+    }
+
+    let mapValue = allCategory.filter((cate) => cate.slugName === resourceName);
+    const objQuery = {
+      type: mapValue[0].name,
+    };
+
+    if (producer) {
+      objQuery["producer"] = producer;
+    }
+
+    const result = await Product.find(objQuery).limit(12);
+
+    const statisticType = {};
+    const statisticDiffType = await Product.find({
+      type: result[0].type,
+    }).distinct("producer");
+
+    for (const key of statisticDiffType) {
+      statisticType[key] = await Product.find({
+        type: result[0].type,
+        producer: key,
+      }).countDocuments();
+    }
+
+    res.render("pages/products", {
+      msg: "success",
+      data: result || [],
+      categories: allCategory || [],
+      ourBrands: statisticType || null,
+    });
+  } catch (error) {
+    res.render("error", {
+      message: error.message,
       error,
-    }); // not found!
+    });
   }
+};
 
-  const objQuery = allCategory.filter((cate) => cate.slugName === resourceName);
+module.exports.getProductDetails = async (req, res, next) => {
+  const { slugNameProduct } = req.params;
 
-  const result = await Product.find({
-    type: objQuery[0].name,
-  }).limit(12);
+  try {
+    const product = await Product.findOne({
+      slugName: slugNameProduct,
+    });
 
-  console.log(result);
+    console.log(product);
 
-  res.render("pages/products", {
-    msg: "success",
-    categories: allCategory || [],
-    data: result || [],
-  });
+    if (!product) throw new Error("Product not found!");
+
+    const { type, producer } = product;
+    const relativeProducts = await Product.find({
+      type,
+      producer,
+    }).limit(12);
+
+    const statisticType = {};
+    const statisticDiffType = await Product.find({
+      type,
+    }).distinct("producer");
+
+    for (const key of statisticDiffType) {
+      statisticType[key] = await Product.find({
+        type,
+        producer: key,
+      }).countDocuments();
+    }
+
+    res.render("pages/productDetail", {
+      msg: "success",
+      categories: allCategory,
+      data: product || null,
+      relatedProducts: relativeProducts || null,
+      ourBrands: statisticType || null,
+    });
+  } catch (error) {
+    res.render("error", {
+      message: error.message,
+      error,
+    });
+  }
 };
 
 module.exports.filterProducts = (req, res) => {
@@ -37,19 +102,6 @@ module.exports.filterProducts = (req, res) => {
   const productArray = products.filter((product) => product.type === type);
   console.log(productArray);
   res.render("pages/products", { products: productArray });
-};
-
-module.exports.getProductDetails = (req, res) => {
-  const product = products.find((product) => product.id === req.params.id);
-
-  let relatedProducts = [];
-
-  if (product)
-    relatedProducts = products.filter(
-      (item) => item.type === product.type && item.id !== product.id
-    );
-
-  res.render("pages/productDetail", { product, relatedProducts });
 };
 
 module.exports.getAllComputer = async (req, res, next) => {

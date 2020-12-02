@@ -22,28 +22,28 @@
     <div class="product-detail">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-8">
-            <% if (product) { %>
+          <div class="col-lg-9">
+            <% if (data) { %>
             <div class="product-detail-top">
               <div class="row align-items-center">
                 <div class="col-md-5">
                   <div class="product-slider-single normal-slider">
-                    <% product.thumbnail.forEach(src => { %>
+                    <% data.images.forEach(src => { %>
                     <img src="<%= src %>" alt="Product Image" />
                     <% }) %>
                   </div>
 
                   <div class="product-slider-single-nav normal-slider">
-                    <% product.thumbnail.forEach(src => { %>
+                    <% data.images.forEach(src => { %>
                     <div class="slider-nav-img">
-                      <img src="<%= src %>" alt="Product Image" />
+                      <img src="<%= src %>" alt="<%=data.name%>" />
                     </div>
                     <% }) %>
                   </div>
                 </div>
                 <div class="col-md-7">
                   <div class="product-content">
-                    <div class="title"><h2><%= product.name %></h2></div>
+                    <div class="title"><h2><%= data.name %></h2></div>
                     <div class="ratting">
                       <i class="fa fa-star"></i>
                       <i class="fa fa-star"></i>
@@ -54,13 +54,13 @@
                     <div class="price">
                       <h4>Price:</h4>
                       <p>
-                        $<%= product.salePrice %><span
-                          >$<%= product.basePrice %></span
-                        >
+                        $<%= data.price %><span>$<%= data.oldPrice %></span>
                       </p>
                     </div>
                     <div class="quantity">
-                      <h4>Quantity:</h4>
+                      <%if (data.quantity.length){%>
+                      <h4>Quantity: <%=data.quantity%></h4>
+                      <%}%>
                       <div class="qty">
                         <button class="btn-minus">
                           <i class="fa fa-minus"></i>
@@ -72,22 +72,32 @@
                       </div>
                     </div>
                     <div class="p-size">
-                      <h4>Size:</h4>
+                      <h4>SKU:</h4>
                       <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn">S</button>
-                        <button type="button" class="btn">M</button>
-                        <button type="button" class="btn">L</button>
-                        <button type="button" class="btn">XL</button>
+                        <button type="button" class="btn">
+                          <%=data.code%>
+                        </button>
                       </div>
                     </div>
-                    <div class="p-color">
-                      <h4>Color:</h4>
+
+                    <div class="p-size">
+                      <h4>Views:</h4>
                       <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn">White</button>
-                        <button type="button" class="btn">Black</button>
-                        <button type="button" class="btn">Blue</button>
+                        <button type="button" class="btn">
+                          <%=data.countView%>
+                        </button>
                       </div>
                     </div>
+
+                    <div class="p-size">
+                      <h4>Likes:</h4>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn">
+                          <%=data.countLike%>
+                        </button>
+                      </div>
+                    </div>
+
                     <div class="action">
                       <a class="btn" href="#"
                         ><i class="fa fa-shopping-cart"></i>Add to Cart</a
@@ -95,6 +105,19 @@
                       <a class="btn" href="#"
                         ><i class="fa fa-shopping-bag"></i>Buy Now</a
                       >
+                    </div>
+
+                    <hr />
+                    <div>
+                      <h4>Khuyến mãi liên quan:</h4>
+                      <div>
+                        Nhập mã
+                        <strong><%=data.promotion.code%></strong>
+                        giảm thêm 5% tối đa
+                        <a><%=data.promotion.desc%></a>
+                        khi thanh toán qua VNPAY-QR.
+                        <a href="<%=data.promotion.link%>">Xem chi tiết</a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -119,24 +142,45 @@
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" data-toggle="pill" href="#reviews"
-                      >Reviews (1)</a
+                      >Reviews (<%=data.comments.length%>)</a
                     >
                   </li>
                 </ul>
 
                 <div class="tab-content">
                   <div id="description" class="container tab-pane active">
-                    <h4>Product description</h4>
-                    <p><%= product.description %></p>
+                    <h4>Thông số kĩ thuật</h4>
+                    <hr />
+                    <table class="table table-bordered">
+                      <tbody>
+                        <%Object.keys(data.details).forEach((field, index) =>
+                        {%>
+                        <tr>
+                          <th scope="row"><%=(index + 1)%></th>
+                          <td><%=field%></td>
+                          <td class="text-center"><%=data.details[field]%></td>
+                        </tr>
+                        <%})%>
+                      </tbody>
+                    </table>
                   </div>
+
                   <div id="specification" class="container tab-pane fade">
-                    <h4>Product specification</h4>
+                    <h4>Mô tả sản phẩm</h4>
+                    <hr />
                     <ul>
-                      <li>Lorem ipsum dolor sit amet</li>
-                      <li>Lorem ipsum dolor sit amet</li>
-                      <li>Lorem ipsum dolor sit amet</li>
-                      <li>Lorem ipsum dolor sit amet</li>
-                      <li>Lorem ipsum dolor sit amet</li>
+                      <%data.descriptions.forEach(field => {%> <%if(field.title)
+                      {%>
+                      <h5><%=field.title%></h5>
+                      <%}%> <%if(field.content) {%>
+                      <p><%=field.content%></p>
+                      <%}%> <%if(field.img && field.content) {%>
+                      <p><%=field.content%></p>
+                      <a href="<%=field.img%>">
+                        <img src="<%=field.img%>" alt="<%=field.title%>" />
+                      </a>
+                      <%}%>
+                      <br /><%})%>
                     </ul>
                   </div>
                   <div id="reviews" class="container tab-pane fade">
@@ -191,20 +235,22 @@
             <% } %>
 
             <!--- related Products -->
-            <% if (relatedProducts.length) { %>
+            <% if (relatedProducts && relatedProducts.length) { %>
             <div class="product">
               <div class="section-header">
-                <h1>Related Products</h1>
+                <h3>Sản phẩm tương tự</h3>
               </div>
 
               <div
                 class="row align-items-center product-slider product-slider-3"
               >
                 <% relatedProducts.forEach(product => { %>
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                   <div class="product-item">
                     <div class="product-title">
-                      <a href="#"><%= product.name %></a>
+                      <a href="/products/<%=product.slugName%>"
+                        ><%= product.name %></a
+                      >
                       <div class="ratting">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -214,22 +260,22 @@
                       </div>
                     </div>
                     <div class="product-image">
-                      <a href="product-detail.html">
+                      <a href="/products/<%=product.slugName%>">
                         <img
-                          src="<%= product.thumbnail[0] %>"
+                          src="<%=product.images[0] %>"
                           alt="Product Image"
                         />
                       </a>
                       <div class="product-action">
                         <a href="#"><i class="fa fa-cart-plus"></i></a>
                         <a href="#"><i class="fa fa-heart"></i></a>
-                        <a href="/products/<%= product.id %>"
+                        <a href="/products/<%= product.slugName %>"
                           ><i class="fa fa-search"></i
                         ></a>
                       </div>
                     </div>
                     <div class="product-price">
-                      <h3><span>$</span><%= product.salePrice %></h3>
+                      <h3><span>$</span><%= product.price %></h3>
                       <a class="btn" href=""
                         ><i class="fa fa-shopping-cart"></i>Buy Now</a
                       >
@@ -242,7 +288,8 @@
             <% } %>
           </div>
 
-          <%- include('../partials/productSidebar'); %>
+          <%- include('../partials/productSidebar', {col: 3, type: data.type,
+          categories, ourBrands}); %>
         </div>
       </div>
     </div>

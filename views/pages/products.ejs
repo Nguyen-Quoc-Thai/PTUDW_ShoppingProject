@@ -76,7 +76,9 @@
               <div class="col-md-4">
                 <div class="product-item">
                   <div class="product-title">
-                    <a href="#"><%= product.name %></a>
+                    <a href="/products/<%= product.slugName %>"
+                      ><%= product.name %></a
+                    >
                     <div class="ratting">
                       <i class="fa fa-star"></i>
                       <i class="fa fa-star"></i>
@@ -86,13 +88,13 @@
                     </div>
                   </div>
                   <div class="product-image">
-                    <a href="#">
+                    <a href="/products/<%= product.slugName %>">
                       <img src="<%= product.images[0] %>" alt="Product Image" />
                     </a>
                     <div class="product-action">
                       <a href="#"><i class="fa fa-cart-plus"></i></a>
                       <a href="#"><i class="fa fa-heart"></i></a>
-                      <a href="/products/<%= product._id %>"
+                      <a href="/products/<%= product.slugName %>"
                         ><i class="fa fa-search"></i
                       ></a>
                     </div>
@@ -133,7 +135,8 @@
             <% } %>
           </div>
 
-          <%- include('../partials/productSidebar', {col: 3, categories}); %>
+          <%- include('../partials/productSidebar', {col: 3, type: data[0].type,
+          categories, ourBrands}); %>
         </div>
       </div>
     </div>
