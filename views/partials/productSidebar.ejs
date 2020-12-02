@@ -19,11 +19,12 @@
     <h2 class="title">Our Brands</h2>
     <ul>
       <%const index = categories.filter(fil => fil.name === type)%>
-      <%Object.keys(ourBrands).forEach((brand) => {%>
+      <%ourBrands.forEach((brand) => {%>
       <li>
-        <a href="/products/resource/<%=index[0].slugName%>?producer=<%=brand%>"
-          ><%=brand%> </a
-        ><span>(<%=ourBrands[brand]%>)</span>
+        <a
+          href="/products/resource/<%=index[0].slugName%>?producer=<%=brand.name%>"
+          ><%=brand.name%> </a
+        ><span>(<%=brand.count%>)</span>
       </li>
       <%})%>
     </ul>

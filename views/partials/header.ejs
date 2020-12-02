@@ -59,16 +59,22 @@
           <a href="/contact" class="nav-item nav-link">Contact Us</a>
         </div>
         <div class="navbar-nav ml-auto">
+          <%if(user) {%>
           <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
-              >User Account</a
+              ><%=user.firstName%> <%=user.lastName%></a
             >
-            <div class="dropdown-menu">
-              <a href="/user/dashboard" class="dropdown-item">Dash Board</a>
+            <div class="dropdown-menu" id="user-act">
+              <a href="/user/dashboard" class="dropdown-item">Dashboard</a>
               <a href="/user/wishlist" class="dropdown-item">Wishlist</a>
+              <a href="/user/wishlist" class="dropdown-item post">Logout</a>
             </div>
           </div>
-          <a href="/user/auth" class="nav-item nav-link">Login & Register</a>
+          <a href="/user/auth" class="nav-item nav-link"><i class="fas fa-lock"></i></a>
+          <%}else{%>
+            <a href="/user/auth" class="nav-item nav-link">Resister & Login</i></a>
+          <%}%>
+
         </div>
       </div>
     </nav>
@@ -109,4 +115,19 @@
     </div>
   </div>
 </div>
+<%#
+console.log("post logout!");
+  $('#user-act>a.post').click(function(e) {
+
+    $.ajax({
+      type: "POST",
+      url: '/user/logout',
+      data: null,
+      success: function() {
+        console.log("success");
+      },
+      dataType: "json/application"
+    });
+  });
+#%>
 <!-- Bottom Bar End -->

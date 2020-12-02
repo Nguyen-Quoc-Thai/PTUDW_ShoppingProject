@@ -4,20 +4,25 @@ const User = require("../models/user.model");
 const Product = require("../models/product.model");
 
 const { allCategory } = require("./../utils/constant");
+const { statistic } = require("./../utils/statistic");
 
 module.exports.getResourceProducts = async (req, res, next) => {
-  const { resourceName } = req.params;
+  const { resourceSlugName } = req.params;
   const { producer } = req.query;
-  const validResourceName = allCategory.map((cate) => cate.slugName);
+
+  const validResourceSlugName = allCategory.map((cate) => cate.slugName);
 
   try {
-    if (!validResourceName.includes(resourceName)) {
+    if (!validResourceSlugName.includes(resourceSlugName)) {
       throw new Error("Invalid url");
     }
 
-    let mapValue = allCategory.filter((cate) => cate.slugName === resourceName);
+    let mapValue = allCategory.find(
+      (cate) => cate.slugName === resourceSlugName
+    );
+
     const objQuery = {
-      type: mapValue[0].name,
+      type: mapValue.name,
     };
 
     if (producer) {
@@ -26,23 +31,19 @@ module.exports.getResourceProducts = async (req, res, next) => {
 
     const result = await Product.find(objQuery).limit(12);
 
-    const statisticType = {};
-    const statisticDiffType = await Product.find({
-      type: result[0].type,
-    }).distinct("producer");
+    const statisticPerType = await statistic(
+      Product,
+      { type: mapValue.name },
+      "producer"
+    );
 
-    for (const key of statisticDiffType) {
-      statisticType[key] = await Product.find({
-        type: result[0].type,
-        producer: key,
-      }).countDocuments();
-    }
+    if (statisticPerType.length > 9) statisticPerType.length = 9;
 
     res.render("pages/products", {
       msg: "success",
-      data: result || [],
-      categories: allCategory || [],
-      ourBrands: statisticType || null,
+      categories: allCategory,
+      data: result || null,
+      ourBrands: statisticPerType || null,
     });
   } catch (error) {
     res.render("error", {
@@ -53,41 +54,28 @@ module.exports.getResourceProducts = async (req, res, next) => {
 };
 
 module.exports.getProductDetails = async (req, res, next) => {
-  const { slugNameProduct } = req.params;
+  const { productSlugName } = req.params;
 
   try {
     const product = await Product.findOne({
-      slugName: slugNameProduct,
+      slugName: productSlugName,
     });
-
-    console.log(product);
-
-    if (!product) throw new Error("Product not found!");
 
     const { type, producer } = product;
     const relativeProducts = await Product.find({
       type,
       producer,
-    }).limit(12);
+    }).limit(8);
 
-    const statisticType = {};
-    const statisticDiffType = await Product.find({
-      type,
-    }).distinct("producer");
-
-    for (const key of statisticDiffType) {
-      statisticType[key] = await Product.find({
-        type,
-        producer: key,
-      }).countDocuments();
-    }
+    const statisticPerType = await statistic(Product, { type }, "producer");
+    if (statisticPerType.length > 9) statisticPerType.length = 9;
 
     res.render("pages/productDetail", {
       msg: "success",
       categories: allCategory,
       data: product || null,
       relatedProducts: relativeProducts || null,
-      ourBrands: statisticType || null,
+      ourBrands: statisticPerType || null,
     });
   } catch (error) {
     res.render("error", {

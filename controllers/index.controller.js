@@ -4,14 +4,19 @@ const Product = require("./../models/product.model");
 const { allCategory } = require("./../utils/constant");
 
 module.exports.index = async (req, res, next) => {
-  const result = {};
-
+  console.log("req user", req.user);
   try {
-    for (const key of allCategory) {
-      result[key.name] = await Product.find({
-        type: key.name,
-      }).limit(10);
-    }
+    const resultPromise = Promise.all(
+      allCategory.map(async (cate) => {
+        const ret = await Product.find({
+          type: cate.name,
+        }).limit(10);
+
+        return ret;
+      })
+    );
+
+    const result = await resultPromise;
 
     req.session.cart = {
       userId: null,

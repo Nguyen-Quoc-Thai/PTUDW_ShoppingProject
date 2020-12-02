@@ -1,41 +1,29 @@
 const Cart = require("./../models/cart.model");
 const Product = require("./../models/product.model");
 
-module.exports.get = (req, res) => {
-  res.render("pages/cart");
-};
-
 module.exports.getCart = async (req, res, next) => {
   const { cart } = req.session;
   const { user } = req;
 
+  console.log(cart, user);
+
   try {
     if (user) {
       const userCart = await Cart.findOne({ userId: user._id });
-      return res.render("pages/auth", {
-        // page cart
+      return res.render("pages/cart", {
         msg: "success",
         user: "Get cart successful!",
         data: userCart,
       });
     }
 
-    if (!cart) {
-      cart = {
-        userId: null,
-        status: "waiting",
-        items: [],
-        totalQuantity: 0,
-        totalCost: 0,
-      };
-    }
-
     req.session.cart = cart;
     // {userId, status, items, totalQuantity, totalCost}
-    res.render("pages/auth", {
+
+    res.render("pages/cart", {
       // page cart
       msg: "success",
-      user: "Open cart successful!",
+      user: "Get cart successful!",
       data: cart,
     });
   } catch (error) {

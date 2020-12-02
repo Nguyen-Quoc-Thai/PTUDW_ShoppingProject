@@ -2206,6 +2206,13 @@ h2 {
   margin-bottom: 30px;
 }
 
+.t-1 {
+  font-size: 0.8rem;
+  margin-top: -10px;
+  padding: 0px 15px 0 0 !important;
+  color: red;
+}
+
 /**********************************/
 /********** Footer CSS ************/
 /**********************************/

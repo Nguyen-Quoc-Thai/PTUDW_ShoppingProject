@@ -6,17 +6,16 @@ const {
   checkNotAuthenticated,
 } = require("./../middlewares/auth.middleware");
 
-router.get("/dashboard", userController.getDashboard);
+// router.get("/dashboard", userController.getDashboard);
 
-router.get("/wishlist", userController.getWishlist);
+// router.get("/wishlist", userController.getWishlist);
 
-router.get("/checkout", userController.getCheckout);
+// router.get("/checkout", userController.getCheckout);
 
-router.get("/auth", userController.getAuth);
+// router.get("/auth", userController.getAuth);
 
-router.get("/register", checkNotAuthenticated, userController.getSignUp);
+router.get("/auth", checkNotAuthenticated, userController.getAuth);
 router.post("/register", checkNotAuthenticated, userController.postSignUp);
-router.get("/login", checkNotAuthenticated, userController.getSignIn);
 router.post("/login", checkNotAuthenticated, userController.postSignIn);
 router.post("/logout", checkAuthenticated, userController.postSignOut);
 router.get("/confirm/:token", checkNotAuthenticated, userController.getConfirm);

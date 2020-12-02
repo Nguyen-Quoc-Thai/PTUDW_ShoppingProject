@@ -3,13 +3,13 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const session = require('express-session')
-const passport = require('passport')
+const session = require("express-session");
+const passport = require("passport");
 
-require('dotenv').config()
+require("dotenv").config();
 
-const connectDB = require('./config/db')
-const session_secret = process.env.SESSION_SECRET || 'session_secret'
+const connectDB = require("./config/db");
+const session_secret = process.env.SESSION_SECRET || "session_secret";
 
 const indexRouter = require("./routes/index.route");
 const userRouter = require("./routes/user.route");
@@ -17,12 +17,12 @@ const productRouter = require("./routes/product.route");
 const cartRouter = require("./routes/cart.route");
 const contactRouter = require("./routes/contact.route");
 
-require('./config/passport')(passport)
+require("./config/passport")(passport);
 
 const app = express();
 
 // Connect DB
-connectDB()
+connectDB();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -30,18 +30,22 @@ app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(session({
-  secret: session_secret,
-  resave: false,
-  saveUninitialized: true
-}))
+app.locals.user = null;
 
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(
+  session({
+    secret: session_secret,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);

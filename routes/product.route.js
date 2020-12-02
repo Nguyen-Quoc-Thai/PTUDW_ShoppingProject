@@ -3,8 +3,11 @@ var router = express.Router();
 const productController = require("../controllers/product.controller");
 
 /* GET users listing. */
-router.get("/resource/:resourceName", productController.getResourceProducts);
-router.get("/:slugNameProduct", productController.getProductDetails);
+router.get(
+  "/resource/:resourceSlugName",
+  productController.getResourceProducts
+);
+router.get("/:productSlugName", productController.getProductDetails);
 
 // router.get("/filter", productController.filterProducts);
 

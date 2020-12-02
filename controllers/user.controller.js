@@ -11,24 +11,28 @@ const { sendMail } = require("./../config/nodemailer");
 const tokenLife = process.env.TOKEN_LIFE;
 const jwtKey = process.env.JWT_KEY;
 
-module.exports.getDashboard = (req, res) => {
-  res.render("pages/dashboard");
-};
+// module.exports.getDashboard = (req, res) => {
+//   res.render("pages/dashboard");
+// };
 
-module.exports.getWishlist = (req, res) => {
-  res.render("pages/wishlist");
-};
+// module.exports.getWishlist = (req, res) => {
+//   res.render("pages/wishlist");
+// };
 
-module.exports.getCheckout = (req, res) => {
-  res.render("pages/checkout");
-};
+// module.exports.getCheckout = (req, res) => {
+//   res.render("pages/checkout");
+// };
 
-module.exports.getAuth = (req, res) => {
-  res.render("pages/auth");
-};
+// module.exports.getAuth = (req, res) => {
+//   res.render("pages/auth");
+// };
 
-module.exports.getSignUp = (req, res, next) => {
-  res.render("pages/auth");
+module.exports.getAuth = (req, res, next) => {
+  res.render("pages/auth", {
+    msg: "success",
+    respond: "",
+    data: "",
+  });
 };
 
 module.exports.postSignUp = async (req, res, next) => {
@@ -44,8 +48,29 @@ module.exports.postSignUp = async (req, res, next) => {
   try {
     if (password !== retypePassword)
       return res.render("pages/auth", {
-        msg: "ValidatorError",
-        retypePassword: "Password retype does not match!",
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+          retypePassword: "Password retype does not match!",
+        },
+      });
+
+    if (password.length < 6)
+      return res.render("pages/auth", {
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+          password: "Password length must be greater than 6!",
+        },
+      });
+
+    if (password.length > 20)
+      return res.render("pages/auth", {
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+          password: "Password length must be lesser than 20!",
+        },
       });
 
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -71,9 +96,11 @@ module.exports.postSignUp = async (req, res, next) => {
 
     console.log(result);
     res.render("pages/auth", {
-      msg: "success",
-      user: "Sign up successful!",
-      data: result,
+      respond: {
+        msg: "success",
+        user: "Sign up successful!",
+      },
+      data: "",
     });
   } catch (error) {
     let respond = { msg: "ValidatorError" };
@@ -83,12 +110,8 @@ module.exports.postSignUp = async (req, res, next) => {
       );
 
     console.log(respond);
-    res.render("pages/auth", { respond });
+    res.render("pages/auth", { respond, data: req.body });
   }
-};
-
-module.exports.getSignIn = (req, res, next) => {
-  res.render("pages/auth");
 };
 
 module.exports.postSignIn = async (req, res, next) => {
@@ -99,18 +122,24 @@ module.exports.postSignIn = async (req, res, next) => {
 
     if (!user) {
       const respond = {
-        msg: "ValidatorError",
+        msg: "ValidatorError2",
         [Object.keys(info)[0]]: info[Object.keys(info)[0]],
       };
-      console.log(respond);
-      return res.render("pages/auth", respond);
+
+      return res.render("pages/auth", {
+        respond,
+        data: JSON.parse(JSON.stringify(req.body)),
+      });
     }
 
     if (!user.isVerified) {
       return res.render("pages/auth", {
         // render page co nut resend email confirm acc
-        msg: "ValidatorError",
-        user: "Your account has not been verified!",
+        respond: {
+          msg: "ValidatorError2",
+          user: "Your account has not been verified!",
+        },
+        data: req.body,
       });
     }
 
@@ -120,17 +149,16 @@ module.exports.postSignIn = async (req, res, next) => {
           return next(err);
         }
 
-        console.log(user);
-        return res.render("pages/dashboard", {
-          msg: "success",
-          user: "Sign in successful!",
-          data: user,
-        });
+        req.app.locals.user = req.user || null;
+        res.redirect("back");
       });
     } else {
-      res.render("pages/login", {
-        msg: "ValidatorError",
-        user: "Your account has been blocked!",
+      res.render("pages/auth", {
+        respond: {
+          msg: "ValidatorError2",
+          user: "Your account has been blocked!",
+        },
+        data: req.body,
       });
     }
   })(req, res, next);
@@ -337,7 +365,7 @@ module.exports.postReset = async (req, res, next) => {
     res.render("pages/auth", {
       msg: "success",
       user: "Reset password success!",
-      data: newUser
+      data: newUser,
     });
   } catch (error) {
     console.log(error);
