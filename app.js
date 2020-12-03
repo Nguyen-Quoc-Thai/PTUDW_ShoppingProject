@@ -19,6 +19,8 @@ const contactRouter = require("./routes/contact.route");
 
 require("./config/passport")(passport);
 
+const { init } = require("./middlewares/init.middleware");
+
 const app = express();
 
 // Connect DB
@@ -34,8 +36,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.locals.user = null;
-
 app.use(
   session({
     secret: session_secret,
@@ -46,6 +46,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(init);
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);

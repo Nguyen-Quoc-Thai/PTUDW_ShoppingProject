@@ -59,7 +59,7 @@
           <a href="/contact" class="nav-item nav-link">Contact Us</a>
         </div>
         <div class="navbar-nav ml-auto">
-          <%if(user) {%>
+          <%if(user){%>
           <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
               ><%=user.firstName%> <%=user.lastName%></a
@@ -104,11 +104,11 @@
         <div class="user">
           <a href="/user/wishlist" class="btn wishlist">
             <i class="fa fa-heart"></i>
-            <span>(0)</span>
+            <span class="cart-count-like">(0)</span>
           </a>
           <a href="/cart" class="btn cart">
             <i class="fa fa-shopping-cart"></i>
-            <span>(0)</span>
+            <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
           </a>
         </div>
       </div>

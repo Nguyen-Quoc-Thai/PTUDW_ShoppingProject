@@ -28,6 +28,7 @@ const jwtKey = process.env.JWT_KEY;
 // };
 
 module.exports.getAuth = (req, res, next) => {
+  console.log(req.app.locals.cart);
   res.render("pages/auth", {
     msg: "success",
     respond: "",
@@ -94,7 +95,6 @@ module.exports.postSignUp = async (req, res, next) => {
     });
     sendMail(req, result.email, token, "confirmation");
 
-    console.log(result);
     res.render("pages/auth", {
       respond: {
         msg: "success",
@@ -109,7 +109,6 @@ module.exports.postSignUp = async (req, res, next) => {
         (err) => (respond[err] = error.errors[err].message)
       );
 
-    console.log(respond);
     res.render("pages/auth", { respond, data: req.body });
   }
 };
@@ -168,7 +167,7 @@ module.exports.postSignOut = (req, res, next) => {
   req.logout();
   req.session.cart = null;
   req.user = null;
-  res.redirect("user/login");
+  res.redirect("back");
 };
 
 module.exports.getConfirm = async (req, res, next) => {

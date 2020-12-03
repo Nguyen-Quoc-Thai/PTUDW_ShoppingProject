@@ -55,3 +55,11 @@ module.exports.allCategory = [
     icon: "wifi",
   },
 ];
+
+module.exports.initCart = {
+  userId: null,
+  status: "waiting",
+  items: [],
+  totalQuantity: 0,
+  totalCost: 0,
+};

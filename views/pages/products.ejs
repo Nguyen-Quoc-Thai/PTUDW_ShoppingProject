@@ -92,7 +92,12 @@
                       <img src="<%= product.images[0] %>" alt="Product Image" />
                     </a>
                     <div class="product-action">
-                      <a href="#"><i class="fa fa-cart-plus"></i></a>
+                      <a
+                        href="#"
+                        class="add-to-cart"
+                        value="<%=product.slugName%>"
+                        ><i class="fa fa-cart-plus"></i
+                      ></a>
                       <a href="#"><i class="fa fa-heart"></i></a>
                       <a href="/products/<%= product.slugName %>"
                         ><i class="fa fa-search"></i

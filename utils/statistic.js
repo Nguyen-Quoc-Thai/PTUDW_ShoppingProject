@@ -18,3 +18,7 @@ module.exports.statistic = async (Model, filterFields, groupBy) => {
     return [];
   }
 };
+
+module.exports.parsePrice = (strPrice) => {
+  return parseInt(strPrice.replace(/[\.dđ]/g, ""));
+};

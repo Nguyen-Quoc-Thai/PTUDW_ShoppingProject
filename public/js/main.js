@@ -228,4 +228,34 @@
       $("#" + checkbox_id + "-show").slideDown();
     }
   });
+
+  // Add to cart
+  $(".add-to-cart").click(function (e) {
+    e.preventDefault();
+    const slugName = $(this).attr("value");
+    $.post(`/cart/${slugName}`, {}, function (data, status) {
+      if (data.msg === "success") {
+        const curCount = parseInt(
+          $(".cart-count-add").html().replace(/[()]/g, "")
+        );
+
+        $(".cart-count-add").html(`(${curCount + 1})`);
+      }
+    });
+  });
+
+  // Plus and minus item in cart
+  $(".change-val").click(function () {
+    e.preventDefault();
+    const slugName = $(this).attr("value");
+    // $.post(`/cart/${slugName}`, {}, function (data, status) {
+    //   if (data.msg === "success") {
+    //     const curCount = parseInt(
+    //       $(".cart-count-add").html().replace(/[()]/g, "")
+    //     );
+
+    //     $(".cart-count-add").html(`(${curCount + 1})`);
+    //   }
+    // });
+  });
 })(jQuery);

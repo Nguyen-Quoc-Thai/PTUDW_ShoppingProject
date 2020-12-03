@@ -15,12 +15,10 @@ const cartSchema = mongoose.Schema({
     enum: enumStatus,
     default: "waiting",
   },
-  items: [
-    {
-      type: Array,
-      default: [],
-    },
-  ],
+  items: {
+    type: Array,
+    default: [],
+  },
   // {itemId, name, thumbnail, price, quantity, total}
   totalQuantity: {
     type: Number,
