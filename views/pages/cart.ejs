@@ -27,6 +27,7 @@
               <div class="table-responsive">
                 <table class="table table-bordered">
                   <thead class="thead-dark">
+                    <%if (cart.items.length) {%>
                     <tr>
                       <th>Product</th>
                       <th>Price</th>
@@ -34,9 +35,10 @@
                       <th>Total</th>
                       <th>Remove</th>
                     </tr>
+                    <%}%>
                   </thead>
-                  <tbody class="align-middle">
-                    <%cart.items.forEach(item => {%>
+                  <tbody class="align-middle" id="cart">
+                    <%if (cart.items.length) { cart.items.forEach(item => {%>
                     <tr>
                       <td>
                         <div class="img">
@@ -49,21 +51,46 @@
                       <td><%=item.price%></td>
                       <td>
                         <div class="qty">
-                          <button class="btn-minus change-val" value="-1">
+                          <button
+                            class="btn-minus change-val"
+                            value="-1"
+                            name="<%=item.slugName%>"
+                          >
                             <i class="fa fa-minus"></i>
                           </button>
                           <input type="text" value="<%=item.quantity%>" />
-                          <button class="btn-plus change-val" value="1">
+                          <button
+                            class="btn-plus change-val"
+                            value="1"
+                            name="<%=item.slugName%>"
+                          >
                             <i class="fa fa-plus"></i>
                           </button>
                         </div>
                       </td>
-                      <td><%=item.total.toLocaleString('vi-VN')%></td>
-                      <td>
-                        <button><i class="fa fa-trash"></i></button>
+                      <td id="<%=item.itemId%>">
+                        <%=item.total.toLocaleString('vi-VN')%>
+                      </td>
+                      <td class="trash">
+                        <button
+                          class="change-val"
+                          value="0"
+                          name="<%=item.slugName%>"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
                       </td>
                     </tr>
-                    <%})%>
+                    <%})}else{%>
+                    <h3>No product found!</h3>
+                    <h6 class="pt-3">
+                      <span
+                        ><a class="text-success" href="/"
+                          >Continue shopping</a
+                        ></span
+                      >
+                    </h6>
+                    <%}%>
                   </tbody>
                 </table>
               </div>
@@ -83,17 +110,32 @@
                     <div class="cart-content">
                       <h1>Cart Summary</h1>
                       <p>
-                        Total cost<span
+                        Total cost<span id="total-cost"
                           ><%=cart.totalCost.toLocaleString('vi-VN')%></span
                         >
                       </p>
-                      <p>Shipping cost<span>25,000</span></p>
+                      <%if (cart.items.length) {%>
+                      <p>Shipping cost<span id="shipping-fee">25,000</span></p>
+                      <%}else{%>
+                      <p>Shipping cost<span id="shipping-fee">0</span></p>
+                      <%}%> <%if (cart) {%>
+                      <p>
+                        Total quantity<span id="total-quantity"
+                          ><%=cart.totalQuantity%></span
+                        >
+                      </p>
+                      <%}else{%>
+                      <p>Total quantity<span id="total-quantity">0</span></p>
+                      <%}%> <%if (cart.items.length) {%>
                       <h2>
-                        Total payment<span
+                        Total payment<span id="total-payment"
                           ><%=(cart.totalCost + 25000).toLocaleString('vi-VN',
                           )%></span
                         >
                       </h2>
+                      <%}else{%>
+                      <h2>Total payment<span>0</span></h2>
+                      <%}%>
                     </div>
                     <div class="cart-btn">
                       <button>Update Cart</button>

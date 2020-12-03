@@ -108,26 +108,15 @@
           </a>
           <a href="/cart" class="btn cart">
             <i class="fa fa-shopping-cart"></i>
-            <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
-          </a>
+            <%if (1 && cart) {%>
+              <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
+              <%}else{%>
+                <span class="cart-count-add">(0)</span>
+              <%}%>
+            </a>
         </div>
       </div>
     </div>
   </div>
 </div>
-<%#
-console.log("post logout!");
-  $('#user-act>a.post').click(function(e) {
-
-    $.ajax({
-      type: "POST",
-      url: '/user/logout',
-      data: null,
-      success: function() {
-        console.log("success");
-      },
-      dataType: "json/application"
-    });
-  });
-#%>
 <!-- Bottom Bar End -->
