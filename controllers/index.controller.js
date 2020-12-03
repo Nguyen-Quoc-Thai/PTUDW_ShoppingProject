@@ -21,7 +21,6 @@ module.exports.index = async (req, res, next) => {
 
     res.render("pages/index", {
       msg: "success",
-      categories: allCategory || [],
       data: result || [],
     });
   } catch (error) {

@@ -51,6 +51,16 @@
                       <td><%=item.price%></td>
                       <td>
                         <div class="qty">
+                          <%if (item.quantity <= 1) {%>
+                          <button
+                            class="btn-minus change-val"
+                            value="-1"
+                            name="<%=item.slugName%>"
+                            disabled
+                          >
+                            <i class="fa fa-minus"></i>
+                          </button>
+                          <%}else{%>
                           <button
                             class="btn-minus change-val"
                             value="-1"
@@ -58,6 +68,8 @@
                           >
                             <i class="fa fa-minus"></i>
                           </button>
+                          <%}%>
+
                           <input type="text" value="<%=item.quantity%>" />
                           <button
                             class="btn-plus change-val"
@@ -137,10 +149,10 @@
                       <h2>Total payment<span>0</span></h2>
                       <%}%>
                     </div>
-                    <div class="cart-btn">
+                    <form class="cart-btn" method="GET" action="/checkout">
                       <button>Update Cart</button>
-                      <button>Checkout</button>
-                    </div>
+                      <button type="submit">Checkout</button>
+                    </form>
                   </div>
                 </div>
               </div>

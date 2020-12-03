@@ -15,6 +15,7 @@ const indexRouter = require("./routes/index.route");
 const userRouter = require("./routes/user.route");
 const productRouter = require("./routes/product.route");
 const cartRouter = require("./routes/cart.route");
+const checkoutRouter = require("./routes/checkout.route");
 const contactRouter = require("./routes/contact.route");
 
 require("./config/passport")(passport);
@@ -53,6 +54,7 @@ app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
+app.use("/checkout", checkoutRouter);
 app.use("/contact", contactRouter);
 
 // catch 404 and forward to error handler

@@ -56,6 +56,14 @@ const userScheme = mongoose.Schema({
     type: String,
     default: "",
   },
+  city: {
+    type: String,
+    default: "",
+  },
+  district: {
+    type: String,
+    default: "",
+  },
   avatar: {
     type: String,
     default: "",

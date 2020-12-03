@@ -40,18 +40,11 @@
               >Products</a
             >
             <div class="dropdown-menu">
-              <a href="/products/filter?type=computer" class="dropdown-item"
-                >Computer</a
+              <%categories.forEach((cate) => {%>
+              <a href="/products/resource/<%=cate.slugName%>" class="dropdown-item"
+                ><%=cate.name%></a
               >
-              <a href="/products/filter?type=laptop" class="dropdown-item"
-                >Laptop</a
-              >
-              <a href="/products/filter?type=mobile" class="dropdown-item"
-                >Mobile</a
-              >
-              <a href="/products/filter?type=accessory" class="dropdown-item"
-                >Accessory</a
-              >
+                <%})%>
             </div>
           </div>
           <a href="/cart" class="nav-item nav-link">Cart</a>
@@ -108,7 +101,7 @@
           </a>
           <a href="/cart" class="btn cart">
             <i class="fa fa-shopping-cart"></i>
-            <%if (1 && cart) {%>
+            <%if (cart) {%>
               <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
               <%}else{%>
                 <span class="cart-count-add">(0)</span>

@@ -5,8 +5,10 @@ const slug = require("slug");
 const passport = require("passport");
 
 const User = require("./../models/user.model");
+const Cart = require("./../models/cart.model");
 
 const { sendMail } = require("./../config/nodemailer");
+const { mergeCart } = require("./../utils/statistic");
 
 const tokenLife = process.env.TOKEN_LIFE;
 const jwtKey = process.env.JWT_KEY;
@@ -143,12 +145,13 @@ module.exports.postSignIn = async (req, res, next) => {
     }
 
     if (user.status) {
-      req.logIn(user, function (err) {
+      req.logIn(user, async function (err) {
         if (err) {
           return next(err);
         }
 
-        req.app.locals.user = req.user || null;
+        const cart = await mergeCart(Cart, req.user._id, req.session.cart);
+        req.session.cart = cart;
         res.redirect("back");
       });
     } else {

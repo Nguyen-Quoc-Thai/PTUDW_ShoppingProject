@@ -201,11 +201,14 @@
     var oldValue = $button.parent().find("input").val();
     if ($button.hasClass("btn-plus")) {
       var newVal = parseFloat(oldValue) + 1;
+      $(".qty button.btn-minus").attr("disabled", false);
     } else {
-      if (oldValue > 0) {
+      if (oldValue > 1) {
         var newVal = parseFloat(oldValue) - 1;
+        newVal == 1 ? $button.attr("disabled", true) : "";
       } else {
-        newVal = 0;
+        newVal = 1;
+        $button.attr("disabled", true);
       }
     }
     $button.parent().find("input").val(newVal);

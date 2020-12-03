@@ -41,7 +41,6 @@ module.exports.getResourceProducts = async (req, res, next) => {
 
     res.render("pages/products", {
       msg: "success",
-      categories: allCategory,
       data: result || null,
       ourBrands: statisticPerType || null,
     });
@@ -72,7 +71,6 @@ module.exports.getProductDetails = async (req, res, next) => {
 
     res.render("pages/productDetail", {
       msg: "success",
-      categories: allCategory,
       data: product || null,
       relatedProducts: relativeProducts || null,
       ourBrands: statisticPerType || null,
@@ -85,57 +83,57 @@ module.exports.getProductDetails = async (req, res, next) => {
   }
 };
 
-module.exports.filterProducts = (req, res) => {
-  const type = req.query.type;
-  const productArray = products.filter((product) => product.type === type);
-  console.log(productArray);
-  res.render("pages/products", { products: productArray });
-};
+// module.exports.filterProducts = (req, res) => {
+//   const type = req.query.type;
+//   const productArray = products.filter((product) => product.type === type);
+//   console.log(productArray);
+//   res.render("pages/products", { products: productArray });
+// };
 
-module.exports.getAllComputer = async (req, res, next) => {
-  const { producer } = req.params || "";
+// module.exports.getAllComputer = async (req, res, next) => {
+//   const { producer } = req.params || "";
 
-  const result = await Product.find({
-    type: "computer",
-    producer,
-  });
+//   const result = await Product.find({
+//     type: "computer",
+//     producer,
+//   });
 
-  res.render("pages/product.computers", {
-    msg: "success",
-    user: "Get all computers successful!",
-    data: result,
-  });
-};
+//   res.render("pages/product.computers", {
+//     msg: "success",
+//     user: "Get all computers successful!",
+//     data: result,
+//   });
+// };
 
-module.exports.getAllLaptop = async (req, res, next) => {
-  const { producer } = req.params || "";
+// module.exports.getAllLaptop = async (req, res, next) => {
+//   const { producer } = req.params || "";
 
-  const result = await Product.find({
-    type: "laptop",
-    producer,
-  });
+//   const result = await Product.find({
+//     type: "laptop",
+//     producer,
+//   });
 
-  res.render("pages/product.laptops", {
-    msg: "success",
-    user: "Get all laptops successful!",
-    data: result,
-  });
-};
+//   res.render("pages/product.laptops", {
+//     msg: "success",
+//     user: "Get all laptops successful!",
+//     data: result,
+//   });
+// };
 
-module.exports.getAllMobile = async (req, res, next) => {
-  const { producer } = req.params || "";
+// module.exports.getAllMobile = async (req, res, next) => {
+//   const { producer } = req.params || "";
 
-  const result = await Product.find({
-    type: "mobile",
-    producer,
-  });
+//   const result = await Product.find({
+//     type: "mobile",
+//     producer,
+//   });
 
-  res.render("pages/product.mobiles", {
-    msg: "success",
-    user: "Get all mobiles successful!",
-    data: result,
-  });
-};
+//   res.render("pages/product.mobiles", {
+//     msg: "success",
+//     user: "Get all mobiles successful!",
+//     data: result,
+//   });
+// };
 
 module.exports.getAll = (req, res, next) => {
   const page = parseInt(req.query.page) || 1;

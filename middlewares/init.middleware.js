@@ -1,12 +1,11 @@
-const { initCart } = require("./../utils/constant");
+const { initCart, allCategory } = require("./../utils/constant");
 
 module.exports.init = function (req, res, next) {
   req.app.locals.user = req.user || null;
+  req.app.locals.cart = req.session.cart || initCart;
+  !req.session.cart ? (req.session.cart = initCart) : "";
 
-  if (req.session) {
-    if (req.session.cart) req.app.locals.cart = req.session.cart;
-    else req.session.cart = initCart;
-  } else req.app.locals.cart = initCart;
+  req.app.locals.categories = allCategory;
 
   next();
 };

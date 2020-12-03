@@ -110,7 +110,7 @@ module.exports.addToCart = async (req, res, next) => {
 };
 
 // AJAX
-module.exports.patchUpdate = async (req, res, next) => {
+module.exports.putUpdate = async (req, res, next) => {
   const enumType = [-1, 1, 0];
 
   const { bias } = req.body;
