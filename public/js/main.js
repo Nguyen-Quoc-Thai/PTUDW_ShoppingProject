@@ -294,6 +294,9 @@
             ? (data.data.totalCost + 25000).toLocaleString("vi-VN")
             : 0
         );
+        $(".cart-count-add").html(
+          data.data.totalQuantity ? `(${data.data.totalQuantity})` : `(0)`
+        );
       }
     });
   });
@@ -327,6 +330,11 @@
   });
 
   // Handle comment
+  // $("#comment :input").each(function () {
+  //   $(this).focus(function () {
+  //     $(".comment-warning").remove(this);
+  //   });
+  // });
   $("#comment").submit(function (e) {
     e.preventDefault();
 
@@ -335,6 +343,14 @@
     $("#comment :input").each(function () {
       data[$(this).attr("name")] = $(this).val();
     });
+
+    if (!data.name || !data.email || !data.review) {
+      console.log($("span.comment-warning span").val());
+      if ($("span.comment-warning span").val()) return;
+      const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-warning">Bạn phải điền đây đủ thông tin</span></div>`;
+      $(".leave-comment").prepend(warning);
+      return;
+    }
 
     $.post(url, { ...data }, function (data, status) {
       console.log(data);
@@ -354,6 +370,86 @@
       </div>`;
         $(".reviews-submit").before(html);
         $("textarea[name='review']").val("");
+      }
+    });
+  });
+
+  // Handle logout
+  $("#logout").click(function (e) {
+    e.preventDefault();
+    $("#user-act").submit();
+  });
+
+  // Handle change password
+  $("#change-password").submit(function (e) {
+    e.preventDefault();
+
+    const url = $(this).attr("action");
+    let data = {};
+    $("#change-password :input").each(function () {
+      data[$(this).attr("name")] = $(this).val();
+    });
+
+    const request = $.ajax({
+      url,
+      data: JSON.stringify({ ...data }),
+      type: "PUT",
+      contentType: "application/json",
+      processData: false,
+      xhr: function () {
+        return window.XMLHttpRequest == null ||
+          new window.XMLHttpRequest().addEventListener == null
+          ? new window.ActiveXObject("Microsoft.XMLHTTP")
+          : $.ajaxSettings.xhr();
+      },
+    });
+
+    request.done(function (data, status) {
+      if (status === "success") {
+        let className = "";
+
+        if (data.msg !== "success") {
+          className = "text-warning";
+        } else className = "text-success";
+        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
+        $(".change-password").prepend(result);
+      }
+    });
+  });
+
+  // Handle change info
+  $("#change-info").submit(function (e) {
+    e.preventDefault();
+
+    const url = $(this).attr("action");
+    let data = {};
+    $("#change-info :input").each(function () {
+      data[$(this).attr("name")] = $(this).val();
+    });
+
+    const request = $.ajax({
+      url,
+      data: JSON.stringify({ ...data }),
+      type: "PUT",
+      contentType: "application/json",
+      processData: false,
+      xhr: function () {
+        return window.XMLHttpRequest == null ||
+          new window.XMLHttpRequest().addEventListener == null
+          ? new window.ActiveXObject("Microsoft.XMLHTTP")
+          : $.ajaxSettings.xhr();
+      },
+    });
+
+    request.done(function (data, status) {
+      if (status === "success") {
+        let className = "";
+
+        if (data.msg !== "success") {
+          className = "text-warning";
+        } else className = "text-success";
+        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
+        $(".change-info").prepend(result);
       }
     });
   });

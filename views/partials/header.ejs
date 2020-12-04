@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-sm-6">
         <i class="fa fa-envelope"></i>
-        support@email.com
+        r2wteam@email.com
       </div>
       <div class="col-sm-6">
         <i class="fa fa-phone-alt"></i>
@@ -57,11 +57,11 @@
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
               ><%=user.firstName%> <%=user.lastName%></a
             >
-            <div class="dropdown-menu" id="user-act">
-              <a href="/user/dashboard" class="dropdown-item">Dashboard</a>
-              <a href="/user/wishlist" class="dropdown-item">Wishlist</a>
-              <a href="/user/wishlist" class="dropdown-item post">Logout</a>
-            </div>
+            <form class="dropdown-menu" id="user-act" method="POST" action="/user/logout">
+              <a href="/user/account/dashboard" class="dropdown-item">Dashboard</a>
+              <a href="/user/account/wishlist" class="dropdown-item">Wishlist</a>
+              <a href="/user/logout" class="dropdown-item post" id="logout">Logout</a>
+            </form>
           </div>
           <a href="/user/auth" class="nav-item nav-link"><i class="fas fa-lock"></i></a>
           <%}else{%>

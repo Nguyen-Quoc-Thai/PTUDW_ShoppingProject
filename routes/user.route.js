@@ -19,6 +19,19 @@ router.post("/register", checkNotAuthenticated, userController.postSignUp);
 router.post("/login", checkNotAuthenticated, userController.postSignIn);
 router.post("/logout", checkAuthenticated, userController.postSignOut);
 router.get("/confirm/:token", checkNotAuthenticated, userController.getConfirm);
+router.get(
+  "/account/dashboard",
+  checkAuthenticated,
+  userController.getDashboard
+);
+router.put(
+  "/account/password",
+  checkAuthenticated,
+  userController.putUpdatePassword
+);
+
+router.put("/account/info", checkAuthenticated, userController.putUpdateInfo);
+
 router.post("/resend", checkNotAuthenticated, userController.postResend);
 router.get("/recovery", checkNotAuthenticated, userController.getRecovery);
 router.post("/recovery", checkNotAuthenticated, userController.postRecovery);

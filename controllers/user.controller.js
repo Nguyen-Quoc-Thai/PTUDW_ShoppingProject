@@ -203,6 +203,85 @@ module.exports.getConfirm = async (req, res, next) => {
   }
 };
 
+exports.getDashboard = async (req, res, next) => {
+  res.render("pages/dashboard");
+};
+
+exports.putUpdatePassword = async (req, res, next) => {
+  const { user } = req;
+  console.log(req.body);
+
+  try {
+    const { oldPassword, password, retypePassword } = req.body;
+
+    const validOldPassword = await bcrypt.compare(oldPassword, user.password);
+    if (!validOldPassword) {
+      return res.status(200).json({
+        msg: "ValidatorError",
+        user: "Old password invalid!",
+      });
+    }
+
+    if (password !== retypePassword) {
+      return res.status(200).json({
+        msg: "ValidatorError",
+        user: "Password and retype password does not match!",
+      });
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const passwordResetToken = crypto.randomBytes(16).toString("hex");
+
+    user.password = encryptedPassword;
+    user.passwordResetToken = passwordResetToken;
+
+    await User.updateOne({ _id: user._id }, { $set: user });
+
+    res.status(200).json({
+      msg: "success",
+      user: "Your password has been updated!",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      msg: error.message,
+      error,
+    });
+  }
+};
+
+exports.putUpdateInfo = async (req, res, next) => {
+  const { user } = req;
+  const { body } = req;
+
+  try {
+    for (const fie in body) {
+      if (fie !== "undefined") {
+        user[fie] = body[fie];
+      }
+    }
+    await User.updateOne({ _id: user._id }, { $set: body });
+
+    res.status(200).json({
+      msg: "success",
+      user: "Your information has been updated!",
+      data: user,
+    });
+  } catch (error) {
+    let respond = {};
+    error.errors &&
+      Object.keys(error.errors).forEach(
+        (err) => (respond[err] = error.errors[err].message)
+      );
+
+    res.status(200).json({
+      msg: "ValidatorError",
+      errors: respond,
+    });
+  }
+};
+
 exports.postResend = async (req, res, next) => {
   // cai nay can 1 cai nut resend la dc ui
   const { email } = req.body;
