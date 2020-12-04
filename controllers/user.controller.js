@@ -48,6 +48,8 @@ module.exports.postSignUp = async (req, res, next) => {
     retypePassword,
   } = req.body;
 
+  console.log(req.body);
+
   try {
     if (password !== retypePassword)
       return res.render("pages/auth", {

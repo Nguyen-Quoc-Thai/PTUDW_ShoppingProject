@@ -26,123 +26,153 @@
             <div class="checkout-inner">
               <div class="billing-address">
                 <h2>Billing Address</h2>
-                <div class="row">
-                  <div class="col-md-6">
-                    <label>First Name</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.firstName%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>Last Name</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.lastName%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>E-mail</label>
-                    <%if (user.email) {%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.email%>"
-                      disabled
-                    />
+                <form
+                  id="form-val"
+                  method="POST"
+                  action="/checkout?user=<%=user.slugName%>&token=<%=user._id%>"
+                  user-id="<%=user._id%>"
+                >
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label>First Name</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="firstName"
+                        value="<%=user.firstName%>"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Last Name</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="lastName"
+                        value="<%=user.lastName%>"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>E-mail</label>
+                      <%if (user.email) {%>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="email"
+                        value="<%=user.email%>"
+                        disabled
+                      />
+                      <%}else{%>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="email"
+                        value="<%=user.email%>"
+                      />
+                      <%}%>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Mobile No</label>
+                      <%if (user.email) {%>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="phone"
+                        value="<%=user.phone%>"
+                        disabled
+                      />
+                      <%}else{%>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="phone"
+                        value="<%=user.phone%>"
+                      />
+                      <%}%>
+                    </div>
+                    <%if(!user._id){%>
+                    <div class="col-md-6">
+                      <label>Password</label>
+                      <input
+                        class="form-control"
+                        type="password"
+                        name="password"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Retype password</label>
+                      <input
+                        class="form-control"
+                        type="password"
+                        name="retypePassword"
+                        value=""
+                      />
+                    </div>
+                    <%}%>
+                    <div class="col-md-12">
+                      <label>Address</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="address"
+                        value="<%=user.address%>"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Country</label>
+                      <select class="custom-select">
+                        <option selected>Việt nam</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label>City</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="city"
+                        value="<%=user.city%>"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>District</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="district"
+                        value="<%=user.district%>"
+                      />
+                    </div>
+                    <%if (!user._id) {%>
+                    <div class="col-md-12">
+                      <div class="custom-control custom-checkbox">
+                        <input
+                          type="checkbox"
+                          class="custom-control-input"
+                          name="createAcc"
+                          id="newaccount"
+                        />
+                        <label class="custom-control-label" for="newaccount"
+                          >Create an account</label
+                        >
+                      </div>
+                    </div>
                     <%}else{%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.email%>"
-                    />
+                    <div class="col-md-12">
+                      <div class="custom-control custom-checkbox">
+                        <input
+                          type="checkbox"
+                          class="custom-control-input"
+                          name="shipDiff"
+                          id="shipto"
+                        />
+                        <label class="custom-control-label" for="shipto"
+                          >Ship to different address</label
+                        >
+                      </div>
+                    </div>
                     <%}%>
                   </div>
-                  <div class="col-md-6">
-                    <label>Mobile No</label>
-                    <%if (user.email) {%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.phone%>"
-                      disabled
-                    />
-                    <%}else{%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.phone%>"
-                    />
-                    <%}%>
-                  </div>
-                  <div class="col-md-12">
-                    <label>Address</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.address%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>Country</label>
-                    <select class="custom-select">
-                      <option selected>Việt nam</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label>City</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.city%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>District</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.district%>"
-                    />
-                  </div>
-                  <!-- <div class="col-md-6">
-                    <label>ZIP Code</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="ZIP Code"
-                    />
-                  </div> -->
-                  <%if (user.length) {%>
-                  <div class="col-md-12">
-                    <div class="custom-control custom-checkbox">
-                      <input
-                        type="checkbox"
-                        class="custom-control-input"
-                        id="newaccount"
-                      />
-                      <label class="custom-control-label" for="newaccount"
-                        >Create an account</label
-                      >
-                    </div>
-                  </div>
-                  <%}%>
-
-                  <div class="col-md-12">
-                    <div class="custom-control custom-checkbox">
-                      <input
-                        type="checkbox"
-                        class="custom-control-input"
-                        id="shipto"
-                      />
-                      <label class="custom-control-label" for="shipto"
-                        >Ship to different address</label
-                      >
-                    </div>
-                  </div>
-                </div>
+                </form>
               </div>
 
               <div class="shipping-address">
@@ -183,7 +213,7 @@
                   </div>
                   <div class="col-md-6">
                     <label>Mobile No</label>
-                    <%if (user.email) {%>
+                    <%if (user.phone) {%>
                     <input
                       class="form-control"
                       type="text"
@@ -237,10 +267,14 @@
               <div class="checkout-summary">
                 <h1>Cart Total</h1>
                 <hr />
-                <%cart.items.forEach (item => {%>
+                <%cart.items.forEach ((item, index) => {%>
                 <p class="text-wrap">
-                  <%=item.name%> x <%=item.quantity%><span
-                    ><strong><%=item.total.toLocaleString('vi-VN')%></strong>
+                  <strong><%=(index+1)%>. </strong> <%=item.name%> x
+                  <b><%=item.quantity%></b
+                  ><span
+                    ><strong
+                      ><b><%=item.total.toLocaleString('vi-VN')%></b></strong
+                    >
                   </span>
                 </p>
                 <br />
@@ -249,12 +283,14 @@
                 <%if (cart.items.length) {%>
                 <p>
                   Shipping cost<span id="shipping-fee"
-                    ><strong>25,000</strong></span
+                    ><strong><b>25,000</b></strong></span
                   >
                 </p>
                 <%}else{%>
                 <p>
-                  Shipping cost<span id="shipping-fee"><strong>0</strong></span>
+                  Shipping cost<span id="shipping-fee"
+                    ><strong><b>0</b></strong></span
+                  >
                 </p>
                 <%}%> <%if (cart) {%>
                 <p>
@@ -284,7 +320,7 @@
                 <%}%>
               </div>
 
-              <div class="checkout-payment">
+              <div id="checkout-payment" class="checkout-payment">
                 <div class="payment-methods">
                   <h1>Payment Methods</h1>
                   <div class="payment-method">
@@ -296,15 +332,11 @@
                         name="payment"
                       />
                       <label class="custom-control-label" for="payment-1"
-                        >Paypal</label
+                        >COD</label
                       >
                     </div>
                     <div class="payment-content" id="payment-1-show">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Cras tincidunt orci ac eros volutpat maximus lacinia
-                        quis diam.
-                      </p>
+                      <p>Ship code toàn quốc trong 3 ngày.</p>
                     </div>
                   </div>
                   <div class="payment-method">
@@ -316,15 +348,11 @@
                         name="payment"
                       />
                       <label class="custom-control-label" for="payment-2"
-                        >Payoneer</label
+                        >Paypal</label
                       >
                     </div>
                     <div class="payment-content" id="payment-2-show">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Cras tincidunt orci ac eros volutpat maximus lacinia
-                        quis diam.
-                      </p>
+                      <p>Thanh toán online qua ví điện tử Paypal.</p>
                     </div>
                   </div>
                   <div class="payment-method">
@@ -336,60 +364,16 @@
                         name="payment"
                       />
                       <label class="custom-control-label" for="payment-3"
-                        >Check Payment</label
+                        >Direct bank transfer</label
                       >
                     </div>
                     <div class="payment-content" id="payment-3-show">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Cras tincidunt orci ac eros volutpat maximus lacinia
-                        quis diam.
-                      </p>
-                    </div>
-                  </div>
-                  <div class="payment-method">
-                    <div class="custom-control custom-radio">
-                      <input
-                        type="radio"
-                        class="custom-control-input"
-                        id="payment-4"
-                        name="payment"
-                      />
-                      <label class="custom-control-label" for="payment-4"
-                        >Direct Bank Transfer</label
-                      >
-                    </div>
-                    <div class="payment-content" id="payment-4-show">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Cras tincidunt orci ac eros volutpat maximus lacinia
-                        quis diam.
-                      </p>
-                    </div>
-                  </div>
-                  <div class="payment-method">
-                    <div class="custom-control custom-radio">
-                      <input
-                        type="radio"
-                        class="custom-control-input"
-                        id="payment-5"
-                        name="payment"
-                      />
-                      <label class="custom-control-label" for="payment-5"
-                        >Cash on Delivery</label
-                      >
-                    </div>
-                    <div class="payment-content" id="payment-5-show">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Cras tincidunt orci ac eros volutpat maximus lacinia
-                        quis diam.
-                      </p>
+                      <p>Chuyển khoản online qua internet banking.</p>
                     </div>
                   </div>
                 </div>
                 <div class="checkout-btn">
-                  <button>Place Order</button>
+                  <button class="submit-checkout">Place Order</button>
                 </div>
               </div>
             </div>

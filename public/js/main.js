@@ -229,6 +229,7 @@
       var checkbox_id = $(this).attr("id");
       $(".checkout .payment-method .payment-content").slideUp();
       $("#" + checkbox_id + "-show").slideDown();
+      $(".payment-info").css("display", "none");
     }
   });
 
@@ -295,5 +296,36 @@
         );
       }
     });
+  });
+
+  // Handle submit place order
+  $(".submit-checkout").click(function (e) {
+    e.preventDefault();
+
+    if ($(".payment-info").css("display") === "block") {
+      return;
+    }
+
+    // if (!$("#checkout-payment input").is(":checked")) {
+    //   $(".payment-methods")
+    //     .last()
+    //     .after(
+    //       '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Vui lòng chọn phương thức thanh toán</span>'
+    //     );
+    //   return;
+    // }
+    // if ($("#total-quantity strong").val() == 0) {
+    //   $(".payment-methods")
+    //     .last()
+    //     .after(
+    //       '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
+    //     );
+    //   return;
+    // }
+    // if (!$("#form-val").attr("user-id")) {
+    //   window.location.replace("/user/auth");
+    // } else {
+    // }
+    $("#form-val").submit();
   });
 })(jQuery);
