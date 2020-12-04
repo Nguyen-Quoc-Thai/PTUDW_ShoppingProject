@@ -306,26 +306,55 @@
       return;
     }
 
-    // if (!$("#checkout-payment input").is(":checked")) {
-    //   $(".payment-methods")
-    //     .last()
-    //     .after(
-    //       '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Vui lòng chọn phương thức thanh toán</span>'
-    //     );
-    //   return;
-    // }
-    // if ($("#total-quantity strong").val() == 0) {
-    //   $(".payment-methods")
-    //     .last()
-    //     .after(
-    //       '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
-    //     );
-    //   return;
-    // }
-    // if (!$("#form-val").attr("user-id")) {
-    //   window.location.replace("/user/auth");
-    // } else {
-    // }
+    if (!$("#checkout-payment input").is(":checked")) {
+      $(".payment-methods")
+        .last()
+        .after(
+          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Vui lòng chọn phương thức thanh toán</span>'
+        );
+      return;
+    }
+    if ($("#total-quantity strong").val() == 0) {
+      $(".payment-methods")
+        .last()
+        .after(
+          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
+        );
+      return;
+    }
+
     $("#form-val").submit();
+  });
+
+  // Handle comment
+  $("#comment").submit(function (e) {
+    e.preventDefault();
+
+    const url = $(this).attr("action");
+    let data = {};
+    $("#comment :input").each(function () {
+      data[$(this).attr("name")] = $(this).val();
+    });
+
+    $.post(url, { ...data }, function (data, status) {
+      console.log(data);
+      if (data.msg === "success" && status === "success") {
+        const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
+        <div class="reviewer">
+          ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${data.data.date}</span>
+        </div>
+        <div class="ratting">
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+        </div>
+        <p>${data.data.review}</p>
+      </div>`;
+        $(".reviews-submit").before(html);
+        $("textarea[name='review']").val("");
+      }
+    });
   });
 })(jQuery);

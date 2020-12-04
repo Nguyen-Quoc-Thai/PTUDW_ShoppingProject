@@ -101,7 +101,7 @@
           </a>
           <a href="/cart" class="btn cart">
             <i class="fa fa-shopping-cart"></i>
-            <%if (cart) {%>
+            <%if (cart.totalQuantity) {%>
               <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
               <%}else{%>
                 <span class="cart-count-add">(0)</span>

@@ -539,54 +539,39 @@ module.exports.getAllComment = async (req, res, next) => {
 
 // AJAX
 module.exports.postComment = async (req, res, next) => {
-  const { id } = req.params;
-  const { content, rating } = req.body;
+  const { productSlugName } = req.params;
+  const { name, email, review } = req.body;
   const { user } = req;
 
   try {
-    let _id = mongoose.Types.ObjectId();
-    let name = "";
-
-    if (!user) {
-      if (!req.body.name)
-        throw new Error("You are not login so the field {name} is required!");
-      name = req.body.name;
-    } else {
-      _id = user._id;
-      name = user.firstName + user.lastName;
-    }
-
-    if (!content || !rating) {
-      return res.status(205).json({
-        mag: "ValidatorError",
-        user: "Content and rating is required!",
-      });
-    }
-
-    const product = await Product.findById(id);
     const comment = {
-      userId: _id,
       name,
-      content,
-      rating: parseInt(rating),
+      email,
+      review,
+      date: new Date(),
     };
 
-    const newProduct = await Product.updateOne(
-      { _id: id },
+    if (!user) {
+      comment.userId = mongoose.Types.ObjectId();
+    } else {
+      comment.userId = user._id;
+    }
+
+    await Product.updateOne(
+      { slugName: productSlugName },
       {
         $push: {
           comments: comment,
         },
-        $set: {
-          countRating: product.countRating + 1,
-        },
       }
     );
+
+    console.log(comment);
 
     res.status(201).json({
       msg: "success",
       user: `Your comment has been public!`,
-      data: newProduct,
+      data: comment,
     });
   } catch (error) {
     console.log(error);

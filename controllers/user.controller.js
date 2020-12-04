@@ -102,7 +102,7 @@ module.exports.postSignUp = async (req, res, next) => {
     res.render("pages/auth", {
       respond: {
         msg: "success",
-        user: "Sign up successful!",
+        success: "Sign up successful!",
       },
       data: "",
     });
@@ -183,31 +183,22 @@ module.exports.getConfirm = async (req, res, next) => {
     const { _id } = decoded;
 
     const user = await User.findById(_id);
-    if (!user)
-      return res.render("pages/auth", {
-        msg: "ValidatorError",
-        user: "User not found!",
-      });
-
-    if (user.isVerified)
-      return res.render("pages/auth", {
-        msg: "success",
-        user: "Your account has been verified!",
-      });
 
     user.isVerified = true;
     await User.updateOne({ _id }, { $set: user });
 
-    console.log(user);
     res.render("pages/auth", {
-      msg: "success",
-      user: "Your account has been verified!",
+      data: {},
+      respond: {
+        success2: "Your account has been verified!",
+        msg: "success",
+      },
     });
   } catch (error) {
     console.log(error);
-    res.render("pages/auth", {
-      msg: "ValidatorError",
-      user: error.message,
+    res.render("error", {
+      message: "Token has been expires!",
+      error,
     });
   }
 };

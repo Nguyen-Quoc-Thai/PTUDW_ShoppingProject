@@ -169,12 +169,12 @@
                   </div>
 
                   <div id="specification" class="container tab-pane fade">
-                    <h4>Mô tả sản phẩm</h4>
+                    <h4><strong>Mô tả sản phẩm</strong></h4>
                     <hr />
                     <ul>
                       <%data.descriptions.forEach(field => {%> <%if(field.title)
                       {%>
-                      <h5><%=field.title%></h5>
+                      <h5><strong><%=field.title%></strong></h5>
                       <%}%> <%if(field.content) {%>
                       <p><%=field.content%></p>
                       <%}%> <%if(field.img && field.content) {%>
@@ -187,9 +187,14 @@
                     </ul>
                   </div>
                   <div id="reviews" class="container tab-pane fade">
-                    <div class="reviews-submitted">
+                    <%data.comments.forEach((comment) => {%>
+                    <div
+                      class="reviews-submitted"
+                      user-id="<%=comment.userId%>"
+                    >
                       <div class="reviewer">
-                        Phasellus Gravida - <span>01 Jan 2020</span>
+                        <%=comment.name%>&nbsp;&nbsp;&nbsp;
+                        <span><%=comment.date%></span>
                       </div>
                       <div class="ratting">
                         <i class="fa fa-star"></i>
@@ -198,12 +203,10 @@
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
                       </div>
-                      <p>
-                        Sed ut perspiciatis unde omnis iste natus error sit
-                        voluptatem accusantium doloremque laudantium, totam rem
-                        aperiam.
-                      </p>
+                      <p><%=comment.review%></p>
                     </div>
+                    <%})%>
+
                     <div class="reviews-submit">
                       <h4>Give your Review:</h4>
                       <div class="ratting">
@@ -213,20 +216,59 @@
                         <i class="far fa-star"></i>
                         <i class="far fa-star"></i>
                       </div>
-                      <div class="row form">
+                      <form
+                        id="comment"
+                        class="row form"
+                        method="POST"
+                        action="/products/comment/<%=data.slugName%>"
+                      >
+                        <%if (user) {%>
                         <div class="col-sm-6">
-                          <input type="text" placeholder="Name" />
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            value="<%=user.firstName%> <%=user.lastName%>"
+                            name="name"
+                            readonly
+                          />
                         </div>
                         <div class="col-sm-6">
-                          <input type="email" placeholder="Email" />
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            value="<%=user.email%>"
+                            name="email"
+                            readonly
+                          />
                         </div>
                         <div class="col-sm-12">
-                          <textarea placeholder="Review"></textarea>
+                          <textarea
+                            placeholder="Review"
+                            name="review"
+                          ></textarea>
+                        </div>
+                        <%}else{%>
+                        <div class="col-sm-6">
+                          <input type="text" placeholder="Name" name="name" />
+                        </div>
+                        <div class="col-sm-6">
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            name="email"
+                          />
                         </div>
                         <div class="col-sm-12">
-                          <button>Submit</button>
+                          <textarea
+                            placeholder="Review"
+                            name="review"
+                          ></textarea>
                         </div>
-                      </div>
+                        <%}%>
+                        <div class="col-sm-12">
+                          <button type="submit">Leave a comment</button>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>

@@ -110,6 +110,11 @@
                   <div class="alert p-1 t-1"><%=respond.retypePassword%></div>
                   <%}%>
                 </div>
+                <%if(respond.success){%>
+                <div style="padding: 0 0 5px 15px">
+                  <span class="text-success"><%=respond.success%></span>
+                </div>
+                <%}%>
                 <div class="col-md-12">
                   <button class="btn" type="submit">Sign up</button>
                 </div>
@@ -160,6 +165,11 @@
                     >
                   </div>
                 </div>
+                <%if(respond.success2){%>
+                <div style="padding: 0 0 5px 15px">
+                  <span class="text-success"><%=respond.success2%></span>
+                </div>
+                <%}%>
                 <div class="col-md-12">
                   <button class="btn" type="submit">Sign in</button>
                 </div>

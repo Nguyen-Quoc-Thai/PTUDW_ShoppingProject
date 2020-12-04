@@ -8,6 +8,7 @@ router.get(
   productController.getResourceProducts
 );
 router.get("/:productSlugName", productController.getProductDetails);
+router.post("/comment/:productSlugName", productController.postComment);
 
 // router.get("/filter", productController.filterProducts);
 
