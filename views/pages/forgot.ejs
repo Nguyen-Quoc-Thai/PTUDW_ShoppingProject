@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body>
+    <%- include('../partials/header'); %>
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Products</a></li>
+          <li class="breadcrumb-item active">Login & Register</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Login Start -->
+    <div class="login">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6" id="forgot-form">
+            <form
+              class="forgot-form"
+              method="POST"
+              action="/user/reset?token=<%=respond.token%>"
+            >
+              <div class="row">
+                <div class="col-md-6 user-login">
+                  <label>New password</label>
+                  <%if (respond.msg === 'ValidatorError') {%>
+                  <input
+                    class="form-control"
+                    type="password"
+                    name="password"
+                    value="<%=respond.passVal%>"
+                  />
+                  <%}else{%>
+                  <input
+                    class="form-control"
+                    type="password"
+                    name="password"
+                    value=""
+                  />
+                  <%}%> <%if (respond.msg === "ValidatorError" &&
+                  respond.password){%>
+                  <div class="alert p-1 t-1"><%=respond.password%></div>
+                  <%}%>
+                </div>
+                <div class="col-md-6 user-forgot">
+                  <label>Retype password</label>
+                  <input
+                    class="form-control"
+                    type="password"
+                    name="retypePassword"
+                  />
+                  <%if (respond.msg === "ValidatorError" &&
+                  respond.retypePassword) {%>
+                  <div class="alert p-1 t-1"><%=respond.retypePassword%></div>
+                  <%}%>
+                </div>
+                <%if(respond.success){%>
+                <div style="padding: 0 0 5px 15px">
+                  <span class="text-success"><%=respond.success%></span>
+                </div>
+                <%}%>
+                <div class="col-md-12">
+                  <button class="btn" type="submit" style="margin-bottom: 25px">
+                    Change
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Login End -->
+
+    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+  </body>
+</html>

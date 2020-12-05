@@ -32,4 +32,39 @@ router.get("/", checkAuthenticated, userController.getAll);
 router.get("/:id", checkAuthenticated, userController.getOne);
 router.delete("/:id", checkAuthenticated, userController.deleteOne);
 
+router.post(
+  "/forgot",
+  checkNotAuthenticated,
+  userController.postForgotPassword
+);
+router.get(
+  "/forgot/:token",
+  checkNotAuthenticated,
+  userController.getResetPassword
+);
+ 
+router.post("/reset", checkNotAuthenticated, userController.postResetPassword);
+ 
+router.get(
+  "/account/dashboard",
+  checkAuthenticated,
+  userController.getDashboard
+);
+router.put(
+  "/account/password",
+  checkAuthenticated,
+  userController.putUpdatePassword
+);
+ 
+router.put("/account/info", checkAuthenticated, userController.putUpdateInfo);
+ 
+router.post("/resend", checkNotAuthenticated, userController.postResend);
+router.get("/recovery", checkNotAuthenticated, userController.getRecovery);
+router.post("/recovery", checkNotAuthenticated, userController.postRecovery);
+router.get("/reset/:token", checkNotAuthenticated, userController.getReset);
+router.post("/reset/:token", checkNotAuthenticated, userController.postReset);
+router.get("/:id/info", checkAuthenticated, userController.getInfo);
+router.patch("/:id", checkAuthenticated, userController.patchUpdate);
+
+
 module.exports = router;
