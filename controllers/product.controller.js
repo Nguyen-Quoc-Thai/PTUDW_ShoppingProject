@@ -209,7 +209,7 @@ module.exports.getAll = (req, res, next) => {
 // Product details
 module.exports.getOne = (req, res, next) => {
   const _id = req.params.id;
-
+ 
   Product.findById(_id)
     .then(async (product) => {
       if (!product) {
@@ -220,7 +220,7 @@ module.exports.getOne = (req, res, next) => {
       } else {
         product.countView++;
         await Product.updateOne({ _id });
-
+ 
         res.render("pages/info", {
           msg: "success",
           user: `Fetch successful!`,
