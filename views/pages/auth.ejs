@@ -22,7 +22,7 @@
     <div class="login">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-6">
+          <form class="col-lg-6" method="POST" action="/user/register">
             <div class="register-form">
               <div class="row">
                 <div class="col-md-6">
@@ -30,73 +30,128 @@
                   <input
                     class="form-control"
                     type="text"
-                    placeholder="First Name"
+                    name="firstName"
+                    value="<%=data.firstName || ''%>"
                   />
+                  <%if (respond.msg === "ValidatorError" && respond.firstName)
+                  {%>
+                  <div class="alert p-1 t-1"><%=respond.firstName%></div>
+                  <%}%>
                 </div>
                 <div class="col-md-6">
-                  <label>Last Name"</label>
+                  <label>Last Name</label>
                   <input
                     class="form-control"
                     type="text"
-                    placeholder="Last Name"
+                    name="lastName"
+                    value="<%=data.lastName || ''%>"
                   />
+                  <%if (respond.msg === "ValidatorError" && respond.lastName)
+                  {%>
+                  <div class="alert p-1 t-1"><%=respond.lastName%></div>
+                  <%}%>
                 </div>
                 <div class="col-md-6">
                   <label>E-mail</label>
+                  <%if (respond.msg === 'ValidatorError') {%>
                   <input
                     class="form-control"
                     type="text"
-                    placeholder="E-mail"
+                    name="email"
+                    value="<%=data.email%>"
                   />
+                  <%}else{%>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="email"
+                    value=""
+                  />
+                  <%}%> <%if (respond.msg === "ValidatorError" && respond.email)
+                  {%>
+                  <div class="alert p-1 t-1"><%=respond.email%></div>
+                  <%}%>
                 </div>
                 <div class="col-md-6">
                   <label>Mobile No</label>
                   <input
                     class="form-control"
                     type="text"
-                    placeholder="Mobile No"
+                    name="phone"
+                    value="<%=data.phone || ''%>"
                   />
+                  <%if (respond.msg === "ValidatorError" && respond.phone) {%>
+                  <div class="alert p-1 t-1"><%=respond.phone%></div>
+                  <%}%>
                 </div>
                 <div class="col-md-6">
                   <label>Password</label>
                   <input
                     class="form-control"
-                    type="text"
-                    placeholder="Password"
+                    type="password"
+                    name="password"
+                    value="<%respond.msg === 'ValidatorError' ? data.email :
+                  ''%>"
                   />
+                  <%if (respond.msg === "ValidatorError" && respond.password)
+                  {%>
+                  <div class="alert p-1 t-1"><%=respond.password%></div>
+                  <%}%>
                 </div>
                 <div class="col-md-6">
                   <label>Retype Password</label>
                   <input
                     class="form-control"
-                    type="text"
-                    placeholder="Password"
+                    type="password"
+                    name="retypePassword"
                   />
+                  <%if (respond.msg === "ValidatorError" &&
+                  respond.retypePassword) {%>
+                  <div class="alert p-1 t-1"><%=respond.retypePassword%></div>
+                  <%}%>
                 </div>
+                <%if(respond.success){%>
+                <div style="padding: 0 0 5px 15px">
+                  <span class="text-success"><%=respond.success%></span>
+                </div>
+                <%}%>
                 <div class="col-md-12">
-                  <button class="btn">Submit</button>
+                  <button class="btn" type="submit">Sign up</button>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="login-form">
+          </form>
+          <div class="col-lg-6" id="form-toggle">
+            <form class="login-form" method="POST" action="/user/login">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 user-login">
                   <label>E-mail / Username</label>
+                  <%if (respond.msg === 'ValidatorError2') {%>
                   <input
                     class="form-control"
                     type="text"
-                    placeholder="E-mail / Username"
+                    name="email"
+                    value="<%=data.email%>"
                   />
+                  <%}else{%>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="email"
+                    value=""
+                  />
+                  <%}%> <%if (respond.msg === "ValidatorError2" &&
+                  respond.user){%>
+                  <div class="alert p-1 t-1"><%=respond.user%></div>
+                  <%}%>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 user-login">
                   <label>Password</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    placeholder="Password"
-                  />
+                  <input class="form-control" type="password" name="password" />
+                  <%if (respond.msg === "ValidatorError2" && respond.password)
+                  {%>
+                  <div class="alert p-1 t-1"><%=respond.password%></div>
+                  <%}%>
                 </div>
                 <div class="col-md-12">
                   <div class="custom-control custom-checkbox">
@@ -106,15 +161,26 @@
                       id="newaccount"
                     />
                     <label class="custom-control-label" for="newaccount"
-                      >Keep me signed in</label
+                      >Keep me signed in.</label
+                    >
+                    <a
+                      href=""
+                      class="action-toggle"
+                      style="display: inline-block"
+                      >&nbsp; Forgot password?</a
                     >
                   </div>
                 </div>
+                <%if(respond.success2){%>
+                <div style="padding: 0 0 5px 15px">
+                  <span class="text-success"><%=respond.success2%></span>
+                </div>
+                <%}%>
                 <div class="col-md-12">
-                  <button class="btn">Submit</button>
+                  <button class="btn" type="submit">Sign in</button>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

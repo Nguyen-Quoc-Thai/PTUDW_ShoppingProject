@@ -13,26 +13,15 @@
           <div class="col-md-3">
             <nav class="navbar bg-light">
               <ul class="navbar-nav">
+                <% categories.forEach(cate => { %>
                 <li class="nav-item">
-                  <a class="nav-link" href="#"
-                    ><i class="fa fa-shopping-bag"></i>Best Selling</a
+                  <a
+                    class="nav-link"
+                    href="/products/resource/<%=cate.slugName%>"
+                    ><i class="fa fa-<%=cate.icon%>"></i><%=cate.name%></a
                   >
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#computers-index"
-                    ><i class="fa fa-mobile-alt"></i>Computers</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#laptops-index"
-                    ><i class="fa fa-mobile-alt"></i>Laptops</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#mobiles-index"
-                    ><i class="fa fa-microchip"></i>Top Mobiles</a
-                  >
-                </li>
+                <%})%>
               </ul>
             </nav>
           </div>
@@ -186,19 +175,20 @@
       </div>
     </div>
     <!-- Newsletter End -->
-
-    <% if (computers.length) { %>
+    <% data.forEach((cate, index) => {%>
     <div class="featured-product product" id="computers-index">
       <div class="container-fluid">
         <div class="section-header">
-          <h1>Computer Product</h1>
+          <a href="/products/resource/<%=categories[index].slugName%>"
+            ><h4><%=cate[0].type%></h4></a
+          >
         </div>
         <div class="row align-items-center product-slider product-slider-4">
-          <% computers.forEach(computer => { %>
+          <% cate.forEach(cat => { %>
           <div class="col-lg-3">
             <div class="product-item">
               <div class="product-title">
-                <a href="#"><%= computer.name %></a>
+                <a href="/products/<%=cat.slugName%>"><%= cat.name %></a>
                 <div class="ratting">
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
@@ -208,124 +198,32 @@
                 </div>
               </div>
               <div class="product-image">
-                <a href="/products">
-                  <img src="<%= computer.thumbnail[0] %>" alt="Product Image" />
+                <a href="/products/<%=cat.slugName%>">
+                  <img src="<%= cat.images[0] %>" alt="Product Image" />
                 </a>
                 <div class="product-action">
-                  <a href="#"><i class="fa fa-cart-plus"></i></a>
+                  <a href="#" class="add-to-cart" value="<%=cat.slugName%>"
+                    ><i class="fa fa-cart-plus"></i
+                  ></a>
                   <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="/products/<%= computer.id %>"
+                  <a href="/products/<%= cat.slugName %>"
                     ><i class="fa fa-search"></i
                   ></a>
                 </div>
               </div>
               <div class="product-price">
-                <h3><span>$</span><%= computer.salePrice %></h3>
+                <h3><span>$</span><%= cat.price %></h3>
                 <a class="btn" href=""
                   ><i class="fa fa-shopping-cart"></i>Buy Now</a
                 >
               </div>
             </div>
           </div>
-          <% }) %>
+          <%})%>
         </div>
       </div>
     </div>
-    <% } %>
-    <!-- -->
-
-    <% if (laptops.length) { %>
-    <div class="featured-product product" id="laptops-index">
-      <div class="container-fluid">
-        <div class="section-header">
-          <h1>Laptop Product</h1>
-        </div>
-        <div class="row align-items-center product-slider product-slider-4">
-          <% laptops.forEach(laptop => { %>
-          <div class="col-lg-3">
-            <div class="product-item">
-              <div class="product-title">
-                <a href="#"><%= laptop.name %></a>
-                <div class="ratting">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                </div>
-              </div>
-              <div class="product-image">
-                <a href="/products">
-                  <img src="<%= laptop.thumbnail[0] %>" alt="Product Image" />
-                </a>
-                <div class="product-action">
-                  <a href="#"><i class="fa fa-cart-plus"></i></a>
-                  <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="/products/<%= laptop.id %>"
-                    ><i class="fa fa-search"></i
-                  ></a>
-                </div>
-              </div>
-              <div class="product-price">
-                <h3><span>$</span><%= laptop.salePrice %></h3>
-                <a class="btn" href=""
-                  ><i class="fa fa-shopping-cart"></i>Buy Now</a
-                >
-              </div>
-            </div>
-          </div>
-          <% }) %>
-        </div>
-      </div>
-    </div>
-    <% } %>
-
-    <!-- -->
-    <% if (mobiles.length) { %>
-    <div class="featured-product product" id="mobiles-index">
-      <div class="container-fluid">
-        <div class="section-header">
-          <h1>Mobile Product</h1>
-        </div>
-        <div class="row align-items-center product-slider product-slider-4">
-          <% mobiles.forEach(mobile => { %>
-          <div class="col-lg-3">
-            <div class="product-item">
-              <div class="product-title">
-                <a href="#"><%= mobile.name %></a>
-                <div class="ratting">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                </div>
-              </div>
-              <div class="product-image">
-                <a href="/products">
-                  <img src="<%= mobile.thumbnail[0] %>" alt="Product Image" />
-                </a>
-                <div class="product-action">
-                  <a href="#"><i class="fa fa-cart-plus"></i></a>
-                  <a href="#"><i class="fa fa-heart"></i></a>
-                  <a href="/products/<%= mobile.id %>"
-                    ><i class="fa fa-search"></i
-                  ></a>
-                </div>
-              </div>
-              <div class="product-price">
-                <h3><span>$</span><%= mobile.salePrice %></h3>
-                <a class="btn" href=""
-                  ><i class="fa fa-shopping-cart"></i>Buy Now</a
-                >
-              </div>
-            </div>
-          </div>
-          <% }) %>
-        </div>
-      </div>
-    </div>
-    <% } %>
+    <%})%>
 
     <!-- Review Start -->
     <div class="review">

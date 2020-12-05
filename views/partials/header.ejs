@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-sm-6">
         <i class="fa fa-envelope"></i>
-        support@email.com
+        r2wteam@email.com
       </div>
       <div class="col-sm-6">
         <i class="fa fa-phone-alt"></i>
@@ -40,35 +40,34 @@
               >Products</a
             >
             <div class="dropdown-menu">
-              <a href="/products/filter?type=computer" class="dropdown-item"
-                >Computer</a
+              <%categories.forEach((cate) => {%>
+              <a href="/products/resource/<%=cate.slugName%>" class="dropdown-item"
+                ><%=cate.name%></a
               >
-              <a href="/products/filter?type=laptop" class="dropdown-item"
-                >Laptop</a
-              >
-              <a href="/products/filter?type=mobile" class="dropdown-item"
-                >Mobile</a
-              >
-              <a href="/products/filter?type=accessory" class="dropdown-item"
-                >Accessory</a
-              >
+                <%})%>
             </div>
           </div>
           <a href="/cart" class="nav-item nav-link">Cart</a>
-          <a href="/user/checkout" class="nav-item nav-link">Checkout</a>
+          <a href="/checkout" class="nav-item nav-link">Checkout</a>
           <a href="/contact" class="nav-item nav-link">Contact Us</a>
         </div>
         <div class="navbar-nav ml-auto">
+          <%if(user){%>
           <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
-              >User Account</a
+              ><%=user.firstName%> <%=user.lastName%></a
             >
-            <div class="dropdown-menu">
-              <a href="/user/dashboard" class="dropdown-item">Dash Board</a>
-              <a href="/user/wishlist" class="dropdown-item">Wishlist</a>
-            </div>
+            <form class="dropdown-menu" id="user-act" method="POST" action="/user/logout">
+              <a href="/user/account/dashboard" class="dropdown-item">Dashboard</a>
+              <a href="/user/account/wishlist" class="dropdown-item">Wishlist</a>
+              <a href="/user/logout" class="dropdown-item post" id="logout">Logout</a>
+            </form>
           </div>
-          <a href="/user/auth" class="nav-item nav-link">Login & Register</a>
+          <a href="/user/auth" class="nav-item nav-link"><i class="fas fa-lock"></i></a>
+          <%}else{%>
+            <a href="/user/auth" class="nav-item nav-link">Resister & Login</i></a>
+          <%}%>
+
         </div>
       </div>
     </nav>
@@ -98,12 +97,16 @@
         <div class="user">
           <a href="/user/wishlist" class="btn wishlist">
             <i class="fa fa-heart"></i>
-            <span>(0)</span>
+            <span class="cart-count-like">(0)</span>
           </a>
           <a href="/cart" class="btn cart">
             <i class="fa fa-shopping-cart"></i>
-            <span>(0)</span>
-          </a>
+            <%if (cart.totalQuantity) {%>
+              <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
+              <%}else{%>
+                <span class="cart-count-add">(0)</span>
+              <%}%>
+            </a>
         </div>
       </div>
     </div>
