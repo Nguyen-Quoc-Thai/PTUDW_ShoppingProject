@@ -453,4 +453,78 @@
       }
     });
   });
+
+  // Search on resource
+  $(".search").click(function (e) {
+    e.preventDefault();
+
+    const search = $("input[name=search]").val();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("search", search);
+    window.location.search = urlParams;
+  });
+
+  // Search sort price
+  $("a[name=sort]").click(function (e) {
+    e.preventDefault();
+
+    const val = $(this).attr("data");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("sort", val);
+    window.location.search = urlParams;
+  });
+
+  // Search filter price
+  $(".filter a").click(function (e) {
+    e.preventDefault();
+
+    const min = $(this).attr("min");
+    const max = $(this).attr("max");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("min", min);
+    urlParams.set("max", max);
+    window.location.search = urlParams;
+  });
+
+  // Handle click forgot password
+  $(".action-toggle").click(function (e) {
+    e.preventDefault();
+
+    const html = `<form class="forgot-form" method="POST" action="/user/forgot">
+    <div class="row">
+      <div class="col-md-6 user-login">
+        <label>E-mail / Username</label>
+        <input
+          class="form-control"
+          type="text"
+          name="email"
+          value=""
+        />
+      </div>
+      <div class="col-md-12">
+        <div class="custom-control custom-checkbox">
+          <input
+            type="checkbox"
+            class="custom-control-input"
+            id="newaccount"
+          />
+          <label class="custom-control-label" for="newaccount"
+            >Keep me signed in.</label
+          >
+          <a href="/user/auth" style="display: inline-block"
+            >&nbsp; Sign in?</a
+          >
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button class="btn" type="submit">Send</button>
+      </div>
+    </div>
+  </form>`;
+
+    $("#form-toggle").html(html);
+  });
 })(jQuery);

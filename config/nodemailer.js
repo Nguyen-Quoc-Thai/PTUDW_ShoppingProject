@@ -19,6 +19,7 @@ exports.sendMail = (req, receiver, token, type) => {
   });
 
   const urlConfirmation = `http://${req.hostname}/user/confirm/${token}`;
+  const urlRecovery = `http://${req.hostname}/user/forgot/${token}`;
 
   const mailOptionsConfirmation = {
     from: '"The R2W ✔ "<bathanggayk18@gmail.com>', // sender address
@@ -34,7 +35,7 @@ exports.sendMail = (req, receiver, token, type) => {
     to: receiver, // list of receivers
     subject: "Recovery password", // Subject line
     text: `Your token here. Please copy and paste to form to reset password account! \n\n`, // plain text body
-    html: `<b>Token: </b> ${token} \n\n <p>If you don't do this, ignore this email!</p>`, // html body
+    html: `<b>Link: </b> <hr> <a href=${urlRecovery}>${urlRecovery}</a> \n\n <p>If you don't do this, ignore this email!</p>`, // html body
   };
 
   // send mail with defined transport object

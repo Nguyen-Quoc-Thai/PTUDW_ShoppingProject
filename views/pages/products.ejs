@@ -29,20 +29,40 @@
                   <div class="row">
                     <div class="col-md-4">
                       <div class="product-search">
-                        <input type="email" value="Search" />
-                        <button><i class="fa fa-search"></i></button>
+                        <input
+                          type="text"
+                          placeholder="Search"
+                          name="search"
+                          value="<%=query.search%>"
+                        />
+                        <a href="" class="search">
+                          <button type="submit">
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </a>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="product-short">
                         <div class="dropdown">
                           <div class="dropdown-toggle" data-toggle="dropdown">
-                            Product sort by
+                            Sort price
                           </div>
                           <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" class="dropdown-item">Newest</a>
-                            <a href="#" class="dropdown-item">Popular</a>
-                            <a href="#" class="dropdown-item">Most sale</a>
+                            <a
+                              href=""
+                              class="dropdown-item query"
+                              name="sort"
+                              data="asc"
+                              >Ascending</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item query"
+                              name="sort"
+                              data="desc"
+                              >Descending</a
+                            >
                           </div>
                         </div>
                       </div>
@@ -51,19 +71,58 @@
                       <div class="product-price-range">
                         <div class="dropdown">
                           <div class="dropdown-toggle" data-toggle="dropdown">
-                            Product price range
+                            Price range
                           </div>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" class="dropdown-item">$0 to $50</a>
-                            <a href="#" class="dropdown-item">$51 to $100</a>
-                            <a href="#" class="dropdown-item">$101 to $150</a>
-                            <a href="#" class="dropdown-item">$151 to $200</a>
-                            <a href="#" class="dropdown-item">$201 to $250</a>
-                            <a href="#" class="dropdown-item">$251 to $300</a>
-                            <a href="#" class="dropdown-item">$301 to $350</a>
-                            <a href="#" class="dropdown-item">$351 to $400</a>
-                            <a href="#" class="dropdown-item">$401 to $450</a>
-                            <a href="#" class="dropdown-item">$451 to $500</a>
+                          <div class="dropdown-menu dropdown-menu-right filter">
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="0"
+                              max="200000"
+                              >Dưới 200.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="200000"
+                              max="500000"
+                              >200.000đ - 500.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="500000"
+                              max="1000000"
+                              >500.000đ - 1.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="1000000"
+                              max="5000000"
+                              >1.000.000đ - 5.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="5000000"
+                              max="10000000"
+                              >5.000.000đ - 10.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="10000000"
+                              max="25000000"
+                              >10.000.000đ - 25.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="25000000"
+                              max="100000000"
+                              >Trên 25.000.000đ</a
+                            >
                           </div>
                         </div>
                       </div>
@@ -140,8 +199,8 @@
             <% } %>
           </div>
 
-          <%- include('../partials/productSidebar', {col: 3, type: data[0].type,
-          categories, ourBrands}); %>
+          <%- include('../partials/productSidebar', {col: 3, type: data[0] ?
+          data[0].type : 'Laptop & Macbook', categories, ourBrands}); %>
         </div>
       </div>
     </div>

@@ -1,20 +1,24 @@
 const mongoose = require("mongoose");
+const slug = require("slug");
 
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
 
 const { allCategory } = require("./../utils/constant");
-const { statistic } = require("./../utils/statistic");
+const { statistic, parsePrice } = require("./../utils/statistic");
 
 module.exports.getResourceProducts = async (req, res, next) => {
   const { resourceSlugName } = req.params;
   const { producer } = req.query;
 
+  // Filter and sort
+  const { search = "", sort = "asc", min = 0, max = 100000000 } = req.query;
+
   const validResourceSlugName = allCategory.map((cate) => cate.slugName);
 
   try {
     if (!validResourceSlugName.includes(resourceSlugName)) {
-      throw new Error("Invalid url");
+      throw new Error("Invalid url!");
     }
 
     let mapValue = allCategory.find(
@@ -25,11 +29,32 @@ module.exports.getResourceProducts = async (req, res, next) => {
       type: mapValue.name,
     };
 
+    const query = {};
+    query.search = search || "";
+
+    // Query
+    const searchSlug = slug(search);
+    const regex = new RegExp(searchSlug, "i");
+    objQuery.slugName = regex;
+
     if (producer) {
       objQuery["producer"] = producer;
     }
 
-    const result = await Product.find(objQuery).limit(12);
+    let result = await Product.find(objQuery).limit(12);
+
+    // Sort
+    if (sort === "asc") {
+      result = result.sort((a, b) => {
+        return parsePrice(a.price) - parsePrice(b.price);
+      });
+    } else {
+      result = result.sort((a, b) => {
+        return -parsePrice(a.price) + parsePrice(b.price);
+      });
+    }
+
+    // Filter
 
     const statisticPerType = await statistic(
       Product,
@@ -42,6 +67,7 @@ module.exports.getResourceProducts = async (req, res, next) => {
     res.render("pages/products", {
       msg: "success",
       data: result || null,
+      query: query,
       ourBrands: statisticPerType || null,
     });
   } catch (error) {
@@ -50,233 +76,6 @@ module.exports.getResourceProducts = async (req, res, next) => {
       error,
     });
   }
-};
-
-module.exports.getProductDetails = async (req, res, next) => {
-  const { productSlugName } = req.params;
-
-  try {
-    const product = await Product.findOne({
-      slugName: productSlugName,
-    });
-
-    const { type, producer } = product;
-    const relativeProducts = await Product.find({
-      type,
-      producer,
-    }).limit(8);
-
-    const statisticPerType = await statistic(Product, { type }, "producer");
-    if (statisticPerType.length > 9) statisticPerType.length = 9;
-
-    res.render("pages/productDetail", {
-      msg: "success",
-      data: product || null,
-      relatedProducts: relativeProducts || null,
-      ourBrands: statisticPerType || null,
-    });
-  } catch (error) {
-    res.render("error", {
-      message: error.message,
-      error,
-    });
-  }
-};
-
-// module.exports.filterProducts = (req, res) => {
-//   const type = req.query.type;
-//   const productArray = products.filter((product) => product.type === type);
-//   console.log(productArray);
-//   res.render("pages/products", { products: productArray });
-// };
-
-// module.exports.getAllComputer = async (req, res, next) => {
-//   const { producer } = req.params || "";
-
-//   const result = await Product.find({
-//     type: "computer",
-//     producer,
-//   });
-
-//   res.render("pages/product.computers", {
-//     msg: "success",
-//     user: "Get all computers successful!",
-//     data: result,
-//   });
-// };
-
-// module.exports.getAllLaptop = async (req, res, next) => {
-//   const { producer } = req.params || "";
-
-//   const result = await Product.find({
-//     type: "laptop",
-//     producer,
-//   });
-
-//   res.render("pages/product.laptops", {
-//     msg: "success",
-//     user: "Get all laptops successful!",
-//     data: result,
-//   });
-// };
-
-// module.exports.getAllMobile = async (req, res, next) => {
-//   const { producer } = req.params || "";
-
-//   const result = await Product.find({
-//     type: "mobile",
-//     producer,
-//   });
-
-//   res.render("pages/product.mobiles", {
-//     msg: "success",
-//     user: "Get all mobiles successful!",
-//     data: result,
-//   });
-// };
-
-module.exports.getAll = (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const items_per_page = parseInt(req.query.limit) || 100;
-
-  if (page < 1) page = 1;
-
-  const q = req.query.q;
-
-  // filter
-  const type = req.query.type || "";
-  const producer = req.query.producer || "";
-  const tag = req.query.tag || "";
-  const minPrice = parseInt(req.query.minPrice) || 0;
-  const maxPrice = parseInt(req.query.maxPrice) || 1000;
-
-  //sort
-  const sort = req.query.sort;
-  let sortObj = {};
-  if (["newest", "popular", "mostSale"].includes(sort)) {
-    if (sort === "newest")
-      sortObj = {
-        updatedAt: 1,
-      };
-    else if (sort === "popular")
-      sortObj = {
-        countView: 1,
-      };
-    else
-      sortObj = {
-        countSale: 1,
-      };
-  } else {
-    sortObj = {
-      updatedAt: 1,
-    };
-  }
-
-  Product.find({
-    type: {
-      $in: type,
-    },
-    producer: {
-      $in: producer,
-    },
-    tags: {
-      $in: tag,
-    },
-    price: {
-      $gte: minPrice,
-      $lte: maxPrice,
-    },
-    $or: [
-      {
-        name: q,
-      },
-      {
-        rating: q,
-      },
-      {
-        type: q,
-      },
-      {
-        producer: q,
-      },
-      {
-        tag: q,
-      },
-      {
-        "details.$": q,
-      },
-    ],
-  })
-    .sort(sortObj)
-    .skip((page - 1) * items_per_page)
-    .limit(items_per_page)
-    .then(async (products) => {
-      const request = {};
-      const len = await Product.find({}).count();
-
-      request.currentPage = page;
-      request.totalPages = Math.ceil(len / items_per_page);
-
-      if (page > 1) {
-        request.previous = {
-          page: page - 1,
-          limit: items_per_page,
-        };
-      }
-
-      if (page * items_per_page < len) {
-        request.next = {
-          page: page + 1,
-          limit: items_per_page,
-        };
-      }
-
-      const respond = {
-        msg: "success",
-        user: "Fetch successful!",
-        data: products,
-      };
-
-      res.render("pages/auth", respond); // page shop
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/auth", {
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
-};
-
-// Product details
-module.exports.getOne = (req, res, next) => {
-  const _id = req.params.id;
-
-  Product.findById(_id)
-    .then(async (product) => {
-      if (!product) {
-        res.render("pages/info", {
-          msg: "ValidatorError",
-          user: `Product not found!`,
-        });
-      } else {
-        product.countView++;
-        await Product.updateOne({ _id });
-
-        res.render("pages/info", {
-          msg: "success",
-          user: `Fetch successful!`,
-          data: product,
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/info", {
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
 };
 
 // AJAX

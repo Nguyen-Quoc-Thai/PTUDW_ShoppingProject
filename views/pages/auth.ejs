@@ -121,10 +121,10 @@
               </div>
             </div>
           </form>
-          <div class="col-lg-6">
+          <div class="col-lg-6" id="form-toggle">
             <form class="login-form" method="POST" action="/user/login">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 user-login">
                   <label>E-mail / Username</label>
                   <%if (respond.msg === 'ValidatorError2') {%>
                   <input
@@ -145,7 +145,7 @@
                   <div class="alert p-1 t-1"><%=respond.user%></div>
                   <%}%>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 user-login">
                   <label>Password</label>
                   <input class="form-control" type="password" name="password" />
                   <%if (respond.msg === "ValidatorError2" && respond.password)
@@ -161,7 +161,13 @@
                       id="newaccount"
                     />
                     <label class="custom-control-label" for="newaccount"
-                      >Keep me signed in</label
+                      >Keep me signed in.</label
+                    >
+                    <a
+                      href=""
+                      class="action-toggle"
+                      style="display: inline-block"
+                      >&nbsp; Forgot password?</a
                     >
                   </div>
                 </div>
