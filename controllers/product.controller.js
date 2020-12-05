@@ -16,18 +16,37 @@ module.exports.filterProducts = (req, res) => {
   res.render("pages/products", { products: productArray });
 };
 
-module.exports.getProductDetails = (req, res) => {
-  const product = products.find((product) => product.id === req.params.id);
+module.exports.getProductDetails = async (req, res, next) => {
+  const { productSlugName } = req.params;
 
-  let relatedProducts = [];
+  try {
+    const product = await Product.findOne({
+      slugName: productSlugName,
+    });
 
-  if (product)
-    relatedProducts = products.filter(
-      (item) => item.type === product.type && item.id !== product.id
-    );
+    const { type, producer } = product;
+    const relativeProducts = await Product.find({
+      type,
+      producer,
+    }).limit(8);
 
-  res.render("pages/productDetail", { product, relatedProducts });
+    const statisticPerType = await statistic(Product, { type }, "producer");
+    if (statisticPerType.length > 9) statisticPerType.length = 9;
+
+    res.render("pages/productDetail", {
+      msg: "success",
+      data: product || null,
+      relatedProducts: relativeProducts || null,
+      ourBrands: statisticPerType || null,
+    });
+  } catch (error) {
+    res.render("error", {
+      message: error.message,
+      error,
+    });
+  }
 };
+
 
 module.exports.getAllComputer = async (req, res, next) => {
   const { producer } = req.params || "";
@@ -480,7 +499,7 @@ module.exports.getAllComment = async (req, res, next) => {
 module.exports.postComment = async (req, res, next) => {
   const { id } = req.params;
   const { content, rating } = req.body;
-  const {user} = req
+  const { user } = req
 
   try {
     let _id = mongoose.Types.ObjectId();
@@ -539,7 +558,7 @@ module.exports.postComment = async (req, res, next) => {
 // AJAX
 module.exports.postLike = async (req, res, next) => {
   const { id } = req.params;
-  const {user} = req
+  const { user } = req
 
   try {
     const product = await Product.findById(id);
@@ -559,7 +578,7 @@ module.exports.postLike = async (req, res, next) => {
       })
     }
 
-    const {_id} = user
+    const { _id } = user
 
     // Bug: check 2 likes ???
     product.countLike++;
