@@ -1,35 +1,16 @@
 const Cart = require("./../models/cart.model");
 const Checkout = require("./../models/checkout.model");
 
+const { postSignUp } = require("./user.controller");
+
 module.exports.getCheckout = async (req, res, next) => {
   const { user } = req;
 
-  try {
-    if (!user) {
-      return res.render("pages/auth", {
-        msg: "success",
-        user: "Please login to checkout!",
-      });
-    }
-
-    const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
-    if (!cart) throw new Error("User cart not found!");
-
-    res.render("pages/auth", {
-      msg: "success",
-      user: "Page checkout loaded!",
-      data: {
-        user,
-        cart,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.render("pages/auth", {
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
+  res.render("pages/checkout", {
+    msg: "success",
+    user: "Page checkout loaded!",
+    user: user || {},
+  });
 };
 
 module.exports.postCheckout = async (req, res, next) => {
@@ -37,29 +18,32 @@ module.exports.postCheckout = async (req, res, next) => {
 
   try {
     if (!user) {
-      return res.render("pages/auth", {
-        msg: "success",
-        user: "Please login to checkout!",
-      });
+      await postSignUp(req, res, next);
     }
 
-    const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
-    if (!cart) throw new Error("User cart not found!");
-    const { userId, _id, items, totalQuantity, totalCost } = cart;
-    const { address, phone, firstName, lastName } = req.body;
+    console.log(req.body);
 
-    const shippingFee = 4;
+    const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
+
+    const { userId, _id, status, items, totalQuantity, totalCost } = cart;
+    const { address, city, district, phone, firstName, lastName } = user;
+
+    // check if 2 add diff
+
+    const shippingFee = 25000;
 
     const checkoutObj = {
       userId,
       cartId: _id,
-      status: "waiting",
+      status,
       items,
       totalQuantity,
       totalCost,
       address,
+      city,
+      district,
       phone,
-      receiver: firstName + lastName,
+      receiver: firstName + " " + lastName,
       shippingFee,
       paymentMethod: "cod",
       totalPayment: parseInt(totalCost) + shippingFee,
@@ -72,7 +56,7 @@ module.exports.postCheckout = async (req, res, next) => {
     console.log(checkout);
     req.session.checkout = checkout;
 
-    res.render("pages/auth", {
+    res.render("pages/wishlist", {
       // render page thong tin dat hang
       msg: "success",
       user: "Cart checkout successful!",
@@ -89,27 +73,36 @@ module.exports.postCheckout = async (req, res, next) => {
 
 // AJAX
 module.exports.patchUpdate = async (req, res, next) => {
-  const checkoutStatus = ['waiting', 'confirmed', 'transferring', 'delivered', 'canceled']
-  const {checkoutId} = req.params
-  const {status} = req.body
+  const checkoutStatus = [
+    "waiting",
+    "confirmed",
+    "transferring",
+    "delivered",
+    "canceled",
+  ];
+  const { checkoutId } = req.params;
+  const { status } = req.body;
 
   try {
-    if (!checkoutStatus.includes(status)) throw new Error(`Invalid status! Status must be 'waiting', 'confirmed', 'transferring', 'delivered' or 'canceled'! `)
+    if (!checkoutStatus.includes(status))
+      throw new Error(
+        `Invalid status! Status must be 'waiting', 'confirmed', 'transferring', 'delivered' or 'canceled'! `
+      );
 
-    const checkout = await Checkout.findById(checkoutId)
-    if (!checkout) throw new Error('Cart checkout not found!')
-    checkout.status = status
-    await checkout.save()
+    const checkout = await Checkout.findById(checkoutId);
+    if (!checkout) throw new Error("Cart checkout not found!");
+    checkout.status = status;
+    await checkout.save();
 
     res.status(200).json({
-      msg: 'success',
-      user: 'Update status successful!'
-    })
+      msg: "success",
+      user: "Update status successful!",
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(205).json({
-      msg: 'ValidatorError',
-      user: error.message
-    })
+      msg: "ValidatorError",
+      user: error.message,
+    });
   }
-}
+};

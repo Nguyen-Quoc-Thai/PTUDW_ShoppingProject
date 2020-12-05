@@ -58,7 +58,7 @@
                 data-toggle="pill"
                 href="#address-tab"
                 role="tab"
-                ><i class="fa fa-map-marker-alt"></i>address</a
+                ><i class="fa fa-map-marker-alt"></i>Address</a
               >
               <a
                 class="nav-link"
@@ -68,9 +68,13 @@
                 role="tab"
                 ><i class="fa fa-user"></i>Account Details</a
               >
-              <a class="nav-link" href="index.html"
-                ><i class="fa fa-sign-out-alt"></i>Logout</a
-              >
+              <form id="logout" method="POST" action="/user/logout">
+                <button type="submit">
+                  <a class="nav-link" href="">
+                    <i class="fa fa-sign-out-alt"></i>Logout
+                  </a>
+                </button>
+              </form>
             </div>
           </div>
           <div class="col-md-9">
@@ -166,14 +170,14 @@
                 <div class="row">
                   <div class="col-md-6">
                     <h5>Payment Address</h5>
-                    <p>123 Payment Street, Los Angeles, CA</p>
-                    <p>Mobile: 012-345-6789</p>
+                    <p><%=user.address%>, <%=user.district%>, <%=user.city%></p>
+                    <p>Mobile: <%=user.phone%></p>
                     <button class="btn">Edit Address</button>
                   </div>
                   <div class="col-md-6">
                     <h5>Shipping Address</h5>
-                    <p>123 Shipping Street, Los Angeles, CA</p>
-                    <p>Mobile: 012-345-6789</p>
+                    <p><%=user.address%>, <%=user.district%>, <%=user.city%></p>
+                    <p>Mobile: <%=user.phone%></p>
                     <button class="btn">Edit Address</button>
                   </div>
                 </div>
@@ -185,54 +189,120 @@
                 aria-labelledby="account-nav"
               >
                 <h4>Account Details</h4>
-                <div class="row">
+                <form
+                  id="change-info"
+                  class="row"
+                  method="POST"
+                  action="/user/account/info"
+                >
                   <div class="col-md-6">
                     <input
                       class="form-control"
                       type="text"
-                      placeholder="First Name"
+                      name="firstName"
+                      value="<%=user.firstName%>"
                     />
                   </div>
                   <div class="col-md-6">
                     <input
                       class="form-control"
                       type="text"
-                      placeholder="Last Name"
+                      name="lastName"
+                      value="<%=user.lastName%>"
                     />
                   </div>
                   <div class="col-md-6">
                     <input
                       class="form-control"
                       type="text"
-                      placeholder="Mobile"
+                      name="phone"
+                      value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
+                      readonly
                     />
                   </div>
                   <div class="col-md-6">
                     <input
                       class="form-control"
                       type="text"
-                      placeholder="Email"
+                      name="email"
+                      value="<%=user.email%>"
+                      readonly
                     />
                   </div>
+                  <%if(user.address.length){%>
                   <div class="col-md-12">
                     <input
                       class="form-control"
                       type="text"
+                      name="address"
+                      value="<%=user.address%>"
+                    />
+                  </div>
+                  <%}else{%>
+                  <div class="col-md-12">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="address"
                       placeholder="Address"
                     />
                   </div>
-                  <div class="col-md-12">
+                  <%}%> <%if(user.city){%>
+                  <div class="col-md-6">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="city"
+                      value="<%=user.city%>"
+                    />
+                  </div>
+                  <%}else{%>
+                  <div class="col-md-6">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="city"
+                      placeholder="City"
+                    />
+                  </div>
+                  <%}%> <%if(user.district){%>
+                  <div class="col-md-6">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="district"
+                      value="<%=user.district%>"
+                    />
+                  </div>
+                  <%}else{%>
+                  <div class="col-md-6">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="district"
+                      placeholder="District"
+                    />
+                  </div>
+                  <%}%>
+
+                  <div class="col-md-12 change-info">
                     <button class="btn">Update Account</button>
                     <br /><br />
                   </div>
-                </div>
+                </form>
                 <h4>Password change</h4>
-                <div class="row">
+                <form
+                  id="change-password"
+                  class="row"
+                  method="POST"
+                  action="/user/account/password"
+                >
                   <div class="col-md-12">
                     <input
                       class="form-control"
                       type="password"
                       placeholder="Current Password"
+                      name="oldPassword"
                     />
                   </div>
                   <div class="col-md-6">
@@ -240,6 +310,7 @@
                       class="form-control"
                       type="text"
                       placeholder="New Password"
+                      name="password"
                     />
                   </div>
                   <div class="col-md-6">
@@ -247,12 +318,13 @@
                       class="form-control"
                       type="text"
                       placeholder="Confirm Password"
+                      name="retypePassword"
                     />
                   </div>
-                  <div class="col-md-12">
-                    <button class="btn">Save Changes</button>
+                  <div class="col-md-12 change-password">
+                    <button type="submit" class="btn">Save Changes</button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>

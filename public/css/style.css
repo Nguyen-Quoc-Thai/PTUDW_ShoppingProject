@@ -280,6 +280,14 @@ h2 {
     display: none;
   }
 
+  a.nav-link {
+    font-size: 0.9rem;
+  }
+
+  li.nav-item {
+    padding: 5px 30px !important;
+  }
+
   .nav .navbar-dark a.nav-link {
     color: #ffffff;
     font-size: 14px;
@@ -421,14 +429,14 @@ h2 {
 .header .navbar {
   padding: 0;
   height: 100%;
-  max-height: 400px;
+  /* max-height: 400px; */
   overflow: hidden;
   background: #ffffff !important;
 }
 
 .header .navbar-nav {
   width: 100%;
-  padding: 15px 0;
+  /* padding: 15px 0; */
 }
 
 .header .navbar li {
@@ -1866,7 +1874,7 @@ h2 {
 /**********************************/
 .call-to-action {
   position: relative;
-  padding: 30px 0;
+  padding: 10px 0;
   background: #ff6f61;
 }
 
@@ -1882,11 +1890,11 @@ h2 {
 
 .call-to-action a {
   display: inline-block;
-  padding: 0 20px;
+  padding: 5px 20px;
   border: 1px solid #ffffff;
   border-radius: 4px;
   color: #ffffff;
-  font-size: 30px;
+  font-size: 15px;
   letter-spacing: 2px;
   transition: all 0.3s;
 }
@@ -2196,6 +2204,13 @@ h2 {
   padding: 30px;
   background: #ffffff;
   margin-bottom: 30px;
+}
+
+.t-1 {
+  font-size: 0.8rem;
+  margin-top: -10px;
+  padding: 0px 15px 0 0 !important;
+  color: red;
 }
 
 /**********************************/

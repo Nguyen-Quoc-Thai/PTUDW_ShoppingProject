@@ -1,48 +1,34 @@
 const Cart = require("./../models/cart.model");
 const Product = require("./../models/product.model");
 
-module.exports.get = (req, res) => {
-  res.render("pages/cart");
-};
+const { parsePrice } = require("./../utils/statistic");
 
 module.exports.getCart = async (req, res, next) => {
-  const { cart } = req.session;
   const { user } = req;
+
+  console.log(req.app.locals.user);
 
   try {
     if (user) {
-      const userCart = await Cart.findOne({ userId: user._id });
-      return res.render("pages/auth", {
-        // page cart
-        msg: "success",
-        user: "Get cart successful!",
-        data: userCart,
-      });
-    }
-
-    if (!cart) {
-      cart = {
-        userId: null,
+      const userCart = await Cart.findOne({
+        userId: user._id,
         status: "waiting",
-        items: [],
-        totalQuantity: 0,
-        totalCost: 0,
-      };
+      });
+
+      if (!userCart) {
+        req.session.cart = await Cart.create({ userId: user._id });
+      } else req.session.cart = userCart;
     }
 
-    req.session.cart = cart;
-    // {userId, status, items, totalQuantity, totalCost}
-    res.render("pages/auth", {
-      // page cart
+    return res.render("pages/cart", {
       msg: "success",
-      user: "Open cart successful!",
-      data: cart,
+      user: "Get cart successful!",
     });
   } catch (error) {
     console.log(error);
-    res.render("pages/auth", {
-      msg: "ValidatorError",
-      user: "Fail to fetch cart!",
+    res.render("error", {
+      message: "Fail to fetch cart!",
+      error,
     });
   }
 };
@@ -50,62 +36,69 @@ module.exports.getCart = async (req, res, next) => {
 // AJAX
 module.exports.addToCart = async (req, res, next) => {
   const { user } = req;
-  const { cart } = req.session;
-  const { itemId } = req.params;
+  let { cart } = req.session;
+  const { slugName } = req.params;
 
   let flagNewItem = true;
-  let newCartItem = [];
 
   try {
-    const id = user._id || null;
-    const userCart = await Cart.findById(id);
-    if (userCart) newCartItem = userCart.items;
+    if (user) {
+      const userCart = await Cart.findOne({
+        userId: user._id,
+        status: "waiting",
+      });
 
-    const product = await Product.findById(itemId);
-    if (!product) throw new Error("Product not found!");
-    const { _id, name, price, thumbnail } = product;
+      if (!userCart) {
+        cart = await Cart.create({ userId: user._id });
+      } else cart = userCart;
+    }
 
-    newCartItem = cart.items.map((item) => {
-      if (item.itemId === itemId) {
-        item.quantity++;
-        flagNewItem = false;
-      }
-
-      return item;
+    const product = await Product.findOne({
+      slugName,
     });
 
+    if (!product) throw new Error("Product not found!");
+    const { _id, name, price, images } = product;
+
+    for (let i = 0; i < cart.items.length; i++) {
+      if (cart.items[i].name === name) {
+        cart.items[i].quantity++;
+        cart.items[i].total += parsePrice(price);
+
+        flagNewItem = false;
+      }
+    }
+
     if (flagNewItem) {
-      newCartItem.push({
+      cart.items.push({
         itemId: _id,
         name,
-        thumbnail: thumbnail[0],
+        slugName,
+        thumbnail: images[0],
         price,
         quantity: 1,
+        total: parsePrice(price),
       });
     }
 
     cart.totalQuantity++;
-    cart.totalCost += parseInt(price);
-    cart.items = newCartItem;
+    cart.totalCost += parsePrice(price);
 
     if (user) {
       await Cart.updateOne(
         { userId: user._id },
         {
-          $set: {
-            items: newCartItem,
-            totalQuantity: cart.totalQuantity,
-            totalCost: cart.totalCost,
-          },
+          $set: cart,
         }
       );
     }
 
-    res.session.cart = cart;
+    console.log(cart);
+
+    req.session.cart = cart;
     res.status(200).json({
       msg: "success",
       user: "Add to cart successful!",
-      data: cart,
     });
   } catch (error) {
     console.log(error);
@@ -117,66 +110,71 @@ module.exports.addToCart = async (req, res, next) => {
 };
 
 // AJAX
-module.exports.patchUpdate = async (req, res, next) => {
-  const enumType = ["inc", "desc", "del"];
-  const { type } = req.query;
+module.exports.putUpdate = async (req, res, next) => {
+  const enumType = [-1, 1, 0];
 
-  const { itemId } = req.params;
+  const { bias } = req.body;
+  const { slugName } = req.params;
   const { user } = req;
-  const { cart } = req.session;
+  let { cart } = req.session;
 
-  let newCartItem = [];
+  console.log(cart);
 
   try {
-    const id = user._id || null;
-    const userCart = await Cart.findById(id);
-    if (userCart) newCartItem = userCart.items;
+    if (user) {
+      const userCart = await Cart.findOne({
+        userId: user._id,
+        status: "waiting",
+      });
 
-    const product = await Product.findById(itemId);
-    if (!product) throw new Error("Product not found!");
-    const { price } = product;
+      if (!userCart) {
+        cart = await Cart.create({ userId: user._id });
+      } else cart = userCart;
+    }
 
-    if (!enumType.includes(type))
-      throw new Error(`Query type must be 'inc', 'desc' or 'del'!`);
-    const bias = type === "inc" ? 1 : type === "desc" ? -1 : 0;
+    if (!enumType.includes(bias))
+      throw new Error(`Bias must be 1: inc, -1: desc or 0: del!`);
 
-    newCartItem = cart.items.map((item) => {
-      if (item.itemId === itemId) {
-        if (item.quantity === 1 && type === "desc") {
-          return null;
-        } else if (type === "del") {
+    cart.items = cart.items.map((item) => {
+      if (item.slugName === slugName) {
+        if (bias === 0) {
           cart.totalQuantity -= parseInt(item.quantity);
-          cart.totalCost -= parseInt(item.quantity) * parseInt(item.price);
+          cart.totalCost -= parseInt(item.quantity) * parsePrice(item.price);
+
+          return null;
+        }
+        if (item.quantity === 1 && bias === -1) {
+          cart.totalQuantity += bias;
+          cart.totalCost += bias * parsePrice(item.price);
+          item.quantity += bias;
+          item.total += bias * parsePrice(item.price);
 
           return null;
         } else {
           cart.totalQuantity += bias;
-          cart.totalCost += bias * parseInt(item.price);
+          cart.totalCost += bias * parsePrice(item.price);
           item.quantity += bias;
+          item.total += bias * parsePrice(item.price);
         }
       }
 
       return item;
     });
 
-    newCartItem = newCartItem.filter((item) => item !== null);
-
-    cart.items = newCartItem;
+    cart.items = cart.items.filter((item) => item !== null);
 
     if (user) {
       await Cart.updateOne(
         { userId: user._id },
         {
-          $set: {
-            items: newCartItem,
-            totalQuantity: cart.totalQuantity,
-            totalCost: cart.totalCost,
-          },
+          $set: cart,
         }
       );
     }
 
-    res.session.cart = cart;
+    console.log(cart);
+
+    req.session.cart = cart;
     res.status(200).json({
       msg: "success",
       user: "Update cart successful!",

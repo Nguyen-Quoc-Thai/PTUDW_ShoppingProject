@@ -201,11 +201,14 @@
     var oldValue = $button.parent().find("input").val();
     if ($button.hasClass("btn-plus")) {
       var newVal = parseFloat(oldValue) + 1;
+      $(".qty button.btn-minus").attr("disabled", false);
     } else {
-      if (oldValue > 0) {
+      if (oldValue > 1) {
         var newVal = parseFloat(oldValue) - 1;
+        newVal == 1 ? $button.attr("disabled", true) : "";
       } else {
-        newVal = 0;
+        newVal = 1;
+        $button.attr("disabled", true);
       }
     }
     $button.parent().find("input").val(newVal);
@@ -226,6 +229,302 @@
       var checkbox_id = $(this).attr("id");
       $(".checkout .payment-method .payment-content").slideUp();
       $("#" + checkbox_id + "-show").slideDown();
+      $(".payment-info").css("display", "none");
     }
+  });
+
+  // Add to cart
+  $(".add-to-cart").click(function (e) {
+    e.preventDefault();
+    const slugName = $(this).attr("value");
+
+    $.post(`/cart/${slugName}`, {}, function (data, status) {
+      if (data.msg === "success" && status === "success") {
+        const curCount = parseInt(
+          $(".cart-count-add").html().replace(/[()]/g, "")
+        );
+
+        $(".cart-count-add").html(`(${curCount + 1})`);
+      }
+    });
+  });
+
+  // Update cart
+  $(".change-val").click(function (e) {
+    e.preventDefault();
+
+    const value = $(this).attr("value");
+    const slugName = $(this).attr("name");
+
+    if (parseInt(value) === 0) {
+      const re = confirm("Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?");
+      if (re == false) return false;
+      $(this).parent().parent().css("display", "none");
+    }
+
+    const request = $.ajax({
+      url: `/cart/${slugName}`,
+      data: JSON.stringify({
+        bias: parseInt(value),
+      }),
+      type: "PUT",
+      contentType: "application/json",
+      processData: false,
+      xhr: function () {
+        return window.XMLHttpRequest == null ||
+          new window.XMLHttpRequest().addEventListener == null
+          ? new window.ActiveXObject("Microsoft.XMLHTTP")
+          : $.ajaxSettings.xhr();
+      },
+    });
+
+    request.done(function (data, status) {
+      if (data.msg === "success" && status === "success") {
+        data.data.items.forEach((item) => {
+          $(`#${item.itemId}`).html(item.total.toLocaleString("vi-VN"));
+        });
+
+        $("#total-cost").html(data.data.totalCost.toLocaleString("vi-VN"));
+        $("#total-quantity").html(
+          data.data.totalQuantity.toLocaleString("vi-VN")
+        );
+        $("#shipping-fee").html(data.data.totalQuantity ? "25.000" : "0");
+        $("#total-payment").html(
+          data.data.totalQuantity
+            ? (data.data.totalCost + 25000).toLocaleString("vi-VN")
+            : 0
+        );
+        $(".cart-count-add").html(
+          data.data.totalQuantity ? `(${data.data.totalQuantity})` : `(0)`
+        );
+      }
+    });
+  });
+
+  // Handle submit place order
+  $(".submit-checkout").click(function (e) {
+    e.preventDefault();
+
+    if ($(".payment-info").css("display") === "block") {
+      return;
+    }
+
+    if (!$("#checkout-payment input").is(":checked")) {
+      $(".payment-methods")
+        .last()
+        .after(
+          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Vui lòng chọn phương thức thanh toán</span>'
+        );
+      return;
+    }
+    if ($("#total-quantity strong").val() == 0) {
+      $(".payment-methods")
+        .last()
+        .after(
+          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
+        );
+      return;
+    }
+
+    $("#form-val").submit();
+  });
+
+  // Handle comment
+  // $("#comment :input").each(function () {
+  //   $(this).focus(function () {
+  //     $(".comment-warning").remove(this);
+  //   });
+  // });
+  $("#comment").submit(function (e) {
+    e.preventDefault();
+
+    const url = $(this).attr("action");
+    let data = {};
+    $("#comment :input").each(function () {
+      data[$(this).attr("name")] = $(this).val();
+    });
+
+    if (!data.name || !data.email || !data.review) {
+      console.log($("span.comment-warning span").val());
+      if ($("span.comment-warning span").val()) return;
+      const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-warning">Bạn phải điền đây đủ thông tin</span></div>`;
+      $(".leave-comment").prepend(warning);
+      return;
+    }
+
+    $.post(url, { ...data }, function (data, status) {
+      console.log(data);
+      if (data.msg === "success" && status === "success") {
+        const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
+        <div class="reviewer">
+          ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${data.data.date}</span>
+        </div>
+        <div class="ratting">
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+          <i class="fa fa-star"></i>
+        </div>
+        <p>${data.data.review}</p>
+      </div>`;
+        $(".reviews-submit").before(html);
+        $("textarea[name='review']").val("");
+      }
+    });
+  });
+
+  // Handle logout
+  $("#logout").click(function (e) {
+    e.preventDefault();
+    $("#user-act").submit();
+  });
+
+  // Handle change password
+  $("#change-password").submit(function (e) {
+    e.preventDefault();
+
+    const url = $(this).attr("action");
+    let data = {};
+    $("#change-password :input").each(function () {
+      data[$(this).attr("name")] = $(this).val();
+    });
+
+    const request = $.ajax({
+      url,
+      data: JSON.stringify({ ...data }),
+      type: "PUT",
+      contentType: "application/json",
+      processData: false,
+      xhr: function () {
+        return window.XMLHttpRequest == null ||
+          new window.XMLHttpRequest().addEventListener == null
+          ? new window.ActiveXObject("Microsoft.XMLHTTP")
+          : $.ajaxSettings.xhr();
+      },
+    });
+
+    request.done(function (data, status) {
+      if (status === "success") {
+        let className = "";
+
+        if (data.msg !== "success") {
+          className = "text-warning";
+        } else className = "text-success";
+        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
+        $(".change-password").prepend(result);
+      }
+    });
+  });
+
+  // Handle change info
+  $("#change-info").submit(function (e) {
+    e.preventDefault();
+
+    const url = $(this).attr("action");
+    let data = {};
+    $("#change-info :input").each(function () {
+      data[$(this).attr("name")] = $(this).val();
+    });
+
+    const request = $.ajax({
+      url,
+      data: JSON.stringify({ ...data }),
+      type: "PUT",
+      contentType: "application/json",
+      processData: false,
+      xhr: function () {
+        return window.XMLHttpRequest == null ||
+          new window.XMLHttpRequest().addEventListener == null
+          ? new window.ActiveXObject("Microsoft.XMLHTTP")
+          : $.ajaxSettings.xhr();
+      },
+    });
+
+    request.done(function (data, status) {
+      if (status === "success") {
+        let className = "";
+
+        if (data.msg !== "success") {
+          className = "text-warning";
+        } else className = "text-success";
+        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
+        $(".change-info").prepend(result);
+      }
+    });
+  });
+
+  // Search on resource
+  $(".search").click(function (e) {
+    e.preventDefault();
+
+    const search = $("input[name=search]").val();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("search", search);
+    window.location.search = urlParams;
+  });
+
+  // Search sort price
+  $("a[name=sort]").click(function (e) {
+    e.preventDefault();
+
+    const val = $(this).attr("data");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("sort", val);
+    window.location.search = urlParams;
+  });
+
+  // Search filter price
+  $(".filter a").click(function (e) {
+    e.preventDefault();
+
+    const min = $(this).attr("min");
+    const max = $(this).attr("max");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("min", min);
+    urlParams.set("max", max);
+    window.location.search = urlParams;
+  });
+
+  // Handle click forgot password
+  $(".action-toggle").click(function (e) {
+    e.preventDefault();
+
+    const html = `<form class="forgot-form" method="POST" action="/user/forgot">
+    <div class="row">
+      <div class="col-md-6 user-login">
+        <label>E-mail / Username</label>
+        <input
+          class="form-control"
+          type="text"
+          name="email"
+          value=""
+        />
+      </div>
+      <div class="col-md-12">
+        <div class="custom-control custom-checkbox">
+          <input
+            type="checkbox"
+            class="custom-control-input"
+            id="newaccount"
+          />
+          <label class="custom-control-label" for="newaccount"
+            >Keep me signed in.</label
+          >
+          <a href="/user/auth" style="display: inline-block"
+            >&nbsp; Sign in?</a
+          >
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button class="btn" type="submit">Send</button>
+      </div>
+    </div>
+  </form>`;
+
+    $("#form-toggle").html(html);
   });
 })(jQuery);

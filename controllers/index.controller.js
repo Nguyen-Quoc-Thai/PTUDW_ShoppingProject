@@ -1,40 +1,32 @@
 const products = require("../models/products.model");
-const Product = require('./../models/product.model')
+const Product = require("./../models/product.model");
 
-module.exports.get = (req, res) => {
-  const laptops = products.filter((product) => product.type === "laptop");
-  const mobiles = products.filter((product) => product.type === "mobile");
-  const computers = products.filter((product) => product.type === "computer");
-
-  res.render("pages/index", { laptops, mobiles, computers });
-};
-
+const { allCategory } = require("./../utils/constant");
 
 module.exports.index = async (req, res, next) => {
-  const [computers, laptops, mobiles] = await Promise.all([
-    Product.find({
-      type: 'computer'
-    }),
-    Product.find({
-      type: 'laptop'
-    }),
-    Product.find({
-      type: 'mobile'
-    })
-  ])
+  console.log("req user", req.user);
+  console.log(req.session);
+  try {
+    const resultPromise = Promise.all(
+      allCategory.map(async (cate) => {
+        const ret = await Product.find({
+          type: cate.name,
+        }).limit(10);
 
-  req.session.cart = {
-    userId: null,
-    status: "waiting",
-    items: [],
-    totalQuantity: 0,
-    totalCost: 0,
-  };
+        return ret;
+      })
+    );
 
-  res.render("pages/index", {
-    msg: 'success',
-    laptops,
-    mobiles,
-    computers
-  });
-}
+    const result = await resultPromise;
+
+    res.render("pages/index", {
+      msg: "success",
+      data: result || [],
+    });
+  } catch (error) {
+    res.render("error", {
+      message: error.message,
+      error,
+    });
+  }
+};

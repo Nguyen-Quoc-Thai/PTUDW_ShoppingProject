@@ -6,4 +6,4 @@ module.exports.findUserByEmail = (email) => {
 
 module.exports.findUserById = (id) => {
     return User.findById(id)
-}zzz
+}

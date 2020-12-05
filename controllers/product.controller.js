@@ -1,42 +1,73 @@
 const mongoose = require("mongoose");
+const slug = require("slug");
 
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
 
-const products = require("../models/products.model");
+const { allCategory } = require("./../utils/constant");
+const { statistic, parsePrice } = require("./../utils/statistic");
 
-module.exports.getProducts = (req, res) => {
-  res.render("pages/products", { products });
-};
+module.exports.getResourceProducts = async (req, res, next) => {
+  const { resourceSlugName } = req.params;
+  const { producer } = req.query;
 
-module.exports.filterProducts = (req, res) => {
-  const type = req.query.type;
-  const productArray = products.filter((product) => product.type === type);
-  console.log(productArray);
-  res.render("pages/products", { products: productArray });
-};
+  // Filter and sort
+  const { search = "", sort = "asc", min = 0, max = 100000000 } = req.query;
 
-module.exports.getProductDetails = async (req, res, next) => {
-  const { productSlugName } = req.params;
+  const validResourceSlugName = allCategory.map((cate) => cate.slugName);
 
   try {
-    const product = await Product.findOne({
-      slugName: productSlugName,
-    });
+    if (!validResourceSlugName.includes(resourceSlugName)) {
+      throw new Error("Invalid url!");
+    }
 
-    const { type, producer } = product;
-    const relativeProducts = await Product.find({
-      type,
-      producer,
-    }).limit(8);
+    let mapValue = allCategory.find(
+      (cate) => cate.slugName === resourceSlugName
+    );
 
-    const statisticPerType = await statistic(Product, { type }, "producer");
+    const objQuery = {
+      type: mapValue.name,
+    };
+
+    const query = {};
+    query.search = search || "";
+
+    // Query
+    const searchSlug = slug(search);
+    const regex = new RegExp(searchSlug, "i");
+    objQuery.slugName = regex;
+
+    if (producer) {
+      objQuery["producer"] = producer;
+    }
+
+    let result = await Product.find(objQuery).limit(12);
+
+    // Sort
+    if (sort === "asc") {
+      result = result.sort((a, b) => {
+        return parsePrice(a.price) - parsePrice(b.price);
+      });
+    } else {
+      result = result.sort((a, b) => {
+        return -parsePrice(a.price) + parsePrice(b.price);
+      });
+    }
+
+    // Filter
+
+    const statisticPerType = await statistic(
+      Product,
+      { type: mapValue.name },
+      "producer"
+    );
+
     if (statisticPerType.length > 9) statisticPerType.length = 9;
 
-    res.render("pages/productDetail", {
+    res.render("pages/products", {
       msg: "success",
-      data: product || null,
-      relatedProducts: relativeProducts || null,
+      data: result || null,
+      query: query,
       ourBrands: statisticPerType || null,
     });
   } catch (error) {
@@ -45,196 +76,6 @@ module.exports.getProductDetails = async (req, res, next) => {
       error,
     });
   }
-};
-
-
-module.exports.getAllComputer = async (req, res, next) => {
-  const { producer } = req.params || "";
-
-  const result = await Product.find({
-    type: "computer",
-    producer,
-  });
-
-  res.render("pages/product.computers", {
-    msg: "success",
-    user: "Get all computers successful!",
-    data: result,
-  });
-};
-
-module.exports.getAllLaptop = async (req, res, next) => {
-  const { producer } = req.params || "";
-
-  const result = await Product.find({
-    type: "laptop",
-    producer,
-  });
-
-  res.render("pages/product.laptops", {
-    msg: "success",
-    user: "Get all laptops successful!",
-    data: result,
-  });
-};
-
-module.exports.getAllMobile = async (req, res, next) => {
-  const { producer } = req.params || "";
-
-  const result = await Product.find({
-    type: "mobile",
-    producer,
-  });
-
-  res.render("pages/product.mobiles", {
-    msg: "success",
-    user: "Get all mobiles successful!",
-    data: result,
-  });
-};
-
-module.exports.getAll = (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const items_per_page = parseInt(req.query.limit) || 100;
-
-  if (page < 1) page = 1;
-
-  const q = req.query.q;
-
-  // filter
-  const type = req.query.type || "";
-  const producer = req.query.producer || "";
-  const tag = req.query.tag || "";
-  const minPrice = parseInt(req.query.minPrice) || 0;
-  const maxPrice = parseInt(req.query.maxPrice) || 1000;
-
-  //sort
-  const sort = req.query.sort;
-  let sortObj = {};
-  if (["newest", "popular", "mostSale"].includes(sort)) {
-    if (sort === "newest")
-      sortObj = {
-        updatedAt: 1,
-      };
-    else if (sort === "popular")
-      sortObj = {
-        countView: 1,
-      };
-    else
-      sortObj = {
-        countSale: 1,
-      };
-  } else {
-    sortObj = {
-      updatedAt: 1,
-    };
-  }
-
-  Product.find({
-    type: {
-      $in: type,
-    },
-    producer: {
-      $in: producer,
-    },
-    tags: {
-      $in: tag,
-    },
-    price: {
-      $gte: minPrice,
-      $lte: maxPrice,
-    },
-    $or: [
-      {
-        name: q,
-      },
-      {
-        rating: q,
-      },
-      {
-        type: q,
-      },
-      {
-        producer: q,
-      },
-      {
-        tag: q,
-      },
-      {
-        "details.$": q,
-      },
-    ],
-  })
-    .sort(sortObj)
-    .skip((page - 1) * items_per_page)
-    .limit(items_per_page)
-    .then(async (products) => {
-      const request = {};
-      const len = await Product.find({}).count();
-
-      request.currentPage = page;
-      request.totalPages = Math.ceil(len / items_per_page);
-
-      if (page > 1) {
-        request.previous = {
-          page: page - 1,
-          limit: items_per_page,
-        };
-      }
-
-      if (page * items_per_page < len) {
-        request.next = {
-          page: page + 1,
-          limit: items_per_page,
-        };
-      }
-
-      const respond = {
-        msg: "success",
-        user: "Fetch successful!",
-        data: products,
-      };
-
-      res.render("pages/auth", respond); // page shop
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/auth", {
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
-};
-
-// Product details
-module.exports.getOne = (req, res, next) => {
-  const _id = req.params.id;
- 
-  Product.findById(_id)
-    .then(async (product) => {
-      if (!product) {
-        res.render("pages/info", {
-          msg: "ValidatorError",
-          user: `Product not found!`,
-        });
-      } else {
-        product.countView++;
-        await Product.updateOne({ _id });
- 
-        res.render("pages/info", {
-          msg: "success",
-          user: `Fetch successful!`,
-          data: product,
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/info", {
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
 };
 
 // AJAX
@@ -440,11 +281,11 @@ module.exports.getRelative = async (req, res, next) => {
       data: result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(205).json({
-      msg: 'ValidatorError',
-      user: error.message
-    })
+      msg: "ValidatorError",
+      user: error.message,
+    });
   }
 };
 
@@ -497,54 +338,39 @@ module.exports.getAllComment = async (req, res, next) => {
 
 // AJAX
 module.exports.postComment = async (req, res, next) => {
-  const { id } = req.params;
-  const { content, rating } = req.body;
-  const { user } = req
+  const { productSlugName } = req.params;
+  const { name, email, review } = req.body;
+  const { user } = req;
 
   try {
-    let _id = mongoose.Types.ObjectId();
-    let name = ''
-
-    if (!user) {
-      if (!req.body.name) throw new Error('You are not login so the field {name} is required!')
-      name = req.body.name
-    }
-    else {
-      _id = user._id
-      name = user.firstName + user.lastName
-    }
-
-    if (!content || !rating) {
-      return res.status(205).json({
-        mag: 'ValidatorError',
-        user: 'Content and rating is required!'
-      })
-    }
-
-    const product = await Product.findById(id);
     const comment = {
-      userId: _id,
       name,
-      content,
-      rating: parseInt(rating),
+      email,
+      review,
+      date: new Date(),
     };
 
-    const newProduct = await Product.updateOne(
-      { _id: id },
+    if (!user) {
+      comment.userId = mongoose.Types.ObjectId();
+    } else {
+      comment.userId = user._id;
+    }
+
+    await Product.updateOne(
+      { slugName: productSlugName },
       {
         $push: {
           comments: comment,
         },
-        $set: {
-          countRating: product.countRating + 1
-        }
       }
     );
+
+    console.log(comment);
 
     res.status(201).json({
       msg: "success",
       user: `Your comment has been public!`,
-      data: newProduct,
+      data: comment,
     });
   } catch (error) {
     console.log(error);
@@ -558,7 +384,7 @@ module.exports.postComment = async (req, res, next) => {
 // AJAX
 module.exports.postLike = async (req, res, next) => {
   const { id } = req.params;
-  const { user } = req
+  const { user } = req;
 
   try {
     const product = await Product.findById(id);
@@ -570,15 +396,15 @@ module.exports.postLike = async (req, res, next) => {
         name: name,
         price: price,
         thumbnail: thumbnail,
-      })
+      });
 
       return res.status(200).json({
-        msg: 'success',
-        user: 'Add to like resources successful!'
-      })
+        msg: "success",
+        user: "Add to like resources successful!",
+      });
     }
 
-    const { _id } = user
+    const { _id } = user;
 
     // Bug: check 2 likes ???
     product.countLike++;
@@ -602,13 +428,13 @@ module.exports.postLike = async (req, res, next) => {
             },
           },
         }
-      )
-    ])
+      ),
+    ]);
 
     res.status(200).json({
-      msg: 'success',
-      user: 'Like product successful!'
-    })
+      msg: "success",
+      user: "Like product successful!",
+    });
   } catch (error) {
     console.log(error);
     res.status(205).json({

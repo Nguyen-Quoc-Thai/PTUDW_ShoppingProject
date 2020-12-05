@@ -21,28 +21,48 @@
     <div class="product-view">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-8">
-            <% if (products.length) { %>
+          <div class="col-lg-9">
+            <% if (data.length) { %>
             <div class="row">
               <div class="col-md-12">
                 <div class="product-view-top">
                   <div class="row">
                     <div class="col-md-4">
                       <div class="product-search">
-                        <input type="email" value="Search" />
-                        <button><i class="fa fa-search"></i></button>
+                        <input
+                          type="text"
+                          placeholder="Search"
+                          name="search"
+                          value="<%=query.search%>"
+                        />
+                        <a href="" class="search">
+                          <button type="submit">
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </a>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="product-short">
                         <div class="dropdown">
                           <div class="dropdown-toggle" data-toggle="dropdown">
-                            Product sort by
+                            Sort price
                           </div>
                           <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" class="dropdown-item">Newest</a>
-                            <a href="#" class="dropdown-item">Popular</a>
-                            <a href="#" class="dropdown-item">Most sale</a>
+                            <a
+                              href=""
+                              class="dropdown-item query"
+                              name="sort"
+                              data="asc"
+                              >Ascending</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item query"
+                              name="sort"
+                              data="desc"
+                              >Descending</a
+                            >
                           </div>
                         </div>
                       </div>
@@ -51,19 +71,58 @@
                       <div class="product-price-range">
                         <div class="dropdown">
                           <div class="dropdown-toggle" data-toggle="dropdown">
-                            Product price range
+                            Price range
                           </div>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" class="dropdown-item">$0 to $50</a>
-                            <a href="#" class="dropdown-item">$51 to $100</a>
-                            <a href="#" class="dropdown-item">$101 to $150</a>
-                            <a href="#" class="dropdown-item">$151 to $200</a>
-                            <a href="#" class="dropdown-item">$201 to $250</a>
-                            <a href="#" class="dropdown-item">$251 to $300</a>
-                            <a href="#" class="dropdown-item">$301 to $350</a>
-                            <a href="#" class="dropdown-item">$351 to $400</a>
-                            <a href="#" class="dropdown-item">$401 to $450</a>
-                            <a href="#" class="dropdown-item">$451 to $500</a>
+                          <div class="dropdown-menu dropdown-menu-right filter">
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="0"
+                              max="200000"
+                              >Dưới 200.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="200000"
+                              max="500000"
+                              >200.000đ - 500.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="500000"
+                              max="1000000"
+                              >500.000đ - 1.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="1000000"
+                              max="5000000"
+                              >1.000.000đ - 5.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="5000000"
+                              max="10000000"
+                              >5.000.000đ - 10.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="10000000"
+                              max="25000000"
+                              >10.000.000đ - 25.000.000đ</a
+                            >
+                            <a
+                              href=""
+                              class="dropdown-item"
+                              min="25000000"
+                              max="100000000"
+                              >Trên 25.000.000đ</a
+                            >
                           </div>
                         </div>
                       </div>
@@ -72,11 +131,13 @@
                 </div>
               </div>
 
-              <% products.forEach(product => { %>
+              <% data.forEach(product => { %>
               <div class="col-md-4">
                 <div class="product-item">
                   <div class="product-title">
-                    <a href="#"><%= product.name %></a>
+                    <a href="/products/<%= product.slugName %>"
+                      ><%= product.name %></a
+                    >
                     <div class="ratting">
                       <i class="fa fa-star"></i>
                       <i class="fa fa-star"></i>
@@ -86,22 +147,24 @@
                     </div>
                   </div>
                   <div class="product-image">
-                    <a href="#">
-                      <img
-                        src="<%= product.thumbnail[0] %>"
-                        alt="Product Image"
-                      />
+                    <a href="/products/<%= product.slugName %>">
+                      <img src="<%= product.images[0] %>" alt="Product Image" />
                     </a>
                     <div class="product-action">
-                      <a href="#"><i class="fa fa-cart-plus"></i></a>
+                      <a
+                        href="#"
+                        class="add-to-cart"
+                        value="<%=product.slugName%>"
+                        ><i class="fa fa-cart-plus"></i
+                      ></a>
                       <a href="#"><i class="fa fa-heart"></i></a>
-                      <a href="/products/<%= product.id %>"
+                      <a href="/products/<%= product.slugName %>"
                         ><i class="fa fa-search"></i
                       ></a>
                     </div>
                   </div>
                   <div class="product-price">
-                    <h3><span>$</span><%= product.salePrice %></h3>
+                    <h3><span>$</span><%= product.price %></h3>
                     <a class="btn" href=""
                       ><i class="fa fa-shopping-cart"></i>Buy Now</a
                     >
@@ -116,7 +179,7 @@
               <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                   <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    <a class="page-link" href="#" tabindex="-1"><</a>
                   </li>
                   <li class="page-item active">
                     <a class="page-link" href="#">1</a>
@@ -124,7 +187,7 @@
                   <li class="page-item"><a class="page-link" href="#">2</a></li>
                   <li class="page-item"><a class="page-link" href="#">3</a></li>
                   <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
+                    <a class="page-link" href="#">></a>
                   </li>
                 </ul>
               </nav>
@@ -132,11 +195,12 @@
             <!-- Pagination Start -->
 
             <% } else { %>
-            <h1>NO PRODUCTS</h1>
+            <h1>No product found!</h1>
             <% } %>
           </div>
 
-          <%- include('../partials/productSidebar'); %>
+          <%- include('../partials/productSidebar', {col: 3, type: data[0] ?
+          data[0].type : 'Laptop & Macbook', categories, ourBrands}); %>
         </div>
       </div>
     </div>
