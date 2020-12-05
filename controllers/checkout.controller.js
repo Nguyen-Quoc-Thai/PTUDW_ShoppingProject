@@ -56,7 +56,7 @@ module.exports.postCheckout = async (req, res, next) => {
     console.log(checkout);
     req.session.checkout = checkout;
 
-    res.render("pages/wishlist", {
+    res.render("pages/dashboard", {
       // render page thong tin dat hang
       msg: "success",
       user: "Cart checkout successful!",

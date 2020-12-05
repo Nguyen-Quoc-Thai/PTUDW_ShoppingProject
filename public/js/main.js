@@ -317,11 +317,11 @@
         );
       return;
     }
-    if ($("#total-quantity strong").val() == 0) {
+    if ($("#total-quantity>strong").html() == 0) {
       $(".payment-methods")
         .last()
         .after(
-          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
+          '<span class="text-warning payment-info2" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
         );
       return;
     }
@@ -455,7 +455,7 @@
   });
 
   // Search on resource
-  $(".search").click(function (e) {
+  $("#search").click(function (e) {
     e.preventDefault();
 
     const search = $("input[name=search]").val();
@@ -526,5 +526,28 @@
   </form>`;
 
     $("#form-toggle").html(html);
+  });
+
+  // Pagination
+  $(".page-item").click(function (e) {
+    e.preventDefault();
+
+    if ($(this).hasClass("disabled")) return;
+    const val = $(this).attr("value");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("page", val);
+    window.location.search = urlParams;
+  });
+
+  // Global search
+  $(".btn-search-global").click(function (e) {
+    e.preventDefault();
+
+    const val = $(".text-search-global").val();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("q", val);
+    window.location.assign(`/products/search?${urlParams}`);
   });
 })(jQuery);

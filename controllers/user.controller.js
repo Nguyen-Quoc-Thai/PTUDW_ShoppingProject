@@ -282,7 +282,423 @@ exports.putUpdateInfo = async (req, res, next) => {
   }
 };
 
-//
+exports.postForgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(404).json({
+        msg: "ValidatorError",
+        user: "User not found!",
+      });
+
+    const token = jwt.sign({ _id: user._id }, jwtKey, {
+      expiresIn: tokenLife,
+    });
+    user.passwordResetToken = token;
+    user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // 5h
+
+    await User.updateOne({ _id: user._id }, { $set: user });
+    sendMail(req, email, token, "recovery");
+
+    res.status(200).json({
+      msg: "success",
+      user: "Reset password email has been sent!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      msg: error.message,
+      error,
+    });
+  }
+};
+
+exports.getResetPassword = async (req, res, next) => {
+  const { token } = req.params;
+
+  try {
+    const decoded = jwt.verify(token, jwtKey);
+    const { _id } = decoded;
+
+    const user = await User.findOne({
+      _id,
+      passwordResetToken: token,
+      passwordResetExpires: {
+        $gt: Date.now(),
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    res.render("pages/forgot", {
+      respond: {
+        msg: "success",
+        success: "Type your new password!",
+        token,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("pages/forgot", {
+      respond: {
+        msg: "ValidatorError",
+        user: error.message,
+        token,
+      },
+    });
+  }
+};
+
+exports.postResetPassword = async (req, res, next) => {
+  const { token } = req.query;
+  const { password, retypePassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, jwtKey);
+    const { _id } = decoded;
+
+    const user = await User.findById(_id);
+
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    if (password !== retypePassword) {
+      return res.render("pages/forgot", {
+        respond: {
+          msg: "ValidatorError",
+          passVal: password,
+          retypePassword: "Retype password does not match!",
+        },
+      });
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    user.password = encryptedPassword;
+
+    await User.updateOne({ _id: user._id }, { $set: user });
+
+    res.redirect("back");
+  } catch (error) {
+    console.log(error);
+    res.render("pages/forgot", {
+      respond: {
+        msg: "ValidatorError",
+        user: error.message,
+        token,
+      },
+    });
+  }
+};
+
+exports.postResend = async (req, res, next) => {
+  // cai nay can 1 cai nut resend la dc ui
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.render("pages/auth", {
+        // render page signup success
+        msg: "ValidatorError",
+        user: "Email not found!",
+      });
+
+    if (user.isVerified)
+      return res.render("pages/auth", {
+        // render page signup success
+        msg: "success",
+        user: "Your account has been verified!",
+      });
+
+    const token = jwt.sign({ _id: user._id }, jwtKey, {
+      expiresIn: tokenLife,
+    });
+    sendMail(req, user.email, token, "confirmation");
+
+    user.msg = "success";
+    console.log(user);
+    res.render("pages/auth", {
+      msg: "success",
+      user: `Recovery email has been sent to ${email}!`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("pages/auth", {
+      msg: "ValidatorError",
+      user: error.message,
+    });
+  }
+};
+
+module.exports.getRecovery = (req, res, next) => {
+  res.render("pages/recovery"); // render page 1 field nhap email
+};
+
+module.exports.postRecovery = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.render("pages/auth", {
+        msg: "ValidatorError",
+        user: "Email not found!",
+      });
+
+    const token = jwt.sign({ _id: user._id }, jwtKey, {
+      expiresIn: tokenLife,
+    });
+    user.passwordResetToken = token;
+    user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // 5h
+
+    await User.updateOne({ _id: user._id }, { $set: user });
+    sendMail(req, email, token, "recovery");
+
+    res.render("pages/auth", {
+      mag: "success",
+      user: `Recovery email has been sent to ${email}!`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("pages/auth", {
+      msg: "ValidatorError",
+      user: error.message,
+    });
+  }
+};
+
+module.exports.getReset = async (req, res, next) => {
+  const { token } = req.params;
+
+  try {
+    const decoded = jwt.verify(token, jwtKey);
+    const { _id } = decoded;
+
+    const user = await User.findOne({
+      _id,
+      passwordResetToken: token,
+      passwordResetExpires: {
+        $gt: Date.now(),
+      },
+    });
+
+    if (!user) {
+      return res.render("pages/auth", {
+        // render page 404
+        msg: "ValidatorError",
+        user: "Token invalid!",
+      });
+    }
+
+    res.render("pages/auth", {
+      // render page nhap 2 field password va retypePassword
+      msg: "success",
+      user: "Type your new password!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("pages/auth", {
+      // render page 404
+      msg: "ValidatorError",
+      user: error.message,
+    });
+  }
+};
+
+module.exports.postReset = async (req, res, next) => {
+  const { password, retypePassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, jwtKey);
+    const { _id } = decoded;
+
+    const user = await User.findOne({
+      _id,
+      passwordResetToken: token,
+      passwordResetExpires: {
+        $gt: Date.now(),
+      },
+    });
+
+    if (!user) {
+      return res.render("pages/auth", {
+        // render page 404
+        msg: "ValidatorError",
+        user: "Token failed. Invalid url!",
+      });
+    }
+
+    if (password !== retypePassword) {
+      return res.render("pages/auth", {
+        // render page get reset password
+        msg: "ValidatorError",
+        user: "Passwords does not match!",
+      });
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const passwordResetToken = crypto.randomBytes(16).toString("hex");
+
+    user.password = encryptedPassword;
+    user.passwordResetToken = passwordResetToken;
+
+    const newUser = await User.updateOne({ _id }, { $set: user });
+
+    res.render("pages/auth", {
+      msg: "success",
+      user: "Reset password success!",
+      data: newUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("pages/auth", {
+      // render page 404
+      msg: "ValidatorError",
+      user: error.message,
+    });
+  }
+};
+
+module.exports.getInfo = (req, res, next) => {
+  const { user } = req;
+
+  try {
+    if (!user) {
+      return res.render("pages/auth", {
+        msg: "ValidatorError",
+        user: "Please login to get information!",
+      });
+    }
+
+    res.render("pages/auth", {
+      // page info
+      msg: "success",
+      user: "Get information successful!",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("pages/auth", {
+      msg: "ValidatorError",
+      user: error.message,
+    });
+  }
+};
+
+module.exports.patchUpdate = async (req, res, next) => {
+  const acceptUserFields = [
+    "firstName",
+    "lastName",
+    "phone",
+    "address",
+    "password",
+  ];
+
+  const { id } = req.params;
+  const { user } = req;
+  const keys = Object.keys(req.body);
+  let hasPassword = false;
+  let newUser = {};
+
+  try {
+    for (const ops of keys) {
+      if (acceptUserFields.includes(ops)) {
+        newUser[ops] = req.body.ops;
+      } else {
+        return res.render("pages/auth", {
+          // render page info
+          msg: "ValidatorError",
+          user:
+            "You are only allowed to change the {firstName}, {lastName}, {phone}, {address}, {password}!",
+          data: user,
+        });
+      }
+
+      if (ops === "password") {
+        hasPassword = true;
+      }
+    }
+
+    if (hasPassword) {
+      if (!newUser.oldPassword)
+        return res.render("pages/auth", {
+          // render page info
+          msg: "ValidatorError",
+          user: "Old password is required!",
+          data: user,
+        });
+      else {
+        const isMatched = bcrypt.compare(newUser.oldPassword, user.password);
+        if (!isMatched)
+          return res.render("pages/auth", {
+            // render page info
+            msg: "ValidatorError",
+            user: "Old password is invalid!",
+            data: user,
+          });
+      }
+    }
+
+    if (hasPassword && !newUser.retypePassword) {
+      return res.render("pages/auth", {
+        // render page info
+        msg: "ValidatorError",
+        user: "Retypepassword is required!",
+        data: user,
+      });
+    }
+
+    if (
+      hasPassword &&
+      newUser.retypePassword &&
+      newUser.password !== newUser.retypePassword
+    ) {
+      return res.render("pages/auth", {
+        // render page info
+        msg: "ValidatorError",
+        user: "Password and retypepassword does not match!",
+        data: user,
+      });
+    }
+
+    if (hasPassword) {
+      const encryptedPassword = await bcrypt.hash(password, 10);
+      user.password = encryptedPassword;
+    }
+
+    const result = await User.updateOne(
+      { _id: id },
+      { $set: user },
+      { runValidators: true }
+    );
+    if (!result) {
+      return res.render("pages/auth", {
+        // render page info
+        msg: "ValidatorError",
+        user: "Phone number already exist!",
+        data: user,
+      });
+    }
+
+    res.render("pages/auth", {
+      msg: "success",
+      user: "Info updated!",
+      data: result,
+    });
+  } catch (error) {
+    console.log(error),
+      res.render("pages/auth", {
+        msg: "ValidatorError",
+        user: error.message,
+        data: user,
+      });
+  }
+};
 
 module.exports.getAll = (req, res, next) => {
   const { user } = req;
