@@ -3,11 +3,17 @@ const { product } = require("puppeteer");
 var router = express.Router();
 const productController = require("../controllers/product.controller");
 
+const {
+  searchCache,
+  resourceCache,
+} = require("./../middlewares/redis.middleware");
+
 /* GET users listing. */
-router.get("/search", productController.getSearch);
+router.get("/search", searchCache, productController.getSearch);
 
 router.get(
   "/resource/:resourceSlugName",
+  resourceCache,
   productController.getResourceProducts
 );
 

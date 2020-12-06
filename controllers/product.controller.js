@@ -1,3 +1,6 @@
+const RedisClient = require("./../config/redis");
+const cache_life = process.env.CACHE_LIFE;
+
 const mongoose = require("mongoose");
 const slug = require("slug");
 
@@ -69,17 +72,28 @@ module.exports.getSearch = async (req, res, next) => {
 
     res.render("pages/products", {
       msg: "success",
-      data: result || null,
       query: q,
+      data: result || null,
       ourBrands: statisticPerType || null,
       respond,
     });
+
+    const key = q + page + item_per_page + sort;
+    RedisClient.setex(
+      key,
+      cache_life,
+      JSON.stringify({
+        data: result || null,
+        ourBrands: statisticPerType || null,
+        respond,
+      })
+    );
   } catch (error) {
     console.log(error);
     res.render("pages/products", {
       msg: "ValidatorError",
-      data: result || null,
       query: q,
+      data: result || null,
       ourBrands: statisticPerType || null,
       respond: {},
     });
@@ -87,8 +101,8 @@ module.exports.getSearch = async (req, res, next) => {
 };
 
 module.exports.getResourceProducts = async (req, res, next) => {
-  const { resourceSlugName } = req.params;
-  const { producer } = req.query;
+  const { resourceSlugName = "laptop-va-macbook" } = req.params;
+  const { producer = "Dell" } = req.query;
   const page = parseInt(req.query.page) || 1;
   const item_per_page = parseInt(req.query.item_per_page) || 12;
 
@@ -179,11 +193,23 @@ module.exports.getResourceProducts = async (req, res, next) => {
     console.log(respond);
     res.render("pages/products", {
       msg: "success",
-      data: result || null,
       query: query,
+      data: result || null,
       ourBrands: statisticPerType || null,
       respond,
     });
+
+    const key =
+      resourceSlugName + producer + page + item_per_page + search + sort;
+    RedisClient.setex(
+      key,
+      cache_life,
+      JSON.stringify({
+        data: result || null,
+        ourBrands: statisticPerType || null,
+        respond,
+      })
+    );
   } catch (error) {
     res.render("error", {
       message: error.message,
