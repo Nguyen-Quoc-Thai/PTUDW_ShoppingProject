@@ -1,7 +1,10 @@
+const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
 const Checkout = require("./../models/checkout.model");
 
 const { postSignUp } = require("./user.controller");
+
+const { initCart } = require("./../utils/constant");
 
 module.exports.getCheckout = async (req, res, next) => {
   const { user } = req;
@@ -14,7 +17,7 @@ module.exports.getCheckout = async (req, res, next) => {
 };
 
 module.exports.postCheckout = async (req, res, next) => {
-  const { user } = req;
+  const { user, body } = req;
 
   try {
     if (!user) {
@@ -26,7 +29,10 @@ module.exports.postCheckout = async (req, res, next) => {
     const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
 
     const { userId, _id, status, items, totalQuantity, totalCost } = cart;
-    const { address, city, district, phone, firstName, lastName } = user;
+    const { address, city, district, phone, firstName, lastName } = body;
+
+    body.phone = user.phone;
+    body.email = user.email;
 
     // check if 2 add diff
 
@@ -51,22 +57,48 @@ module.exports.postCheckout = async (req, res, next) => {
 
     const checkout = new Checkout(checkoutObj);
     cart.status = "staging";
-    await Promise.all([checkout.save(), cart.save()]);
+    await Promise.all([
+      checkout.save(),
+      cart.save(),
+      User.updateOne({ _id: user._id }, { $set: body }),
+    ]);
 
     console.log(checkout);
     req.session.checkout = checkout;
+    req.session.cart = initCart;
 
-    res.render("pages/dashboard", {
-      // render page thong tin dat hang
+    res.redirect("/user/account/dashboard");
+    // res.render("pages/dashboard", {
+    //   // render page thong tin dat hang
+    //   msg: "success",
+    //   user: "Cart checkout successful!",
+    //   data: checkout,
+    // });
+  } catch (error) {
+    console.log(error);
+    res.render("error", {
+      msg: error.message,
+      error,
+    });
+  }
+};
+
+// AJAX
+module.exports.getCheckoutHistory = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const checkout = await Checkout.findById(id);
+
+    res.status(200).json({
       msg: "success",
-      user: "Cart checkout successful!",
       data: checkout,
     });
   } catch (error) {
-    console.log(error);
-    res.render("pages/auth", {
-      msg: "ValidatorError",
-      user: error.message,
+    console.log(error.message);
+    res.status(500).json({
+      msg: error.message,
+      error,
     });
   }
 };

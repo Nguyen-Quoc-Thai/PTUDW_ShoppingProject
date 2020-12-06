@@ -37,7 +37,8 @@ module.exports.mergeCart = async (Model, userId, sessionCart) => {
       cart = await Cart.create(sessionCart);
     } else if (userCart.totalQuantity === 0) {
       sessionCart.userId = userId;
-      cart = await Model.updateOne({ userId }, { $set: sessionCart });
+      await Model.updateOne({ userId }, { $set: sessionCart });
+      cart = sessionCart;
     } else {
       cart = userCart;
 

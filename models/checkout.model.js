@@ -70,6 +70,10 @@ const checkoutSchema = mongoose.Schema({
     type: Number,
     required: [true, "Total payment is required!"],
   },
+  date: {
+    type: Date,
+    default: new Date(),
+  },
 });
 
 // Add plugins

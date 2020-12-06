@@ -6,6 +6,7 @@ const passport = require("passport");
 
 const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
+const Checkout = require("./../models/checkout.model");
 
 const { sendMail } = require("./../config/nodemailer");
 const { mergeCart } = require("./../utils/statistic");
@@ -204,7 +205,21 @@ module.exports.getConfirm = async (req, res, next) => {
 };
 
 exports.getDashboard = async (req, res, next) => {
-  res.render("pages/dashboard");
+  const { user } = req;
+
+  try {
+    const checkout = await Checkout.find({ userId: user._id });
+
+    res.render("pages/dashboard", {
+      checkout,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.render("error", {
+      message: error.message,
+      error,
+    });
+  }
 };
 
 exports.putUpdatePassword = async (req, res, next) => {
