@@ -204,47 +204,65 @@
                 role="tabpanel"
                 aria-labelledby="account-nav"
               >
-                <h4>Account Details</h4>
+              <h4>Account Details</h4>
                 <form
+                  enctype="multipart/form-data"
                   id="change-info"
                   class="row"
                   method="POST"
                   action="/user/account/info"
                 >
-                  <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="firstName"
-                      value="<%=user.firstName%>"
-                    />
+                  <div class="col-md-12 d-flex">
+                    <div class="col-md-2">
+                      <div class="avatar-wrapper">
+                        <img class="profile-pic" src="<%=user.avatar%>" />
+                        <div class="upload-button">
+                        </div>
+                        <input id="thumbnail" class="file-upload" type="file" accept="image/*" name="thumbnail"/>
+                      </div>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="col-md-12 d-flex mt-45">
+                        <div class="col-md-6">
+                        <input
+                          class="form-control"
+                          type="text"
+                          name="firstName"
+                          value="<%=user.firstName%>"
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        <input
+                          class="form-control"
+                          type="text"
+                          name="lastName"
+                          value="<%=user.lastName%>"
+                        />
+                      </div>
+                      </div>
+                      <div class="col-md-12 d-flex">
+                        <div class="col-md-6">
+                        <input
+                          class="form-control"
+                          type="text"
+                          name="phone"
+                          value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
+                          readonly
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        <input
+                          class="form-control"
+                          type="text"
+                          name="email"
+                          value="<%=user.email%>"
+                          readonly
+                        />
+                      </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="lastName"
-                      value="<%=user.lastName%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="phone"
-                      value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
-                      readonly
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="email"
-                      value="<%=user.email%>"
-                      readonly
-                    />
-                  </div>
+
                   <%if(user.address.length){%>
                   <div class="col-md-12">
                     <input

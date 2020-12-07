@@ -8,6 +8,8 @@ const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
 const Checkout = require("./../models/checkout.model");
 
+const cloudinary = require("./../config/cloudinary");
+
 const { sendMail } = require("./../config/nodemailer");
 const { mergeCart } = require("./../utils/statistic");
 
@@ -276,6 +278,18 @@ exports.putUpdateInfo = async (req, res, next) => {
         user[fie] = body[fie];
       }
     }
+
+    if (req.file) {
+      const ret = await cloudinary.uploadSingleAvatar(req.file.path);
+      if (ret) {
+        await cloudinary.destroySingle(user.cloudinary_id);
+        body.avatar = ret.url;
+        body.cloudinary_id = ret.id;
+      }
+
+      console.log(ret);
+    }
+
     await User.updateOne({ _id: user._id }, { $set: body });
 
     res.status(200).json({

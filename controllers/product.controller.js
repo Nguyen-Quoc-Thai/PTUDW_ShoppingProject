@@ -101,8 +101,8 @@ module.exports.getSearch = async (req, res, next) => {
 };
 
 module.exports.getResourceProducts = async (req, res, next) => {
-  const { resourceSlugName = "laptop-va-macbook" } = req.params;
-  const { producer = "Dell" } = req.query;
+  const { resourceSlugName } = req.params;
+  const { producer } = req.query;
   const page = parseInt(req.query.page) || 1;
   const item_per_page = parseInt(req.query.item_per_page) || 12;
 

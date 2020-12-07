@@ -54,8 +54,8 @@ module.exports.searchCache = (req, res, next) => {
 };
 
 module.exports.resourceCache = (req, res, next) => {
-  const { resourceSlugName = "laptop-va-macbook" } = req.params;
-  const { producer = "Dell" } = req.query;
+  const { resourceSlugName } = req.params;
+  const { producer } = req.query;
   const page = parseInt(req.query.page) || 1;
   const item_per_page = parseInt(req.query.item_per_page) || 12;
 
@@ -64,7 +64,7 @@ module.exports.resourceCache = (req, res, next) => {
   const { search = "", sort = "asc", min = 0, max = 100000000 } = req.query;
 
   const key =
-    resourceSlugName + producer + page + item_per_page + search + sort;
+    "" + resourceSlugName + producer + page + item_per_page + search + sort;
   console.log("Cache key:" + key);
   RedisClient.get(key, (error, data) => {
     if (error) {

@@ -87,6 +87,10 @@ const userScheme = mongoose.Schema({
   slugName: {
     type: String,
   },
+  cloudinary_id: {
+    type: String,
+    default: "",
+  },
 });
 
 userScheme.path("phone").validate(async (value) => {
