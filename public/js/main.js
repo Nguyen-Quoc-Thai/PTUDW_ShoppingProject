@@ -654,6 +654,7 @@
     });
   });
 
+  // Upload avatar btn
   var readURL = function (input) {
     if (input.files && input.files[0]) {
       var reader = new FileReader();
@@ -672,5 +673,24 @@
 
   $(".upload-button").on("click", function () {
     $(".file-upload").click();
+  });
+
+  // Post like
+  $(".add-to-like").click(function (e) {
+    e.preventDefault();
+
+    const slugName = $(this).attr("value");
+    const url = `/user/like/${slugName}`;
+    $.post(url, {}, function (data, status) {
+      if (data.msg === "success" && status === "success") {
+        const oldVal = parseInt($(".cart-count-like").html().slice(1));
+        $(".cart-count-like").html(`(${oldVal + 1})`);
+      }
+    });
+  });
+
+  // Dashboard logout
+  $("#logout>a").click(function (e) {
+    $("#logout").submit();
   });
 })(jQuery);

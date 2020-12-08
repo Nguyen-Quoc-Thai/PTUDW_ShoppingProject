@@ -6,6 +6,7 @@ const passport = require("passport");
 
 const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
+const Product = require("./../models/product.model");
 const Checkout = require("./../models/checkout.model");
 
 const cloudinary = require("./../config/cloudinary");
@@ -589,6 +590,57 @@ module.exports.postReset = async (req, res, next) => {
       // render page 404
       msg: "ValidatorError",
       user: error.message,
+    });
+  }
+};
+
+module.exports.getWishlist = async (req, res, next) => {
+  res.render("pages/wishlist", { user: req.user });
+};
+
+// AJAX
+module.exports.postLike = async (req, res, next) => {
+  const { productSlugName } = req.params;
+  const { user } = req;
+
+  try {
+    if (user.likes.map((pro) => pro.slugName).includes(productSlugName)) {
+      return res.status(201).json({
+        msg: "success2",
+        user: `This product has been added before!`,
+      });
+    }
+
+    const product = await Product.findOne({ slugName: productSlugName });
+    const { name, slugName, price, images } = product;
+
+    const like = {
+      name,
+      slugName,
+      price,
+      images,
+      date: new Date(),
+    };
+
+    user.likes.push(like);
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: user,
+      }
+    );
+
+    res.status(201).json({
+      msg: "success",
+      user: `Your like has been public!`,
+      data: like,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(205).json({
+      msg: "ValidatorError",
+      user: error.message,
+      error,
     });
   }
 };

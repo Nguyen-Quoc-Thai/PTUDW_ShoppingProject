@@ -59,7 +59,7 @@
             >
             <form class="dropdown-menu" id="user-act" method="POST" action="/user/logout">
               <a href="/user/account/dashboard" class="dropdown-item">Dashboard</a>
-              <a href="/user/account/wishlist" class="dropdown-item">Wishlist</a>
+              <a href="/user/wishlist" class="dropdown-item">Wishlist</a>
               <a href="/user/logout" class="dropdown-item post" id="logout">Logout</a>
             </form>
           </div>
@@ -97,7 +97,11 @@
         <div class="user">
           <a href="/user/wishlist" class="btn wishlist">
             <i class="fa fa-heart"></i>
-            <span class="cart-count-like">(0)</span>
+            <%if(user){%>
+              <span class="cart-count-like">(<%=user.likes.length%>)</span>
+              <%}else{%>
+                <span class="cart-count-like">(0)</span>
+                <%}%>
           </a>
           <a href="/cart" class="btn cart">
             <i class="fa fa-shopping-cart"></i>

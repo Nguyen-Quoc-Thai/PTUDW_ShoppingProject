@@ -157,7 +157,12 @@
                         value="<%=product.slugName%>"
                         ><i class="fa fa-cart-plus"></i
                       ></a>
-                      <a href="#"><i class="fa fa-heart"></i></a>
+                      <a href="#"
+                        ><i
+                          class="fa fa-heart add-to-like"
+                          value="<%=product.slugName%>"
+                        ></i
+                      ></a>
                       <a href="/products/<%= product.slugName %>"
                         ><i class="fa fa-search"></i
                       ></a>
@@ -165,7 +170,7 @@
                   </div>
                   <div class="product-price">
                     <h3><span>$</span><%= product.price %></h3>
-                    <a class="btn" href=""
+                    <a class="btn" href="/checkout"
                       ><i class="fa fa-shopping-cart"></i>Buy Now</a
                     >
                   </div>

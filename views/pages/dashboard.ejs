@@ -10,8 +10,8 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Products</a></li>
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/">Products</a></li>
           <li class="breadcrumb-item active">My Account</li>
         </ul>
       </div>
@@ -69,11 +69,9 @@
                 ><i class="fa fa-user"></i>Account Details</a
               >
               <form id="logout" method="POST" action="/user/logout">
-                <button type="submit">
-                  <a class="nav-link" href="">
-                    <i class="fa fa-sign-out-alt"></i>Logout
-                  </a>
-                </button>
+                <a class="nav-link" href="">
+                  <i class="fa fa-sign-out-alt"></i>Logout
+                </a>
               </form>
             </div>
           </div>
@@ -141,30 +139,12 @@
                   </table>
                 </div>
               </div>
-
-              <!-- Modal -->
-              <button
-                id="show-model"
-                type="button"
-                class="btn btn-primary d-none"
-                data-toggle="modal"
-                data-target="#exampleModalCenter"
-              >
-                Launch demo modal
-              </button>
               <div
-                class="modal fade"
-                id="exampleModalCenter"
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby="exampleModalCenterTitle"
-                aria-hidden="true"
+                class="tab-pane fade"
+                id="payment-tab"
+                role="tabpanel"
+                aria-labelledby="payment-nav"
               >
-                <!-- ====================================== -->
-              </div>
-              <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-
-              </div>
                 <h4>Payment Method</h4>
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
@@ -204,7 +184,7 @@
                 role="tabpanel"
                 aria-labelledby="account-nav"
               >
-              <h4>Account Details</h4>
+                <h4>Account Details</h4>
                 <form
                   enctype="multipart/form-data"
                   id="change-info"
@@ -216,49 +196,54 @@
                     <div class="col-md-2">
                       <div class="avatar-wrapper">
                         <img class="profile-pic" src="<%=user.avatar%>" />
-                        <div class="upload-button">
-                        </div>
-                        <input id="thumbnail" class="file-upload" type="file" accept="image/*" name="thumbnail"/>
+                        <div class="upload-button"></div>
+                        <input
+                          id="thumbnail"
+                          class="file-upload"
+                          type="file"
+                          accept="image/*"
+                          name="thumbnail"
+                        />
                       </div>
                     </div>
                     <div class="col-md-9">
                       <div class="col-md-12 d-flex mt-45">
                         <div class="col-md-6">
-                        <input
-                          class="form-control"
-                          type="text"
-                          name="firstName"
-                          value="<%=user.firstName%>"
-                        />
-                      </div>
-                      <div class="col-md-6">
-                        <input
-                          class="form-control"
-                          type="text"
-                          name="lastName"
-                          value="<%=user.lastName%>"
-                        />
-                      </div>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="firstName"
+                            value="<%=user.firstName%>"
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="lastName"
+                            value="<%=user.lastName%>"
+                          />
+                        </div>
                       </div>
                       <div class="col-md-12 d-flex">
                         <div class="col-md-6">
-                        <input
-                          class="form-control"
-                          type="text"
-                          name="phone"
-                          value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
-                          readonly
-                        />
-                      </div>
-                      <div class="col-md-6">
-                        <input
-                          class="form-control"
-                          type="text"
-                          name="email"
-                          value="<%=user.email%>"
-                          readonly
-                        />
-                      </div>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="phone"
+                            value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
+                            readonly
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="email"
+                            value="<%=user.email%>"
+                            readonly
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -359,6 +344,26 @@
                     <button type="submit" class="btn">Save Changes</button>
                   </div>
                 </form>
+              </div>
+              <!-- Modal -->
+              <button
+                id="show-model"
+                type="button"
+                class="btn btn-primary d-none"
+                data-toggle="modal"
+                data-target="#exampleModalCenter"
+              >
+                Launch demo modal
+              </button>
+              <div
+                class="modal fade"
+                id="exampleModalCenter"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="exampleModalCenterTitle"
+                aria-hidden="true"
+              >
+                <!-- ====================================== -->
               </div>
             </div>
           </div>

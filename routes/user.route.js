@@ -51,6 +51,14 @@ router.put(
   userController.putUpdateInfo
 );
 
+router.post("/wishlist", checkAuthenticated, userController.getWishlist);
+
+router.post(
+  "/like/:productSlugName",
+  checkAuthenticated,
+  userController.postLike
+);
+
 router.post("/resend", checkNotAuthenticated, userController.postResend);
 router.get("/recovery", checkNotAuthenticated, userController.getRecovery);
 router.post("/recovery", checkNotAuthenticated, userController.postRecovery);
