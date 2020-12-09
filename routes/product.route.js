@@ -1,25 +1,27 @@
 var express = require("express");
-const { product } = require("puppeteer");
 var router = express.Router();
 const productController = require("../controllers/product.controller");
+const productApiController = require("../api/v1/controllers/product");
 
 const {
   searchCache,
   resourceCache,
 } = require("./../middlewares/redis.middleware");
 
-/* GET users listing. */
+// Controller
 router.get("/search", searchCache, productController.getSearch);
-
 router.get(
   "/resource/:resourceSlugName",
   resourceCache,
   productController.getResourceProducts
 );
-
 router.get("/:productSlugName", productController.getProductDetails);
 
-router.post("/comment/:productSlugName", productController.postComment);
+// API
+router.post(
+  "/api/v1/comment/:productSlugName",
+  productApiController.postComment
+);
 
 // router.get('/', productController.getAll);
 // router.get('/:id', productController.getOne);

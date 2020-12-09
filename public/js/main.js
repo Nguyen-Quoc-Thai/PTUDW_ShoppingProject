@@ -233,74 +233,6 @@
     }
   });
 
-  // Add to cart
-  $(".add-to-cart").click(function (e) {
-    e.preventDefault();
-    const slugName = $(this).attr("value");
-
-    $.post(`/cart/${slugName}`, {}, function (data, status) {
-      if (data.msg === "success" && status === "success") {
-        const curCount = parseInt(
-          $(".cart-count-add").html().replace(/[()]/g, "")
-        );
-
-        $(".cart-count-add").html(`(${curCount + 1})`);
-      }
-    });
-  });
-
-  // Update cart
-  $(".change-val").click(function (e) {
-    e.preventDefault();
-
-    const value = $(this).attr("value");
-    const slugName = $(this).attr("name");
-
-    if (parseInt(value) === 0) {
-      const re = confirm("Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?");
-      if (re == false) return false;
-      $(this).parent().parent().css("display", "none");
-    }
-
-    const request = $.ajax({
-      url: `/cart/${slugName}`,
-      data: JSON.stringify({
-        bias: parseInt(value),
-      }),
-      type: "PUT",
-      contentType: "application/json",
-      processData: false,
-      xhr: function () {
-        return window.XMLHttpRequest == null ||
-          new window.XMLHttpRequest().addEventListener == null
-          ? new window.ActiveXObject("Microsoft.XMLHTTP")
-          : $.ajaxSettings.xhr();
-      },
-    });
-
-    request.done(function (data, status) {
-      if (data.msg === "success" && status === "success") {
-        data.data.items.forEach((item) => {
-          $(`#${item.itemId}`).html(item.total.toLocaleString("vi-VN"));
-        });
-
-        $("#total-cost").html(data.data.totalCost.toLocaleString("vi-VN"));
-        $("#total-quantity").html(
-          data.data.totalQuantity.toLocaleString("vi-VN")
-        );
-        $("#shipping-fee").html(data.data.totalQuantity ? "25.000" : "0");
-        $("#total-payment").html(
-          data.data.totalQuantity
-            ? (data.data.totalCost + 25000).toLocaleString("vi-VN")
-            : 0
-        );
-        $(".cart-count-add").html(
-          data.data.totalQuantity ? `(${data.data.totalQuantity})` : `(0)`
-        );
-      }
-    });
-  });
-
   // Handle submit place order
   $(".submit-checkout").click(function (e) {
     e.preventDefault();
@@ -329,132 +261,10 @@
     $("#form-val").submit();
   });
 
-  // Handle comment
-  // $("#comment :input").each(function () {
-  //   $(this).focus(function () {
-  //     $(".comment-warning").remove(this);
-  //   });
-  // });
-  $("#comment").submit(function (e) {
-    e.preventDefault();
-
-    const url = $(this).attr("action");
-    let data = {};
-    $("#comment :input").each(function () {
-      data[$(this).attr("name")] = $(this).val();
-    });
-
-    if (!data.name || !data.email || !data.review) {
-      console.log($("span.comment-warning span").val());
-      if ($("span.comment-warning span").val()) return;
-      const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-warning">Bạn phải điền đây đủ thông tin</span></div>`;
-      $(".leave-comment").prepend(warning);
-      return;
-    }
-
-    $.post(url, { ...data }, function (data, status) {
-      console.log(data);
-      if (data.msg === "success" && status === "success") {
-        const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
-        <div class="reviewer">
-          ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${data.data.date}</span>
-        </div>
-        <div class="ratting">
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-        </div>
-        <p>${data.data.review}</p>
-      </div>`;
-        $(".reviews-submit").before(html);
-        $("textarea[name='review']").val("");
-      }
-    });
-  });
-
   // Handle logout
   $("#logout").click(function (e) {
     e.preventDefault();
     $("#user-act").submit();
-  });
-
-  // Handle change password
-  $("#change-password").submit(function (e) {
-    e.preventDefault();
-
-    const url = $(this).attr("action");
-    let data = {};
-    $("#change-password :input").each(function () {
-      data[$(this).attr("name")] = $(this).val();
-    });
-
-    const request = $.ajax({
-      url,
-      data: JSON.stringify({ ...data }),
-      type: "PUT",
-      contentType: "application/json",
-      processData: false,
-      xhr: function () {
-        return window.XMLHttpRequest == null ||
-          new window.XMLHttpRequest().addEventListener == null
-          ? new window.ActiveXObject("Microsoft.XMLHTTP")
-          : $.ajaxSettings.xhr();
-      },
-    });
-
-    request.done(function (data, status) {
-      if (status === "success") {
-        let className = "";
-
-        if (data.msg !== "success") {
-          className = "text-warning";
-        } else className = "text-success";
-        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
-        $(".change-password").prepend(result);
-      }
-    });
-  });
-
-  // Handle change info
-  $("#change-info").submit(function (e) {
-    e.preventDefault();
-
-    let formData = new FormData();
-    var d = $("#thumbnail")[0].files[0];
-    formData.append("thumbnail", d);
-
-    const url = $(this).attr("action");
-    $("#change-info :input").each(function () {
-      formData.append($(this).attr("name"), $(this).val());
-    });
-
-    const request = $.ajax({
-      url,
-      data: formData,
-      type: "PUT",
-      contentType: false,
-      processData: false,
-      xhr: function () {
-        return window.XMLHttpRequest == null ||
-          new window.XMLHttpRequest().addEventListener == null
-          ? new window.ActiveXObject("Microsoft.XMLHTTP")
-          : $.ajaxSettings.xhr();
-      },
-    });
-
-    request.done(function (data, status) {
-      if (status === "success") {
-        let className = "";
-
-        if (data.msg !== "success") {
-          className = "text-warning";
-        } else className = "text-success";
-        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
-        $(".change-info").prepend(result);
-      }
-    });
   });
 
   // Search on resource
@@ -554,106 +364,6 @@
     window.location.assign(`/products/search?${urlParams}`);
   });
 
-  // View history
-  $(".view-checkout").click(function (e) {
-    e.preventDefault();
-
-    const id = $(this).attr("value");
-
-    $.get(`/checkout/${id}`, function (data) {
-      if (data.msg !== "success") return;
-
-      const modal_header = `<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">
-            Thông tin mua hàng
-          </h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-        <div class="mb-3"><span><b>Người nhận:</b>&nbsp;${
-          data.data.receiver
-        }&nbsp;&nbsp;${
-        data.data.phone
-      }<strong>&nbsp;${data.data.paymentMethod.toUpperCase()}</strong></span></div>
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead class="thead-dark">
-                <tr>
-                  <th>No</th>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody class="align-middle" id="cart">`;
-
-      const modal_footer = `<tr>
-              <td>Sum
-              </td>
-              <td>
-              </td>
-              <td></td>
-              <td>${data.data.totalQuantity}
-              </td>
-              <td>${data.data.totalPayment.toLocaleString("vi-VN")} đ</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <div class="modal-footer">
-        <button
-        type="button"
-        class="btn btn-secondary"
-        data-dismiss="modal"
-        >
-        Close
-        </button>
-        </div>
-        </div>
-        </div>`;
-
-      const modal_content = data.data.items.map((item, index) => {
-        return `
-                  <tr>
-                    <td>
-                      ${index + 1}
-                    </td>
-                    <td>
-                      <div class="img d-flex align-items-center">
-                        <a href="/products/${item.slugName}"
-                          ><img style="width: 45px; height: auto;" src="${
-                            item.thumbnail
-                          }" alt="Image"
-                        /></a>
-                        <p class="m-0">${item.name}</p>
-                      </div>
-                    </td>
-                    <td>${item.price}</td>
-                    <td>${item.quantity}
-                    </td>
-                    <td>${item.total.toLocaleString("vi-VN")} đ</td>
-                  </tr>
-                  `;
-      });
-
-      $("#exampleModalCenter").html(
-        modal_header + modal_content.reverse().join("") + modal_footer
-      );
-
-      $("#show-model").trigger("click");
-    });
-  });
-
   // Upload avatar btn
   var readURL = function (input) {
     if (input.files && input.files[0]) {
@@ -675,22 +385,21 @@
     $(".file-upload").click();
   });
 
-  // Post like
-  $(".add-to-like").click(function (e) {
-    e.preventDefault();
-
-    const slugName = $(this).attr("value");
-    const url = `/user/like/${slugName}`;
-    $.post(url, {}, function (data, status) {
-      if (data.msg === "success" && status === "success") {
-        const oldVal = parseInt($(".cart-count-like").html().slice(1));
-        $(".cart-count-like").html(`(${oldVal + 1})`);
-      }
-    });
-  });
-
   // Dashboard logout
   $("#logout>a").click(function (e) {
     $("#logout").submit();
+  });
+
+  // Wishlist trash
+  $(".trash-like").click(function (e) {
+    e.preventDefault();
+
+    const value = $(this).attr("value");
+
+    if (parseInt(value) === 0) {
+      const re = confirm("Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?");
+      if (re == false) return false;
+      $(this).parent().parent().css("display", "none");
+    }
   });
 })(jQuery);
