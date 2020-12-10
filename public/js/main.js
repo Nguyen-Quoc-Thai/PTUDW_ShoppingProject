@@ -328,7 +328,7 @@
             >Keep me signed in.</label
           >
           <a href="/user/auth" style="display: inline-block"
-            >&nbsp; Sign in?</a
+            >&nbsp;Sign in?</a
           >
         </div>
       </div>
@@ -401,5 +401,44 @@
       if (re == false) return false;
       $(this).parent().parent().css("display", "none");
     }
+  });
+
+  // Validator signup
+  $("body>div.login>div>div>form")
+    .find("input")
+    .not(".name")
+    .click(function () {
+      const curr = $(this);
+      curr.next().addClass("d-none");
+      curr.next().removeClass("d-block text-danger");
+    });
+
+  $("input[name=retypePassword]").blur(function (e) {
+    const retype = $("input[name=password]").val();
+    const pass = $(this).val();
+
+    if (retype !== pass) {
+      $(this).next().removeClass("d-none");
+      $(this).next().addClass("d-block text-danger");
+
+      $(this).next().html("Nhập lại mật khẩu không chính xác!");
+      $(this).next().css("font-size", "12px");
+      $(this).next().css("margin", "-10px 0 10px");
+    } else {
+      $(this).css("border-color", "green");
+      $(this).css("border-width", "2px");
+    }
+  });
+
+  $("input[name=retypePassword]").click(function () {
+    const curr = $(this);
+    curr.next().addClass("d-none");
+    curr.next().removeClass("d-block text-danger");
+  });
+
+  $("#form-toggle>form>div>div:nth-child(1)>input").click(function () {
+    const curr = $(this);
+    curr.next().addClass("d-none");
+    curr.next().removeClass("d-block text-danger");
   });
 })(jQuery);

@@ -165,3 +165,62 @@ module.exports.postUnLike = async (req, res, next) => {
     });
   }
 };
+
+// Validator
+
+// Signup
+module.exports.postCheckExist = async (req, res, next) => {
+  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const phoneRegex = /(03|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
+
+  try {
+    const key = Object.keys(req.body)[0];
+
+    let respond = {
+      msg: "success",
+    };
+
+    switch (key) {
+      case "email": {
+        const userWithEmail = await User.findOne({ email: req.body[key] });
+        if (userWithEmail) {
+          respond.email = "Địa chỉ email đã có người sử dụng!";
+        }
+        if (!req.body[key].match(emailRegex)) {
+          respond.email = "Email không hợp lệ!";
+        }
+        break;
+      }
+      case "phone": {
+        const userWithPhone = await User.findOne({ phone: req.body[key] });
+        if (userWithPhone) {
+          respond.phone = "Số điện thoại đã có người sử dụng!";
+        }
+        if (!req.body[key].match(phoneRegex)) {
+          respond.phone = "Số điện thoại không hợp lệ!";
+        }
+        break;
+      }
+      case "password": {
+        if (req.body[key].length < 6) {
+          respond.password = "Độ dài mật khẩu tối thiểu là 6!";
+        } else if (req.body[key].length > 20) {
+          respond.password = "Độ dài mật khẩu tối đa là 20!";
+        }
+        break;
+      }
+    }
+
+    if (Object.keys(respond).length > 1) {
+      respond.msg = "error";
+    }
+
+    res.status(200).json(respond);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      msg: error.message,
+      error,
+    });
+  }
+};

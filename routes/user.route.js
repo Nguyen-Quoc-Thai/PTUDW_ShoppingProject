@@ -57,6 +57,13 @@ router.post(
   userApiController.postUnLike
 );
 
+// Validator api
+router.post(
+  "/api/v1/exist",
+  checkNotAuthenticated,
+  userApiController.postCheckExist
+);
+
 // router.post("/resend", checkNotAuthenticated, userController.postResend);
 // router.get("/recovery", checkNotAuthenticated, userController.getRecovery);
 // router.post("/recovery", checkNotAuthenticated, userController.postRecovery);

@@ -22,55 +22,43 @@
     <div class="login">
       <div class="container-fluid">
         <div class="row">
-          <form class="col-lg-6" method="POST" action="/user/register">
+          <form
+            class="col-lg-6"
+            method="POST"
+            action="/user/register"
+            autocomplete="off"
+          >
             <div class="register-form">
               <div class="row">
                 <div class="col-md-6">
                   <label>First Name</label>
                   <input
-                    class="form-control"
+                    class="form-control name"
                     type="text"
                     name="firstName"
-                    value="<%=data.firstName || ''%>"
+                    value=""
                   />
-                  <%if (respond.msg === "ValidatorError" && respond.firstName)
-                  {%>
-                  <div class="alert p-1 t-1"><%=respond.firstName%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
                   <label>Last Name</label>
                   <input
-                    class="form-control"
+                    class="form-control name"
                     type="text"
                     name="lastName"
-                    value="<%=data.lastName || ''%>"
+                    value=""
                   />
-                  <%if (respond.msg === "ValidatorError" && respond.lastName)
-                  {%>
-                  <div class="alert p-1 t-1"><%=respond.lastName%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
                   <label>E-mail</label>
-                  <%if (respond.msg === 'ValidatorError') {%>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="email"
-                    value="<%=data.email%>"
-                  />
-                  <%}else{%>
                   <input
                     class="form-control"
                     type="text"
                     name="email"
                     value=""
                   />
-                  <%}%> <%if (respond.msg === "ValidatorError" && respond.email)
-                  {%>
-                  <div class="alert p-1 t-1"><%=respond.email%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
                   <label>Mobile No</label>
@@ -78,11 +66,9 @@
                     class="form-control"
                     type="text"
                     name="phone"
-                    value="<%=data.phone || ''%>"
+                    value=""
                   />
-                  <%if (respond.msg === "ValidatorError" && respond.phone) {%>
-                  <div class="alert p-1 t-1"><%=respond.phone%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
                   <label>Password</label>
@@ -90,28 +76,21 @@
                     class="form-control"
                     type="password"
                     name="password"
-                    value="<%respond.msg === 'ValidatorError' ? data.email :
-                  ''%>"
+                    value=""
                   />
-                  <%if (respond.msg === "ValidatorError" && respond.password)
-                  {%>
-                  <div class="alert p-1 t-1"><%=respond.password%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
                   <label>Retype Password</label>
                   <input
-                    class="form-control"
+                    class="name form-control"
                     type="password"
                     name="retypePassword"
                   />
-                  <%if (respond.msg === "ValidatorError" &&
-                  respond.retypePassword) {%>
-                  <div class="alert p-1 t-1"><%=respond.retypePassword%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <%if(respond.success){%>
-                <div style="padding: 0 0 5px 15px">
+                <div style="padding: 0 0 20px 15px">
                   <span class="text-success"><%=respond.success%></span>
                 </div>
                 <%}%>
@@ -126,34 +105,38 @@
               <div class="row">
                 <div class="col-md-6 user-login">
                   <label>E-mail / Username</label>
-                  <%if (respond.msg === 'ValidatorError2') {%>
                   <input
                     class="form-control"
                     type="text"
                     name="email"
                     value="<%=data.email%>"
                   />
-                  <%}else{%>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="email"
-                    value=""
-                  />
-                  <%}%> <%if (respond.msg === "ValidatorError2" &&
-                  respond.user){%>
-                  <div class="alert p-1 t-1"><%=respond.user%></div>
-                  <%}%>
+                  <span class="d-none"></span>
                 </div>
                 <div class="col-md-6 user-login">
                   <label>Password</label>
                   <input class="form-control" type="password" name="password" />
                   <%if (respond.msg === "ValidatorError2" && respond.password)
                   {%>
-                  <div class="alert p-1 t-1"><%=respond.password%></div>
+                  <div style="font-size: 12px; margin: -10px 0 0 0">
+                    <span class="text-danger"><%=respond.password%></span>
+                  </div>
+
                   <%}%>
                 </div>
+                <%if(respond.msg==='ValidatorError2'){%>
+                <span
+                  style="font-size: 12px; margin: -10px 0 15px 15px"
+                  class="text-danger"
+                  ><%=respond.user%></span
+                >
+                <%}%>
                 <div class="col-md-12">
+                  <%if(respond.success2){%>
+                  <span style="font-size: 12px; margin: 0" class="text-success"
+                    ><%=respond.success2%></span
+                  >
+                  <%}%>
                   <div class="custom-control custom-checkbox">
                     <input
                       type="checkbox"
@@ -168,15 +151,10 @@
                       href=""
                       class="action-toggle"
                       style="display: inline-block"
-                      >&nbsp; Forgot password?</a
+                      >&nbsp;Forgot password?</a
                     >
                   </div>
                 </div>
-                <%if(respond.success2){%>
-                <div style="padding: 0 0 5px 15px">
-                  <span class="text-success"><%=respond.success2%></span>
-                </div>
-                <%}%>
                 <div class="col-md-12">
                   <button class="btn" type="submit">Sign in</button>
                 </div>

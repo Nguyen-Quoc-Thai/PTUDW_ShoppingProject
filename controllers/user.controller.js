@@ -143,7 +143,7 @@ module.exports.postSignIn = async (req, res, next) => {
         if (req.body.remember) {
           req.session.cookie.maxAge = +remember_life; // 7 days
         }
-        res.redirect("back");
+        res.redirect("/");
       });
     } else {
       res.render("pages/auth", {
@@ -161,7 +161,7 @@ module.exports.postSignOut = (req, res, next) => {
   req.logout();
   req.session.cart = null;
   req.user = null;
-  res.redirect("back");
+  res.redirect("/");
 };
 
 exports.getDashboard = async (req, res, next) => {
@@ -210,6 +210,36 @@ module.exports.getConfirm = async (req, res, next) => {
   }
 };
 
+exports.postForgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.redirect("back");
+
+    const token = jwt.sign({ _id: user._id }, jwtKey, {
+      expiresIn: tokenLife,
+    });
+    user.passwordResetToken = token;
+    user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // 5h
+
+    await User.updateOne({ _id: user._id }, { $set: user });
+    sendMail(req, email, token, "recovery");
+
+    res.render("pages/email", {
+      msg: "success",
+      user: "Reset password email has been sent!",
+      email,
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("error", {
+      message: error.message,
+      error,
+    });
+  }
+};
+
 exports.getResetPassword = async (req, res, next) => {
   const { token } = req.params;
 
@@ -244,39 +274,6 @@ exports.getResetPassword = async (req, res, next) => {
         user: error.message,
         token,
       },
-    });
-  }
-};
-
-exports.postForgotPassword = async (req, res, next) => {
-  const { email } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user)
-      return res.status(404).json({
-        msg: "ValidatorError",
-        user: "User not found!",
-      });
-
-    const token = jwt.sign({ _id: user._id }, jwtKey, {
-      expiresIn: tokenLife,
-    });
-    user.passwordResetToken = token;
-    user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // 5h
-
-    await User.updateOne({ _id: user._id }, { $set: user });
-    sendMail(req, email, token, "recovery");
-
-    res.status(200).json({
-      msg: "success",
-      user: "Reset password email has been sent!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: error.message,
-      error,
     });
   }
 };

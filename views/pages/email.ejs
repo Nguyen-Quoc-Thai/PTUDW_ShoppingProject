@@ -11,36 +11,40 @@
 
     <div id="container">
       <%if(msg === 'success'){%>
-      <div id="success-box">
-        <div class="dot"></div>
-        <div class="dot two"></div>
-        <div class="face">
-          <div class="eye"></div>
-          <div class="eye right"></div>
-          <div class="mouth happy"></div>
+      <form method="POST" action="/user/forgot">
+        <div class="d-flex justify-content-center">
+          <img
+            style="width: 120px"
+            src="/img/ezgif.com-gif-maker.gif"
+            alt="gif-success"
+          />
         </div>
-        <div class="shadow scale"></div>
-        <div class="message">
-          <h1 class="alert">Success.</h1>
-          <p><%=user%></p>
+        <div class="d-flex justify-content-center align-items-center">
+          <span style="padding: 15px"
+            >Gửi thành công email reset mật khẩu đến:
+            <input
+              class="text-info"
+              type="text"
+              name="email"
+              value="<%=email%>"
+              style="border: none; background-color: transparent"
+            />
+          </span>
+          <button
+            style="line-height: 12px; height: 100%"
+            type="submit"
+            class="btn"
+          >
+            <i class="fab fa-rev"></i>
+            Resend
+          </button>
         </div>
-        <button class="button-box"><h1 class="green">Continue</h1></button>
-      </div>
+      </form>
       <%}else{%>
-      <div id="error-box">
-        <div class="dot"></div>
-        <div class="dot two"></div>
-        <div class="face2">
-          <div class="eye"></div>
-          <div class="eye right"></div>
-          <div class="mouth sad"></div>
+      <div>
+        <div>
+          <button class="button-box"><h1 class="btn">Try again</h1></button>
         </div>
-        <div class="shadow move"></div>
-        <div class="message">
-          <h1 class="alert">Error.</h1>
-          <p><%=user%></p>
-        </div>
-        <button class="button-box"><h1 class="red">Try again</h1></button>
       </div>
     </div>
     <%}%> <%- include('../partials/footer'); %> <%-
