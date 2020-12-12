@@ -35,17 +35,27 @@ router.get(
 );
 router.get("/wishlist", checkAuthenticated, userController.getWishlist);
 
-// Google sign in
+// Google login
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/user/auth" }),
-  function (req, res) {
-    res.redirect("/");
-  }
+  passport.authenticate("google", {
+    successRedirect: "/",
+    failureRedirect: "/user/auth",
+  })
+);
+
+// Facebook login
+router.get("/facebook", passport.authenticate("facebook", { scope: "email" }));
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", {
+    successRedirect: "/",
+    failureRedirect: "/user/auth",
+  })
 );
 
 // API

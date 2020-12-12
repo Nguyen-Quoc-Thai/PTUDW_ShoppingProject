@@ -390,19 +390,6 @@
     $("#logout").submit();
   });
 
-  // Wishlist trash
-  $(".trash-like").click(function (e) {
-    e.preventDefault();
-
-    const value = $(this).attr("value");
-
-    if (parseInt(value) === 0) {
-      const re = confirm("Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?");
-      if (re == false) return false;
-      $(this).parent().parent().css("display", "none");
-    }
-  });
-
   // Validator signup
   $("body>div.login>div>div>form")
     .find("input")

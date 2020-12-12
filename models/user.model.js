@@ -113,12 +113,12 @@ const userScheme = mongoose.Schema({
   // token: String,
 });
 
-userScheme.path("phone").validate(async (value) => {
-  const phoneCount = await mongoose.models.User.countDocuments({
-    phone: value,
-  });
-  return !phoneCount;
-}, "Phone number is already exists!");
+// userScheme.path("phone").validate(async (value) => {
+//   const phoneCount = await mongoose.models.User.countDocuments({
+//     phone: value,
+//   });
+//   return !phoneCount;
+// }, "Phone number is already exists!");
 
 userScheme.path("email").validate(async (value) => {
   const emailCount = await mongoose.models.User.countDocuments({

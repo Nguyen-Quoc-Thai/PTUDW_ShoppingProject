@@ -33,12 +33,25 @@ connectDB();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+const cacheOptions = {
+  etag: true,
+  maxAge: 3600 * 24,
+  expires: 3600 * 24,
+  redirect: true,
+  cacheControl: "public",
+  setHeaders: function (res, path, stat) {
+    res.set({
+      "x-timestamp": Date.now(),
+    });
+  },
+};
+
 app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), cacheOptions));
 
 app.use(
   cookieSession({

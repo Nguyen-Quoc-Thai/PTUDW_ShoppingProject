@@ -240,6 +240,7 @@ module.exports.getProductDetails = async (req, res, next) => {
       ourBrands: statisticPerType || null,
     });
   } catch (error) {
+    console.log(error);
     res.render("error", {
       message: error.message,
       error,

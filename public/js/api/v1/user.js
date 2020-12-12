@@ -16,6 +16,16 @@ $(".add-to-like").click(function (e) {
 $(".trash-like").click(function (e) {
   e.preventDefault();
 
+  const value = $(this).attr("value");
+
+  if (parseInt(value) === 0) {
+    const re = confirm(
+      "Bạn chắc chắn muốn xóa vật phẩm khỏi danh sách quan tâm ?"
+    );
+    if (re == false) return false;
+    $(this).parent().parent().css("display", "none");
+  }
+
   const slugName = $(this).attr("name");
   const url = `/user/api/v1/unlike/${slugName}`;
   $.post(url, {}, function (data, status) {

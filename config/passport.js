@@ -1,12 +1,17 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 
 const User = require("./../models/user.model");
 
-const clientID = process.env.CLIENT_ID;
-const clientSecret = process.env.CLIENT_SECRET;
-const callbackURL = "http://localhost:3000/user/google/callback";
+const clientGoogleID = process.env.GOOGLE_CLIENT_ID;
+const clientGoogleSecret = process.env.GOOGLE_CLIENT_SECRET;
+const callbackGoogleURL = "http://localhost:3000/user/google/callback";
+
+const clientFacebookID = process.env.FACEBOOK_CLIENT_ID;
+const clientFacebookSecret = process.env.FACEBOOK_CLIENT_SECRET;
+const callbackFacebookURL = "http://localhost:3000/user/facebook/callback";
 
 module.exports = function (passport) {
   passport.use(
@@ -41,9 +46,9 @@ module.exports = function (passport) {
   passport.use(
     new GoogleStrategy(
       {
-        clientID,
-        clientSecret,
-        callbackURL,
+        clientID: clientGoogleID,
+        clientSecret: clientGoogleSecret,
+        callbackURL: callbackGoogleURL,
       },
       function (accessToken, refreshToken, profile, done) {
         console.log(profile);
@@ -82,6 +87,69 @@ module.exports = function (passport) {
                 newUser.lastName = profile.name.familyName;
                 newUser.email = profile.emails[0].value;
                 newUser.isVerified = profile.emails[0].verified;
+                newUser.avatar = profile.photos[0].value;
+
+                newUser.save((err) => {
+                  if (err) {
+                    console.log(err);
+                    throw err;
+                  }
+
+                  return done(null, newUser);
+                });
+              }
+            }
+          );
+        });
+      }
+    )
+  );
+
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: clientFacebookID,
+        clientSecret: clientFacebookSecret,
+        callbackURL: callbackFacebookURL,
+        profileFields: ["id", "displayName", "link", "name", "photos", "email"],
+      },
+      function (accessToken, refreshToken, profile, done) {
+        console.log(profile);
+        process.nextTick(function () {
+          User.findOne(
+            {
+              $or: [
+                { "facebook.id": profile.id },
+                { email: profile.emails[0].value },
+              ],
+            },
+            function (err, user) {
+              if (err) {
+                return done(err);
+              }
+
+              if (user) {
+                if (user.facebook.id == undefined) {
+                  user.facebook.id = profile.id;
+                  user.facebook.token = accessToken;
+                  user.firstName = profile.name.givenName;
+                  user.lastName = profile.name.familyName;
+                  user.email = profile.emails[0].value;
+                  user.isVerified = true;
+                  user.avatar = profile.photos[0].value;
+
+                  user.save();
+                }
+
+                return done(null, user);
+              } else {
+                let newUser = new User();
+                newUser.facebook.id = profile.id;
+                newUser.facebook.token = accessToken;
+                newUser.firstName = profile.name.givenName;
+                newUser.lastName = profile.name.familyName;
+                newUser.email = profile.emails[0].value;
+                newUser.isVerified = true;
                 newUser.avatar = profile.photos[0].value;
 
                 newUser.save((err) => {
