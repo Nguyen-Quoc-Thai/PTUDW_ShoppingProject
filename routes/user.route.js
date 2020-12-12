@@ -1,5 +1,6 @@
-var express = require("express");
-var router = express.Router();
+const passport = require("passport");
+const express = require("express");
+const router = express.Router();
 const userController = require("../controllers/user.controller");
 const userApiController = require("./../api/v1/controllers/user");
 
@@ -33,6 +34,19 @@ router.get(
   userController.getDashboard
 );
 router.get("/wishlist", checkAuthenticated, userController.getWishlist);
+
+// Google sign in
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/user/auth" }),
+  function (req, res) {
+    res.redirect("/");
+  }
+);
 
 // API
 router.put(

@@ -56,12 +56,7 @@ module.exports.addToCart = async (req, res, next) => {
     cart.totalCost += parsePrice(price);
 
     if (user) {
-      await Cart.updateOne(
-        { userId: user._id },
-        {
-          $set: cart,
-        }
-      );
+      await cart.save();
     }
 
     console.log(cart);

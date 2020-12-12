@@ -309,6 +309,7 @@
                     <br /><br />
                   </div>
                 </form>
+                <%if(!user.google.id && !user.facebook.id) {%>
                 <h4>Password change</h4>
                 <form
                   id="change-password"
@@ -344,6 +345,7 @@
                     <button type="submit" class="btn">Save Changes</button>
                   </div>
                 </form>
+                <%}%>
               </div>
               <!-- Modal -->
               <button

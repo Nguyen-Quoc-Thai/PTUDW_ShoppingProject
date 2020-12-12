@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const { randomPassword } = require("./../utils/passport");
+
 const enumUser = {
   values: ["user", "admin"],
   message: `Roles must be 'user' or 'admin'!`,
@@ -30,8 +32,9 @@ const userScheme = mongoose.Schema({
   },
   phone: {
     type: String,
-    required: [true, "Phone number is required!"],
-    unique: true,
+    // required: [true, "Phone number is required!"],
+    default: "0987654321",
+    // unique: true,
     match: [/(03|07|08|09|01[2|6|8|9])+([0-9]{8})\b/, "Invalid phone number!"],
   },
   roles: {
@@ -74,11 +77,12 @@ const userScheme = mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is required!"],
+    // required: [true, "Password is required!"],
+    default: randomPassword(8),
   },
   passwordResetToken: {
     type: String,
-    default: "randomStringHere",
+    default: randomPassword(10),
   },
   passwordResetExpires: {
     type: Date,
@@ -91,6 +95,22 @@ const userScheme = mongoose.Schema({
     type: String,
     default: "",
   },
+  google: {
+    type: Object,
+    default: {
+      id: "",
+      token: "",
+    },
+  },
+  facebook: {
+    type: Object,
+    default: {
+      id: "",
+      token: "",
+    },
+  },
+  // id: String,
+  // token: String,
 });
 
 userScheme.path("phone").validate(async (value) => {
