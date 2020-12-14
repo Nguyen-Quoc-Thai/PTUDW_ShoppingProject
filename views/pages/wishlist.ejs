@@ -10,9 +10,9 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/">Products</a></li>
-          <li class="breadcrumb-item active">Wishlist</li>
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+          <li class="breadcrumb-item active">Yêu thích</li>
         </ul>
       </div>
     </div>
@@ -27,11 +27,13 @@
               <div class="table-responsive">
                 <table class="table table-bordered">
                   <thead class="thead-dark">
+                    <%if(user.likes.length) {%>
                     <tr>
-                      <th>Product</th>
-                      <th>Price</th>
-                      <th>Remove</th>
+                      <th>Sản phẩm</th>
+                      <th>Giá</th>
+                      <th>Xóa</th>
                     </tr>
+                    <%}%>
                   </thead>
                   <tbody class="align-middle">
                     <%if (user.likes.length) { user.likes.forEach((item,
@@ -57,11 +59,11 @@
                       </td>
                     </tr>
                     <%})}else{%>
-                    <h3>No product found!</h3>
+                    <h3>Không có sản phẩm yêu thích nào!</h3>
                     <h6 class="pt-3">
                       <span
                         ><a class="text-success" href="/"
-                          >Continue shopping</a
+                          >Tiếp tục mua sắm</a
                         ></span
                       >
                     </h6>

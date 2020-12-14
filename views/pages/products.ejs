@@ -10,8 +10,8 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active">Products</li>
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item active">Sản phẩm</li>
         </ul>
       </div>
     </div>
@@ -31,7 +31,7 @@
                       <div class="product-search">
                         <input
                           type="text"
-                          placeholder="Search"
+                          placeholder="Từ khóa"
                           name="search"
                           value="<%=query.search%>"
                         />
@@ -46,7 +46,7 @@
                       <div class="product-short">
                         <div class="dropdown">
                           <div class="dropdown-toggle" data-toggle="dropdown">
-                            Sort price
+                            Giá
                           </div>
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
@@ -54,14 +54,14 @@
                               class="dropdown-item query"
                               name="sort"
                               data="asc"
-                              >Ascending</a
+                              >Tăng dần</a
                             >
                             <a
                               href=""
                               class="dropdown-item query"
                               name="sort"
                               data="desc"
-                              >Descending</a
+                              >Giảm dần</a
                             >
                           </div>
                         </div>
@@ -71,7 +71,7 @@
                       <div class="product-price-range">
                         <div class="dropdown">
                           <div class="dropdown-toggle" data-toggle="dropdown">
-                            Price range
+                            Giá thuộc phạm vi
                           </div>
                           <div class="dropdown-menu dropdown-menu-right filter">
                             <a
@@ -170,8 +170,11 @@
                   </div>
                   <div class="product-price">
                     <h3><span>$</span><%= product.price %></h3>
-                    <a class="btn" href="/checkout"
-                      ><i class="fa fa-shopping-cart"></i>Buy Now</a
+                    <a
+                      class="btn buy-now"
+                      href="/checkout"
+                      value="<%= product.slugName %>"
+                      ><i class="fa fa-shopping-cart"></i>Mua</a
                     >
                   </div>
                 </div>
@@ -229,7 +232,7 @@
             <!-- Pagination Start -->
 
             <% } else { %>
-            <h1>No product found!</h1>
+            <h1>Không tìm thấy sản phẩm!</h1>
             <% } %>
           </div>
 

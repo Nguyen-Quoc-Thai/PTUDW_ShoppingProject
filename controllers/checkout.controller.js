@@ -1,6 +1,7 @@
 const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
 const Checkout = require("./../models/checkout.model");
+const Province = require("./../models/dist/province.model");
 
 const { postSignUp } = require("./user.controller");
 
@@ -9,27 +10,41 @@ const { initCart } = require("./../utils/constant");
 module.exports.getCheckout = async (req, res, next) => {
   const { user } = req;
 
-  res.render("pages/checkout", {
-    msg: "success",
-    user: "Page checkout loaded!",
-    user: user || {},
-  });
+  try {
+    res.render("pages/checkout", {
+      msg: "success",
+      user: "Page checkout loaded!",
+      user: user || {},
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.render("error", {
+      message: error.message,
+      error,
+    });
+  }
 };
 
 module.exports.postCheckout = async (req, res, next) => {
   const { user, body } = req;
 
   try {
-    if (!user) {
-      await postSignUp(req, res, next);
-    }
-
-    console.log(req.body);
+    // if (!user) {
+    //   await postSignUp(req, res, next);
+    // }
 
     const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
 
     const { userId, _id, status, items, totalQuantity, totalCost } = cart;
-    const { address, city, district, phone, firstName, lastName } = body;
+    const {
+      address,
+      city,
+      district,
+      village,
+      phone,
+      firstName,
+      lastName,
+    } = body;
 
     body.phone = user.phone;
     body.email = user.email;
@@ -48,6 +63,7 @@ module.exports.postCheckout = async (req, res, next) => {
       address,
       city,
       district,
+      village,
       phone,
       receiver: firstName + " " + lastName,
       shippingFee,
@@ -68,12 +84,6 @@ module.exports.postCheckout = async (req, res, next) => {
     req.session.cart = initCart;
 
     res.redirect("/user/account/dashboard");
-    // res.render("pages/dashboard", {
-    //   // render page thong tin dat hang
-    //   msg: "success",
-    //   user: "Cart checkout successful!",
-    //   data: checkout,
-    // });
   } catch (error) {
     console.log(error);
     res.render("error", {

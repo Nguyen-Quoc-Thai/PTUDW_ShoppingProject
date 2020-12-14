@@ -67,6 +67,10 @@ const userScheme = mongoose.Schema({
     type: String,
     default: "",
   },
+  village: {
+    type: String,
+    default: "",
+  },
   avatar: {
     type: String,
     default: "",
@@ -109,8 +113,6 @@ const userScheme = mongoose.Schema({
       token: "",
     },
   },
-  // id: String,
-  // token: String,
 });
 
 // userScheme.path("phone").validate(async (value) => {

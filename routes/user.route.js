@@ -38,10 +38,12 @@ router.get("/wishlist", checkAuthenticated, userController.getWishlist);
 // Google login
 router.get(
   "/google",
+  checkNotAuthenticated,
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 router.get(
   "/google/callback",
+  checkNotAuthenticated,
   passport.authenticate("google", {
     successRedirect: "/",
     failureRedirect: "/user/auth",
@@ -49,9 +51,14 @@ router.get(
 );
 
 // Facebook login
-router.get("/facebook", passport.authenticate("facebook", { scope: "email" }));
+router.get(
+  "/facebook",
+  checkNotAuthenticated,
+  passport.authenticate("facebook", { scope: "email" })
+);
 router.get(
   "/facebook/callback",
+  checkNotAuthenticated,
   passport.authenticate("facebook", {
     successRedirect: "/",
     failureRedirect: "/user/auth",
@@ -81,12 +88,16 @@ router.post(
   userApiController.postUnLike
 );
 
-// Validator api
+// Validator sing up / in api
 router.post(
   "/api/v1/exist",
   checkNotAuthenticated,
   userApiController.postCheckExist
 );
+
+// Select option dependance
+router.get("/api/v1/district/:code", userApiController.getDistrict);
+router.get("/api/v1/village/:code", userApiController.getVillage);
 
 // router.post("/resend", checkNotAuthenticated, userController.postResend);
 // router.get("/recovery", checkNotAuthenticated, userController.getRecovery);

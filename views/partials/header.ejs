@@ -19,7 +19,7 @@
 <div id="navbar" class="nav">
   <div class="container-fluid">
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-      <a href="#" class="navbar-brand">MENU</a>
+      <a href="#" class="navbar-brand">Danh mục</a>
       <button
         type="button"
         class="navbar-toggler"
@@ -34,10 +34,10 @@
         id="navbarCollapse"
       >
         <div class="navbar-nav mr-auto">
-          <a href="/" class="nav-item nav-link">Home</a>
+          <a href="/" class="nav-item nav-link">Trang chủ</a>
           <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
-              >Products</a
+              >Phân loại</a
             >
             <div class="dropdown-menu">
               <%categories.forEach((cate) => {%>
@@ -47,9 +47,9 @@
                 <%})%>
             </div>
           </div>
-          <a href="/cart" class="nav-item nav-link">Cart</a>
-          <a href="/checkout" class="nav-item nav-link">Checkout</a>
-          <a href="/contact" class="nav-item nav-link">Contact Us</a>
+          <a href="/cart" class="nav-item nav-link">Giỏ hàng</a>
+          <a href="/checkout" class="nav-item nav-link">Thanh toán</a>
+          <a href="/contact" class="nav-item nav-link">Liên hệ</a>
         </div>
         <div class="navbar-nav ml-auto">
           <%if(user){%>
@@ -58,14 +58,14 @@
               ><%=user.firstName%> <%=user.lastName%></a
             >
             <form class="dropdown-menu" id="user-act" method="POST" action="/user/logout">
-              <a href="/user/account/dashboard" class="dropdown-item">Dashboard</a>
-              <a href="/user/wishlist" class="dropdown-item">Wishlist</a>
-              <a href="/user/logout" class="dropdown-item post" id="logout">Logout</a>
+              <a href="/user/account/dashboard" class="dropdown-item">Bảng điều khiển</a>
+              <a href="/user/wishlist" class="dropdown-item">Yêu thích</a>
+              <a href="/user/logout" class="dropdown-item post" id="logout">Đăng xuất</a>
             </form>
           </div>
           <a href="/user/auth" class="nav-item nav-link"><i class="fas fa-lock"></i></a>
           <%}else{%>
-            <a href="/user/auth" class="nav-item nav-link">Resister & Login</i></a>
+            <a href="/user/auth" class="nav-item nav-link">Đăng kí & Đăng nhập</i></a>
           <%}%>
 
         </div>

@@ -44,6 +44,10 @@ const checkoutSchema = mongoose.Schema({
     type: String,
     default: "",
   },
+  village: {
+    type: String,
+    default: "",
+  },
   paymentMethod: {
     type: String,
     enum: enumPaymentMethod,

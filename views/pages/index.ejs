@@ -33,9 +33,9 @@
                   alt="Slider Image"
                 />
                 <div class="header-slider-caption">
-                  <p>Top 20 Best Seller In Computers</p>
+                  <p>Top các sản phẩm bán chạy</p>
                   <a class="btn" href="/products"
-                    ><i class="fa fa-shopping-cart"></i>Shop Now</a
+                    ><i class="fa fa-shopping-cart"></i>Mua sắm ngay</a
                   >
                 </div>
               </div>
@@ -45,10 +45,10 @@
                   alt="Slider Image"
                 />
                 <div class="header-slider-caption">
-                  <p>Experience Top Device</p>
-                  <p>ON TREND</p>
+                  <p>Kinh nghiệm mua hàng</p>
+                  <p>Tham khảo</p>
                   <a class="btn" href="/products"
-                    ><i class="fa fa-shopping-cart"></i>Shop Now</a
+                    ><i class="fa fa-shopping-cart"></i>Get</a
                   >
                 </div>
               </div>
@@ -58,7 +58,7 @@
                   alt="Slider Image"
                 />
                 <div class="header-slider-caption">
-                  <p>Some text goes here that describes the image</p>
+                  <p>Some text goes here that describes the store</p>
                   <a class="btn" href="/products"
                     ><i class="fa fa-shopping-cart"></i>Shop Now</a
                   >
@@ -113,28 +113,28 @@
           <div class="col-lg-3 col-md-6 feature-col">
             <div class="feature-content">
               <i class="fab fa-cc-mastercard"></i>
-              <h2>Secure Payment</h2>
+              <h2>Bảo mật thanh toán</h2>
               <p>Lorem ipsum dolor sit amet consectetur elit</p>
             </div>
           </div>
           <div class="col-lg-3 col-md-6 feature-col">
             <div class="feature-content">
               <i class="fa fa-truck"></i>
-              <h2>Worldwide Delivery</h2>
+              <h2>Vận chuyển toàn quốc</h2>
               <p>Lorem ipsum dolor sit amet consectetur elit</p>
             </div>
           </div>
           <div class="col-lg-3 col-md-6 feature-col">
             <div class="feature-content">
               <i class="fa fa-sync-alt"></i>
-              <h2>90 Days Return</h2>
+              <h2>Đổi trả 30 ngày</h2>
               <p>Lorem ipsum dolor sit amet consectetur elit</p>
             </div>
           </div>
           <div class="col-lg-3 col-md-6 feature-col">
             <div class="feature-content">
               <i class="fa fa-comments"></i>
-              <h2>24/7 Support</h2>
+              <h2>Hỗ trợ trực tuyến 24/7</h2>
               <p>Lorem ipsum dolor sit amet consectetur elit</p>
             </div>
           </div>
@@ -148,7 +148,7 @@
       <div class="container-fluid">
         <div class="row align-items-center">
           <div class="col-md-6">
-            <h1>call us for any queries</h1>
+            <h1>Liên hệ ngay với chúng tôi</h1>
           </div>
           <div class="col-md-6">
             <a href="tel:0123456789">+012-345-6789</a>
@@ -163,12 +163,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-6">
-            <h1>Subscribe Our Newsletter</h1>
+            <h1>Đăng kí để nhận các thông tin mới nhất</h1>
           </div>
           <div class="col-md-6">
             <div class="form">
               <input type="email" placeholder="Your email here" />
-              <button>Submit</button>
+              <button>Gửi</button>
             </div>
           </div>
         </div>
@@ -215,8 +215,11 @@
               </div>
               <div class="product-price">
                 <h3><span>$</span><%= cat.price %></h3>
-                <a class="btn" href=""
-                  ><i class="fa fa-shopping-cart"></i>Buy Now</a
+                <a
+                  class="btn buy-now"
+                  href="/checkout"
+                  value="<%=cat.slugName%>"
+                  ><i class="fa fa-shopping-cart"></i>Mua</a
                 >
               </div>
             </div>

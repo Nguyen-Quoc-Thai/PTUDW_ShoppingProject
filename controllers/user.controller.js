@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const slug = require("slug");
 const passport = require("passport");
 
+// Model
 const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
 const Checkout = require("./../models/checkout.model");
@@ -15,7 +16,7 @@ const tokenLife = process.env.TOKEN_LIFE;
 const jwtKey = process.env.JWT_KEY;
 const remember_life = process.env.REMEMBER_LIFE;
 
-module.exports.getAuth = (req, res, next) => {
+module.exports.getAuth = async (req, res, next) => {
   console.log(req.app.locals.cart);
   res.render("pages/auth", {
     msg: "success",

@@ -234,27 +234,46 @@
   });
 
   // Handle submit place order
+  // Form focus
+  $("#form-val>div")
+    .children()
+    .children("input")
+    .each(function () {
+      $(this).focus(function () {
+        $(".text-danger-checkout").html("");
+      });
+    });
+  // Payment method choose
+  $(".custom-control.custom-radio").click(function () {
+    $(".text-danger-checkout").html("");
+  });
+
+  // Submit
   $(".submit-checkout").click(function (e) {
     e.preventDefault();
 
-    if ($(".payment-info").css("display") === "block") {
+    let invalid = false;
+
+    $("#form-val>div")
+      .children()
+      .children("input")
+      .each(function () {
+        if ($(this).val() === "") {
+          invalid = true;
+        }
+      });
+
+    if (invalid) {
+      $(".text-danger-checkout").html("Bạn phải điền đầy đủ thông tin!");
       return;
     }
 
     if (!$("#checkout-payment input").is(":checked")) {
-      $(".payment-methods")
-        .last()
-        .after(
-          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Vui lòng chọn phương thức thanh toán</span>'
-        );
+      $(".text-danger-checkout").html("Vui lòng chọn phương thức thanh toán!");
       return;
     }
     if ($("#total-quantity>strong").html() == 0) {
-      $(".payment-methods")
-        .last()
-        .after(
-          '<span class="text-warning payment-info2" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
-        );
+      $(".text-danger-checkout").html("Không có vật phẩm trong giỏ hàng!");
       return;
     }
 
@@ -427,5 +446,40 @@
     const curr = $(this);
     curr.next().addClass("d-none");
     curr.next().removeClass("d-block text-danger");
+  });
+
+  // Select option dependance
+  // Province/City change
+  $("#province").on("change", function () {
+    $("#district").html("");
+    const code = $(this).children("option:selected").attr("code");
+    console.log(code);
+    $.get(`/user/api/v1/district/${code}`, function (data, status) {
+      if (data.msg === "success" && status === "success") {
+        console.log(data);
+        data.data.forEach(function (district) {
+          $("#district").append(
+            `<option value="${district.name_with_type}" code="${district.code}" parent-code="${district.parent_code}">${district.name_with_type}</option>`
+          );
+        });
+      }
+    });
+  });
+
+  // District change
+  $("#district").on("change", function () {
+    $("#village").html("");
+    const code = $(this).children("option:selected").attr("code");
+    console.log(code);
+    $.get(`/user/api/v1/village/${code}`, function (data, status) {
+      if (data.msg === "success" && status === "success") {
+        console.log(data);
+        data.data.forEach(function (village) {
+          $("#village").append(
+            `<option value="${village.name_with_type}" code="${village.code}" parent-code="${village.parent_code}">${village.name_with_type}</option>`
+          );
+        });
+      }
+    });
   });
 })(jQuery);

@@ -10,9 +10,9 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/">Products</a></li>
-          <li class="breadcrumb-item active">My Account</li>
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+          <li class="breadcrumb-item active">Tài khoản</li>
         </ul>
       </div>
     </div>
@@ -34,7 +34,7 @@
                 data-toggle="pill"
                 href="#dashboard-tab"
                 role="tab"
-                ><i class="fa fa-tachometer-alt"></i>Dashboard</a
+                ><i class="fa fa-tachometer-alt"></i>Bảng điều khiển</a
               >
               <a
                 class="nav-link"
@@ -42,7 +42,7 @@
                 data-toggle="pill"
                 href="#orders-tab"
                 role="tab"
-                ><i class="fa fa-shopping-bag"></i>Orders</a
+                ><i class="fa fa-shopping-bag"></i>Lịch sử đặt hàng</a
               >
               <a
                 class="nav-link"
@@ -50,7 +50,7 @@
                 data-toggle="pill"
                 href="#payment-tab"
                 role="tab"
-                ><i class="fa fa-credit-card"></i>Payment Method</a
+                ><i class="fa fa-credit-card"></i>Phương thức thanh toán</a
               >
               <a
                 class="nav-link"
@@ -58,7 +58,7 @@
                 data-toggle="pill"
                 href="#address-tab"
                 role="tab"
-                ><i class="fa fa-map-marker-alt"></i>Address</a
+                ><i class="fa fa-map-marker-alt"></i>Địa chỉ</a
               >
               <a
                 class="nav-link"
@@ -66,11 +66,11 @@
                 data-toggle="pill"
                 href="#account-tab"
                 role="tab"
-                ><i class="fa fa-user"></i>Account Details</a
+                ><i class="fa fa-user"></i>Tài khoản</a
               >
               <form id="logout" method="POST" action="/user/logout">
                 <a class="nav-link" href="">
-                  <i class="fa fa-sign-out-alt"></i>Logout
+                  <i class="fa fa-sign-out-alt"></i>Đăng xuất
                 </a>
               </form>
             </div>
@@ -83,7 +83,7 @@
                 role="tabpanel"
                 aria-labelledby="dashboard-nav"
               >
-                <h4>Dashboard</h4>
+                <h4>Bảng điều khiển</h4>
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                   condimentum quam ac mi viverra dictum. In efficitur ipsum
@@ -105,11 +105,11 @@
                     <thead class="thead-dark">
                       <tr>
                         <th>No</th>
-                        <th>Date</th>
-                        <th>Address</th>
-                        <th>Total payment</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th>Ngày đặt</th>
+                        <th>Địa chỉ nhận hàng</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -118,8 +118,8 @@
                         <td><%=(index+1)%></td>
                         <td><%=check.date%></td>
                         <td>
-                          <%=check.address%>, <%=check.district%>,
-                          <%=check.city%>
+                          <%=check.address%>, <%=check.village%>,
+                          <%=check.district%>, <%=check.city%>
                         </td>
                         <td>
                           <%=check.totalPayment.toLocaleString('vi-VN')%>&nbsp;đ
@@ -130,7 +130,7 @@
                             class="btn view-checkout"
                             value="<%=check._id%>"
                           >
-                            View
+                            Xem
                           </button>
                         </td>
                       </tr>
@@ -145,7 +145,7 @@
                 role="tabpanel"
                 aria-labelledby="payment-nav"
               >
-                <h4>Payment Method</h4>
+                <h4>Phương thức thanh toán</h4>
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                   condimentum quam ac mi viverra dictum. In efficitur ipsum
@@ -162,19 +162,25 @@
                 role="tabpanel"
                 aria-labelledby="address-nav"
               >
-                <h4>Address</h4>
+                <h4>Địa chỉ nhận hàng</h4>
                 <div class="row">
                   <div class="col-md-6">
-                    <h5>Payment Address</h5>
-                    <p><%=user.address%>, <%=user.district%>, <%=user.city%></p>
-                    <p>Mobile: <%=user.phone%></p>
-                    <button class="btn">Edit Address</button>
+                    <h5>Phương thức thanh toán</h5>
+                    <p>
+                      <%=user.address%>, <%=user.village%>, <%=user.district%>,
+                      <%=user.city%>
+                    </p>
+                    <p>Điện thoại: <%=user.phone%></p>
+                    <button class="btn">Chỉnh sửa</button>
                   </div>
                   <div class="col-md-6">
-                    <h5>Shipping Address</h5>
-                    <p><%=user.address%>, <%=user.district%>, <%=user.city%></p>
-                    <p>Mobile: <%=user.phone%></p>
-                    <button class="btn">Edit Address</button>
+                    <h5>Địa chỉ nhận hàng</h5>
+                    <p>
+                      <%=user.address%>, <%=user.village%>, <%=user.district%>,
+                      <%=user.city%>
+                    </p>
+                    <p>Điện thoại: <%=user.phone%></p>
+                    <button class="btn">Chỉnh sửa</button>
                   </div>
                 </div>
               </div>
@@ -184,7 +190,7 @@
                 role="tabpanel"
                 aria-labelledby="account-nav"
               >
-                <h4>Account Details</h4>
+                <h4>Tài khoản</h4>
                 <form
                   enctype="multipart/form-data"
                   id="change-info"
@@ -249,7 +255,8 @@
                   </div>
 
                   <%if(user.address.length){%>
-                  <div class="col-md-12">
+                  <div class="col-md-6">
+                    <label>Địa chỉ</label>
                     <input
                       class="form-control"
                       type="text"
@@ -258,7 +265,8 @@
                     />
                   </div>
                   <%}else{%>
-                  <div class="col-md-12">
+                  <div class="col-md-6">
+                    <label>Địa chỉ</label>
                     <input
                       class="form-control"
                       type="text"
@@ -268,49 +276,79 @@
                   </div>
                   <%}%> <%if(user.city){%>
                   <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="city"
-                      value="<%=user.city%>"
-                    />
+                    <label>Tỉnh - Thành phố</label>
+                    <select class="custom-select" id="province" name="city">
+                      <option value="<%=user.city%>" selected>
+                        <%=user.city%>
+                      </option>
+                      <%provinces.forEach((province) => {%>
+                      <option
+                        name="city"
+                        value="<%=province.name%>"
+                        code="<%=province.code%>"
+                      >
+                        <%=province.name%>
+                      </option>
+                      <%})%>
+                    </select>
                   </div>
                   <%}else{%>
                   <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="city"
-                      placeholder="City"
-                    />
+                    <label>Tỉnh - Thành phố</label>
+                    <select class="custom-select" id="province" name="city">
+                      <option value="City" selected>City</option>
+                      <%provinces.forEach((province) => {%>
+                      <option
+                        name="city"
+                        value="<%=province.name%>"
+                        code="<%=province.code%>"
+                      >
+                        <%=province.name%>
+                      </option>
+                      <%})%>
+                    </select>
                   </div>
                   <%}%> <%if(user.district){%>
                   <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="district"
-                      value="<%=user.district%>"
-                    />
+                    <label>Quận - Huyện</label>
+                    <select class="custom-select" id="district" name="district">
+                      <option selected value="<%=user.district%>">
+                        <%=user.district%>
+                      </option>
+                    </select>
                   </div>
                   <%}else{%>
                   <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="district"
-                      placeholder="District"
-                    />
+                    <label>Quận - Huyện</label>
+                    <select class="custom-select" id="district" name="district">
+                      <option selected value="District">District</option>
+                    </select>
+                  </div>
+                  <%}%> <%if(user.village){%>
+                  <div class="col-md-6">
+                    <label>Xã - Phường - Thị trấn</label>
+                    <select class="custom-select" id="village" name="village">
+                      <option selected value="<%=user.village%>">
+                        <%=user.village%>
+                      </option>
+                    </select>
+                  </div>
+                  <%}else{%>
+                  <div class="col-md-6">
+                    <label>Xã - Phường - Thị trấn</label>
+                    <select class="custom-select" id="village" name="village">
+                      <option selected value="Village">Village</option>
+                    </select>
                   </div>
                   <%}%>
 
                   <div class="col-md-12 change-info">
-                    <button class="btn">Update Account</button>
+                    <button class="btn">Cập nhật</button>
                     <br /><br />
                   </div>
                 </form>
                 <%if(!user.google.id && !user.facebook.id) {%>
-                <h4>Password change</h4>
+                <h4>Đổi mật khẩu</h4>
                 <form
                   id="change-password"
                   class="row"
@@ -321,7 +359,7 @@
                     <input
                       class="form-control"
                       type="password"
-                      placeholder="Current Password"
+                      placeholder="Mật khẩu hiện tại"
                       name="oldPassword"
                     />
                   </div>
@@ -329,7 +367,7 @@
                     <input
                       class="form-control"
                       type="password"
-                      placeholder="New Password"
+                      placeholder="Mật khẩu mới"
                       name="password"
                     />
                   </div>
@@ -337,12 +375,12 @@
                     <input
                       class="form-control"
                       type="password"
-                      placeholder="Confirm Password"
+                      placeholder="Nhập lại mật khẩu mới"
                       name="retypePassword"
                     />
                   </div>
                   <div class="col-md-12 change-password">
-                    <button type="submit" class="btn">Save Changes</button>
+                    <button type="submit" class="btn">Thay đổi</button>
                   </div>
                 </form>
                 <%}%>

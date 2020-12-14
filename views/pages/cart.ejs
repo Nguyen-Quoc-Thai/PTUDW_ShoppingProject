@@ -10,9 +10,9 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/">Products</a></li>
-          <li class="breadcrumb-item active">Cart</li>
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+          <li class="breadcrumb-item active">Giỏ hàng</li>
         </ul>
       </div>
     </div>
@@ -29,11 +29,11 @@
                   <thead class="thead-dark">
                     <%if (cart.items.length) {%>
                     <tr>
-                      <th>Product</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Total</th>
-                      <th>Remove</th>
+                      <th>Sản phẩm</th>
+                      <th>Giá tiền</th>
+                      <th>Số lượng</th>
+                      <th>Tổng tiền</th>
+                      <th>Xóa</th>
                     </tr>
                     <%}%>
                   </thead>
@@ -94,11 +94,11 @@
                       </td>
                     </tr>
                     <%})}else{%>
-                    <h3>No product found!</h3>
+                    <h3>Không có sản phẩm nào trong giỏ hàng!</h3>
                     <h6 class="pt-3">
                       <span
                         ><a class="text-success" href="/"
-                          >Continue shopping</a
+                          >Tiếp tục mua sắm</a
                         ></span
                       >
                     </h6>
@@ -113,45 +113,45 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="coupon">
-                    <input type="text" placeholder="Coupon Code" />
-                    <button>Apply Code</button>
+                    <input type="text" placeholder="Mã giảm giá" />
+                    <button>Sử dụng</button>
                   </div>
                 </div>
                 <div class="col-md-12">
                   <div class="cart-summary">
                     <div class="cart-content">
-                      <h1>Cart Summary</h1>
+                      <h1>Thông tin tổng hợp</h1>
                       <p>
-                        Total cost<span id="total-cost"
+                        Tổng tiền của giỏ<span id="total-cost"
                           ><%=cart.totalCost.toLocaleString('vi-VN')%></span
                         >
                       </p>
                       <%if (cart.items.length) {%>
-                      <p>Shipping cost<span id="shipping-fee">25,000</span></p>
+                      <p>Phí ship<span id="shipping-fee">25,000</span></p>
                       <%}else{%>
-                      <p>Shipping cost<span id="shipping-fee">0</span></p>
+                      <p>Phí ship<span id="shipping-fee">0</span></p>
                       <%}%> <%if (cart) {%>
                       <p>
-                        Total quantity<span id="total-quantity"
+                        Tổng số lượng<span id="total-quantity"
                           ><%=cart.totalQuantity%></span
                         >
                       </p>
                       <%}else{%>
-                      <p>Total quantity<span id="total-quantity">0</span></p>
+                      <p>Tổng số lượng<span id="total-quantity">0</span></p>
                       <%}%> <%if (cart.items.length) {%>
                       <h2>
-                        Total payment<span id="total-payment"
+                        Thành tiền<span id="total-payment"
                           ><%=(cart.totalCost + 25000).toLocaleString('vi-VN',
                           )%></span
                         >
                       </h2>
                       <%}else{%>
-                      <h2>Total payment<span>0</span></h2>
+                      <h2>Thành tiền<span>0</span></h2>
                       <%}%>
                     </div>
                     <form class="cart-btn" method="GET" action="/checkout">
-                      <button>Update Cart</button>
-                      <button type="submit">Checkout</button>
+                      <button>Cập nhật giỏ hàng</button>
+                      <button type="submit">Thanh toán</button>
                     </form>
                   </div>
                 </div>

@@ -690,6 +690,12 @@ h2 {
 .product-item {
   position: relative;
 }
+.product-item a {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 
 .product-item .product-title {
   padding: 15px;

@@ -97,3 +97,22 @@ $(".view-checkout").click(function (e) {
     $("#show-model").trigger("click");
   });
 });
+
+// Get buy now
+$(".buy-now").click(function (e) {
+  e.preventDefault();
+
+  const slugName = $(this).attr("value");
+
+  $.post(`/cart/api/v1/${slugName}`, {}, function (data, status) {
+    if (data.msg === "success" && status === "success") {
+      const curCount = parseInt(
+        $(".cart-count-add").html().replace(/[()]/g, "")
+      );
+
+      $(".cart-count-add").html(`(${curCount + 1})`);
+
+      window.location.replace("/checkout");
+    }
+  });
+});

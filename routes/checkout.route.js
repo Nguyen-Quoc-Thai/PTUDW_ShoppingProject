@@ -6,9 +6,13 @@ const { checkAuthenticated } = require("./../middlewares/auth.middleware");
 
 // Controller
 router.get("/", checkoutController.getCheckout);
-router.post("/", checkoutController.postCheckout);
+router.post("/", checkAuthenticated, checkoutController.postCheckout);
 
 // Api
-router.get("/api/v1/:id", checkoutApiController.getCheckoutHistory);
+router.get(
+  "/api/v1/:id",
+  checkAuthenticated,
+  checkoutApiController.getCheckoutHistory
+);
 
 module.exports = router;

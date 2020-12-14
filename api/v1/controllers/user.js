@@ -3,6 +3,8 @@ const crypto = require("crypto");
 
 const User = require("./../../../models/user.model");
 const Product = require("./../../../models/product.model");
+const District = require("./../../../models/dist/district.model");
+const Village = require("./../../../models/dist/village.model");
 
 const cloudinary = require("./../../../config/cloudinary");
 
@@ -56,7 +58,7 @@ exports.putUpdateInfo = async (req, res, next) => {
 
   try {
     for (const fie in body) {
-      if (fie !== "phone" && fie !== "email" && fie !== "undefined") {
+      if (!["phone", "email", "undefined"].includes(fie)) {
         user[fie] = body[fie];
       }
     }
@@ -216,6 +218,46 @@ module.exports.postCheckExist = async (req, res, next) => {
     }
 
     res.status(200).json(respond);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      msg: error.message,
+      error,
+    });
+  }
+};
+
+module.exports.getDistrict = async (req, res, next) => {
+  const { code } = req.params;
+  try {
+    const districts = await District.find({
+      parent_code: code,
+    }).sort({ name_with_type: "asc" });
+
+    res.status(200).json({
+      msg: "success",
+      data: districts,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      msg: error.message,
+      error,
+    });
+  }
+};
+
+module.exports.getVillage = async (req, res, next) => {
+  const { code } = req.params;
+  try {
+    const villages = await Village.find({
+      parent_code: code,
+    }).sort({ name_with_type: "asc" });
+
+    res.status(200).json({
+      msg: "success",
+      data: villages,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({

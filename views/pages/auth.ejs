@@ -10,9 +10,9 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Products</a></li>
-          <li class="breadcrumb-item active">Login & Register</li>
+          <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="#">Sản phẩm</a></li>
+          <li class="breadcrumb-item active">Đăng nhập & Đăng kí</li>
         </ul>
       </div>
     </div>
@@ -31,7 +31,7 @@
             <div class="register-form">
               <div class="row">
                 <div class="col-md-6">
-                  <label>First Name</label>
+                  <label>Họ</label>
                   <input
                     class="form-control name"
                     type="text"
@@ -41,7 +41,7 @@
                   <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
-                  <label>Last Name</label>
+                  <label>Tên</label>
                   <input
                     class="form-control name"
                     type="text"
@@ -61,7 +61,7 @@
                   <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
-                  <label>Mobile No</label>
+                  <label>Điện thoại</label>
                   <input
                     class="form-control"
                     type="text"
@@ -71,7 +71,7 @@
                   <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
-                  <label>Password</label>
+                  <label>Mật khẩu</label>
                   <input
                     class="form-control"
                     type="password"
@@ -81,7 +81,7 @@
                   <span class="d-none"></span>
                 </div>
                 <div class="col-md-6">
-                  <label>Retype Password</label>
+                  <label>Nhập lại mật khẩu</label>
                   <input
                     class="name form-control"
                     type="password"
@@ -95,7 +95,7 @@
                 </div>
                 <%}%>
                 <div class="col-md-12">
-                  <button class="btn" type="submit">Sign up</button>
+                  <button class="btn" type="submit">Đăng kí</button>
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@
             <form class="login-form" method="POST" action="/user/login">
               <div class="row">
                 <div class="col-md-6 user-login">
-                  <label>E-mail / Username</label>
+                  <label>E-mail / Tên người dùng</label>
                   <input
                     class="form-control"
                     type="text"
@@ -114,7 +114,7 @@
                   <span class="d-none"></span>
                 </div>
                 <div class="col-md-6 user-login">
-                  <label>Password</label>
+                  <label>Mật khẩu</label>
                   <input class="form-control" type="password" name="password" />
                   <%if (respond.msg === "ValidatorError2" && respond.password)
                   {%>
@@ -187,18 +187,18 @@
                       id="newaccount"
                     />
                     <label class="custom-control-label" for="newaccount"
-                      >Keep me signed in.</label
+                      >Giữ đăng nhập</label
                     >
                     <a
                       href=""
                       class="action-toggle"
                       style="display: inline-block"
-                      >&nbsp;Forgot password?</a
+                      >&nbsp;Quên mật khẩu?</a
                     >
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <button class="btn" type="submit">Sign in</button>
+                  <button class="btn" type="submit">Đăng nhập</button>
                 </div>
               </div>
             </form>
