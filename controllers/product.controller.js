@@ -78,17 +78,6 @@ module.exports.getSearch = async (req, res, next) => {
       request,
     };
 
-    // // Sort
-    // if (sort && sort === "asc") {
-    //   result = result.sort((a, b) => {
-    //     return parsePrice(a.price) - parsePrice(b.price);
-    //   });
-    // } else if (sort && sort === "desc") {
-    //   result = result.sort((a, b) => {
-    //     return -parsePrice(a.price) + parsePrice(b.price);
-    //   });
-    // }
-
     // Our brand
     const statisticPerType = await statistic(Product, { type: "" }, "producer");
 
@@ -276,6 +265,9 @@ module.exports.getProductDetails = async (req, res, next) => {
     if (statisticPerType.length > 9) statisticPerType.length = 9;
 
     res.locals.ourBrands = statisticPerType || null;
+
+    product.countView++;
+    await product.save();
 
     res.render("pages/productDetail", {
       msg: "success",

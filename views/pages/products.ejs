@@ -22,7 +22,6 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-9">
-            <% if (data.length) { %>
             <div class="row">
               <div class="col-md-12">
                 <div class="product-view-top">
@@ -44,7 +43,6 @@
                       </div>
                     </div>
                     <%}%>
-
                     <div class="col-md-4">
                       <div class="product-short">
                         <div class="dropdown">
@@ -158,8 +156,7 @@
                   </div>
                 </div>
               </div>
-
-              <% data.forEach(product => { %>
+              <% if (data.length) { data.forEach(product => { %>
               <div class="col-md-4">
                 <div class="product-item">
                   <div class="product-title">
@@ -167,11 +164,10 @@
                       ><%= product.name %></a
                     >
                     <div class="ratting">
+                      <%Array(+product.rating).fill(0).forEach((num, index) =>
+                      {%>
                       <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
+                      <%})%>
                     </div>
                   </div>
                   <div class="product-image">
@@ -208,62 +204,61 @@
                 </div>
               </div>
               <% }) %>
-            </div>
 
-            <!-- Pagination Start -->
-            <div class="col-md-12">
-              <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                  <%if(!respond.request.previous) {%>
-                  <li
-                    class="page-item disabled pag-minus"
-                    value="<%=(+respond.request.currentPage-1)%>"
-                  >
-                    <a class="page-link" href=""><</a>
-                  </li>
-                  <%}else{%>
-                  <li
-                    class="page-item"
-                    value="<%=(+respond.request.currentPage-1)%>"
-                  >
-                    <a class="page-link" href=""><</a>
-                  </li>
-                  <%}%>
-                  <%Array(+respond.request.totalPages).fill(0).forEach((page,
-                  index) => {%>
-                  <%if((index+1)===+respond.request.currentPage){%>
-                  <li class="page-item active" value="<%=(index+1)%>">
-                    <a class="page-link" href=""><%=(index+1)%></a>
-                  </li>
-                  <%}else{%>
-                  <li class="page-item" value="<%=(index+1)%>">
-                    <a class="page-link" href=""><%=(index+1)%></a>
-                  </li>
-                  <%}%> <%})%> <%if(!respond.request.next) {%>
-                  <li
-                    class="page-item disabled"
-                    value="<%=(+respond.request.currentPage+1)%>"
-                  >
-                    <a class="page-link" href="">></a>
-                  </li>
-                  <%}else{%>
-                  <li
-                    class="page-item pag-plus"
-                    value="<%=(+respond.request.currentPage+1)%>"
-                  >
-                    <a class="page-link" href="">></a>
-                  </li>
-                  <%}%>
-                </ul>
-              </nav>
+              <!-- Pagination Start -->
+              <div class="col-md-12">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                    <%if(!respond.request.previous) {%>
+                    <li
+                      class="page-item disabled pag-minus"
+                      value="<%=(+respond.request.currentPage-1)%>"
+                    >
+                      <a class="page-link" href=""><</a>
+                    </li>
+                    <%}else{%>
+                    <li
+                      class="page-item"
+                      value="<%=(+respond.request.currentPage-1)%>"
+                    >
+                      <a class="page-link" href=""><</a>
+                    </li>
+                    <%}%>
+                    <%Array(+respond.request.totalPages).fill(0).forEach((page,
+                    index) => {%>
+                    <%if((index+1)===+respond.request.currentPage){%>
+                    <li class="page-item active" value="<%=(index+1)%>">
+                      <a class="page-link" href=""><%=(index+1)%></a>
+                    </li>
+                    <%}else{%>
+                    <li class="page-item" value="<%=(index+1)%>">
+                      <a class="page-link" href=""><%=(index+1)%></a>
+                    </li>
+                    <%}%> <%})%> <%if(!respond.request.next) {%>
+                    <li
+                      class="page-item disabled"
+                      value="<%=(+respond.request.currentPage+1)%>"
+                    >
+                      <a class="page-link" href="">></a>
+                    </li>
+                    <%}else{%>
+                    <li
+                      class="page-item pag-plus"
+                      value="<%=(+respond.request.currentPage+1)%>"
+                    >
+                      <a class="page-link" href="">></a>
+                    </li>
+                    <%}%>
+                  </ul>
+                </nav>
+              </div>
+              <% } else {%>
+              <div class="col-md-12">
+                <h4 class="text-info pl-4">Không tìm thấy sản phẩm!</h4>
+              </div>
+              <% } %>
             </div>
-            <!-- Pagination Start -->
-
-            <% } else { %>
-            <h1>Không tìm thấy sản phẩm!</h1>
-            <% } %>
           </div>
-
           <%- include('../partials/productSidebar', {col: 3, type: data[0] ?
           data[0].type : 'Laptop & Macbook'}); %>
         </div>
@@ -275,12 +270,24 @@
     <div class="brand">
       <div class="container-fluid">
         <div class="brand-slider">
-          <div class="brand-item"><img src="img/brand-1.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-2.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-3.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-4.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-5.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-6.png" alt="" /></div>
+          <div class="brand-item">
+            <img src="/img/brand-1.png" alt="" />
+          </div>
+          <div class="brand-item">
+            <img src="/img/brand-2.png" alt="" />
+          </div>
+          <div class="brand-item">
+            <img src="/img/brand-3.png" alt="" />
+          </div>
+          <div class="brand-item">
+            <img src="/img/brand-4.png" alt="" />
+          </div>
+          <div class="brand-item">
+            <img src="/img/brand-5.png" alt="" />
+          </div>
+          <div class="brand-item">
+            <img src="/img/brand-6.png" alt="" />
+          </div>
         </div>
       </div>
     </div>

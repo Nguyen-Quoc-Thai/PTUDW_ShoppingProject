@@ -190,11 +190,9 @@
               <div class="product-title">
                 <a href="/products/<%=cat.slugName%>"><%= cat.name %></a>
                 <div class="ratting">
+                  <%Array(+cat.rating).fill(0).forEach((num, index) => {%>
                   <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
+                  <%})%>
                 </div>
               </div>
               <div class="product-image">

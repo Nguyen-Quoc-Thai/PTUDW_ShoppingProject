@@ -91,7 +91,7 @@ $(".view-checkout").click(function (e) {
     });
 
     $("#exampleModalCenter").html(
-      modal_header + modal_content.reverse().join("") + modal_footer
+      modal_header + modal_content.join("") + modal_footer
     );
 
     $("#show-model").trigger("click");

@@ -5,13 +5,15 @@ const bcrypt = require("bcrypt");
 
 const User = require("./../models/user.model");
 
+const baseURL = process.env.BASE_URL;
+
 const clientGoogleID = process.env.GOOGLE_CLIENT_ID;
 const clientGoogleSecret = process.env.GOOGLE_CLIENT_SECRET;
-const callbackGoogleURL = "http://localhost:3000/user/google/callback";
+const callbackGoogleURL = `${baseURL}/user/google/callback`;
 
 const clientFacebookID = process.env.FACEBOOK_CLIENT_ID;
 const clientFacebookSecret = process.env.FACEBOOK_CLIENT_SECRET;
-const callbackFacebookURL = "http://localhost:3000/user/facebook/callback";
+const callbackFacebookURL = `${baseURL}/user/facebook/callback`;
 
 module.exports = function (passport) {
   passport.use(

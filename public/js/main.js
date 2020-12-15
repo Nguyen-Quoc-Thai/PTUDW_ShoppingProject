@@ -24,9 +24,9 @@
   $(window).scroll(function () {
     if ($(this).scrollTop() > 100) {
       $(".back-to-top").fadeIn("slow");
-      $(".nav").addClass("nav-scroll");
+      $(".nav").not(".not-scroll").addClass("nav-scroll");
     } else {
-      $(".nav").removeClass("nav-scroll");
+      $(".nav").not(".not-scroll").removeClass("nav-scroll");
       $(".back-to-top").fadeOut("slow");
     }
   });
@@ -272,7 +272,10 @@
       return;
     }
 
-    if (!$("input[name=createAcc]:checked").length) {
+    if (
+      $("input[name=createAcc]").length &&
+      !$("input[name=createAcc]:checked").length
+    ) {
       $(".text-danger-checkout").html(
         "Bạn chưa có tài khoản. Vui lòng chọn tạo tài khoản!"
       );

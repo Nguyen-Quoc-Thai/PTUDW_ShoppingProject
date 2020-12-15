@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const Cart = require("./../../../models/cart.model");
 const Product = require("../../../models/product.model");
 
@@ -20,15 +18,14 @@ module.exports.addToCart = async (req, res, next) => {
       });
 
       if (!userCart) {
-        cart = await Cart.create({ userId: user._id });
+        cart = new Cart({ userId: user._id });
       } else cart = userCart;
     }
 
     const product = await Product.findOne({
       slugName,
     });
-
-    if (!product) throw new Error("Product not found!");
+    if (!product) throw new Error("Không tìm thấy sản phẩm!");
     const { _id, name, price, images } = product;
 
     for (let i = 0; i < cart.items.length; i++) {

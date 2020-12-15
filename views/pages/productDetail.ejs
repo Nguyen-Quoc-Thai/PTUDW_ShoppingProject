@@ -45,11 +45,9 @@
                   <div class="product-content">
                     <div class="title"><h2><%= data.name %></h2></div>
                     <div class="ratting">
+                      <%Array(+data.rating).fill(0).forEach((num, index) => {%>
                       <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
+                      <%})%>
                     </div>
                     <div class="price">
                       <h4>Giá:</h4>
@@ -164,7 +162,9 @@
                         <tr>
                           <th scope="row"><%=(index + 1)%></th>
                           <td><%=field%></td>
-                          <td class="text-center"><%=data.details[field]%></td>
+                          <td class="text-center">
+                            <%=data.details[field].replace(/^[\s,'"-.\(\)]+|\s+$/gm,'');%>
+                          </td>
                         </tr>
                         <%})%>
                       </tbody>
@@ -183,7 +183,11 @@
                       <%}%> <%if(field.img && field.content) {%>
                       <p><%=field.content%></p>
                       <a href="<%=field.img%>">
-                        <img src="<%=field.img%>" alt="<%=field.title%>" />
+                        <img
+                          src="<%=field.img%>"
+                          alt="<%=field.title%>"
+                          style="max-width: 100%"
+                        />
                       </a>
                       <%}%>
                       <br /><br /><%})%>
@@ -197,7 +201,13 @@
                     >
                       <div class="reviewer">
                         <%=comment.name%>&nbsp;&nbsp;&nbsp;
-                        <span><%=comment.date%></span>
+                        <span
+                          ><%=new Intl.DateTimeFormat( ['ban', 'id'], { year:
+                          'numeric', month: 'numeric', day: 'numeric', hour:
+                          'numeric', minute: 'numeric', second: 'numeric',
+                          hour12: false, timeZone: 'America/Los_Angeles' }
+                          ).format(comment.date)%></span
+                        >
                       </div>
                       <div class="ratting">
                         <i class="fa fa-star"></i>
@@ -351,12 +361,12 @@
     <div class="brand">
       <div class="container-fluid">
         <div class="brand-slider">
-          <div class="brand-item"><img src="img/brand-1.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-2.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-3.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-4.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-5.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-6.png" alt="" /></div>
+          <div class="brand-item"><img src="/img/brand-1.png" alt="" /></div>
+          <div class="brand-item"><img src="/img/brand-2.png" alt="" /></div>
+          <div class="brand-item"><img src="/img/brand-3.png" alt="" /></div>
+          <div class="brand-item"><img src="/img/brand-4.png" alt="" /></div>
+          <div class="brand-item"><img src="/img/brand-5.png" alt="" /></div>
+          <div class="brand-item"><img src="/img/brand-6.png" alt="" /></div>
         </div>
       </div>
     </div>

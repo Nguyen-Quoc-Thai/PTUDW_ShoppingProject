@@ -17,11 +17,25 @@ $("#comment").submit(function (e) {
   }
 
   $.post(url, { ...data }, function (data, status) {
-    console.log(data);
+    const options = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false,
+      timeZone: "America/Los_Angeles",
+    };
+
+    const time = Intl.DateTimeFormat(["ban", "id"], options).format(
+      new Date(data.data.date)
+    );
+
     if (data.msg === "success" && status === "success") {
       const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
         <div class="reviewer">
-          ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${data.data.date}</span>
+          ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${time}</span>
         </div>
         <div class="ratting">
           <i class="fa fa-star"></i>

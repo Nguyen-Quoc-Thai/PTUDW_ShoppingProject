@@ -9,9 +9,16 @@ module.exports.index = async (req, res, next) => {
   try {
     const resultPromise = Promise.all(
       allCategory.map(async (cate) => {
+        // Tops of product collection
         const ret = await Product.find({
           type: cate.name,
         }).limit(10);
+
+        // Samples product collection
+        // const ret = await Product.aggregate([
+        //   { $match: { type: cate.name } },
+        //   { $sample: { size: 10 } },
+        // ]);
 
         return ret;
       })

@@ -84,7 +84,7 @@ module.exports.postCheckout = async (req, res, next) => {
     ]);
 
     console.log(checkout);
-    req.session.checkout = checkout;
+    // req.session.checkout = checkout;
     req.session.cart = initCart;
 
     res.redirect("/user/account/dashboard");

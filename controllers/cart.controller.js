@@ -3,9 +3,9 @@ const Cart = require("./../models/cart.model");
 module.exports.getCart = async (req, res, next) => {
   const { user } = req;
 
-  console.log(req.app.locals.user);
-
   try {
+    let { cart } = req.session;
+
     if (user) {
       const userCart = await Cart.findOne({
         userId: user._id,
@@ -13,10 +13,14 @@ module.exports.getCart = async (req, res, next) => {
       });
 
       if (!userCart) {
-        req.session.cart = await Cart.create({ userId: user._id });
-      } else req.session.cart = userCart;
+        cart = new Cart({ userId: user._id });
+        await cart.save();
+      } else cart = userCart;
     }
 
+    console.log(cart.items.length);
+
+    req.session.cart = cart;
     return res.render("pages/cart", {
       msg: "success",
     });

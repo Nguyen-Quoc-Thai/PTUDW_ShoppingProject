@@ -236,6 +236,7 @@ h2 {
 /**********************************/
 .nav {
   position: relative;
+  z-index: 100 !important;
 }
 
 @media (min-width: 992px) {
@@ -251,6 +252,10 @@ h2 {
   left: 0;
   right: 0;
   z-index: 1;
+}
+
+.not-scroll {
+  z-index: 10 !important;
 }
 
 .nav .navbar {
