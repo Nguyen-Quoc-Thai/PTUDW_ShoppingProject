@@ -3,13 +3,13 @@ const slug = require("mongoose-slug-updater");
 
 const enumType = {
   values: ["computer", "laptop", "mobile"],
-  message: `Product type must be 'computer', 'laptop' or 'mobile'!`,
+  message: `Loại sản phẩm phải là 'computer', 'laptop' or 'mobile'!`,
 };
 
 const productSchema = mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Name is required!"],
+    required: [true, "Tên người dùng là bắt buộc!"],
   },
   slugName: {
     type: String,
@@ -25,7 +25,7 @@ const productSchema = mongoose.Schema({
   },
   price: {
     type: String,
-    required: [true, "Price is required!"],
+    required: [true, "Giá sản phẩm là bắt buộc!"],
   },
   oldPrice: {
     type: String,
@@ -53,7 +53,7 @@ const productSchema = mongoose.Schema({
   },
   producer: {
     type: String,
-    required: [true, "Producer is required!"],
+    required: [true, "Nhà sản xuất là bắt buộc!"],
   },
   video: {
     type: String,

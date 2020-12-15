@@ -33,6 +33,10 @@ module.exports.postSignUp = async (req, res, next) => {
     phone,
     password,
     retypePassword,
+    address = "",
+    city = "",
+    district = "",
+    village = "",
   } = req.body;
 
   console.log(req.body);
@@ -43,7 +47,7 @@ module.exports.postSignUp = async (req, res, next) => {
         data: req.body,
         respond: {
           msg: "ValidatorError",
-          retypePassword: "Password retype does not match!",
+          retypePassword: "Nhập lại mật khẩu không khớp!",
         },
       });
 
@@ -52,7 +56,7 @@ module.exports.postSignUp = async (req, res, next) => {
         data: req.body,
         respond: {
           msg: "ValidatorError",
-          password: "Password length must be greater than 6!",
+          password: "Chiều dài mật khẩu tối thiểu là 6!",
         },
       });
 
@@ -61,7 +65,7 @@ module.exports.postSignUp = async (req, res, next) => {
         data: req.body,
         respond: {
           msg: "ValidatorError",
-          password: "Password length must be lesser than 20!",
+          password: "Chiều dài mật khẩu tối đa là 2020!",
         },
       });
 
@@ -76,6 +80,10 @@ module.exports.postSignUp = async (req, res, next) => {
       slugName: slug(firstName + " " + lastName),
       password: encryptedPassword,
       passwordResetToken,
+      address,
+      city,
+      district,
+      village,
     };
 
     const user = new User(userObj);
@@ -89,7 +97,7 @@ module.exports.postSignUp = async (req, res, next) => {
     res.render("pages/auth", {
       respond: {
         msg: "success",
-        success: "Sign up successful!",
+        success: "Đăng kí tài khoản thành công!",
       },
       data: "",
     });
@@ -127,7 +135,7 @@ module.exports.postSignIn = async (req, res, next) => {
         // render page co nut resend email confirm acc
         respond: {
           msg: "ValidatorError2",
-          user: "Your account has not been verified!",
+          user: "Bạn chưa xác thực email!",
         },
         data: req.body,
       });
@@ -150,7 +158,7 @@ module.exports.postSignIn = async (req, res, next) => {
       res.render("pages/auth", {
         respond: {
           msg: "ValidatorError2",
-          user: "Your account has been blocked!",
+          user: "Tài khoản của bạn đã bị khóa!",
         },
         data: req.body,
       });
@@ -198,7 +206,7 @@ module.exports.getConfirm = async (req, res, next) => {
     res.render("pages/auth", {
       data: {},
       respond: {
-        success2: "Your account has been verified!",
+        success2: "Xác thực tài khoản thành công!",
         msg: "success",
       },
     });
@@ -229,7 +237,7 @@ exports.postForgotPassword = async (req, res, next) => {
 
     res.render("pages/email", {
       msg: "success",
-      user: "Reset password email has been sent!",
+      user: "Gửi thành công email reset mật khẩu!",
       email,
     });
   } catch (error) {
@@ -263,7 +271,7 @@ exports.getResetPassword = async (req, res, next) => {
     res.render("pages/forgot", {
       respond: {
         msg: "success",
-        success: "Type your new password!",
+        success: "Nhập mật khẩu mới!",
         token,
       },
     });
@@ -298,7 +306,7 @@ exports.postResetPassword = async (req, res, next) => {
         respond: {
           msg: "ValidatorError",
           passVal: password,
-          retypePassword: "Retype password does not match!",
+          retypePassword: "Nhập lại mật khẩu không khớp!",
         },
       });
     }

@@ -30,7 +30,7 @@ module.exports.searchCache = (req, res, next) => {
 
   if (page < 1) page = 1;
 
-  const key = q + page + item_per_page + sort;
+  const key = q + page + item_per_page + sort + min + max;
   console.log("Cache key:" + key);
   RedisClient.get(key, (error, data) => {
     if (error) {
@@ -44,6 +44,9 @@ module.exports.searchCache = (req, res, next) => {
     if (data != null) {
       res.render("pages/products", {
         msg: "ValidatorError",
+        min,
+        max,
+        sort,
         query: q,
         ...JSON.parse(data),
       });
@@ -64,7 +67,15 @@ module.exports.resourceCache = (req, res, next) => {
   const { search = "", sort = "asc", min = 0, max = 100000000 } = req.query;
 
   const key =
-    "" + resourceSlugName + producer + page + item_per_page + search + sort;
+    "" +
+    resourceSlugName +
+    producer +
+    page +
+    item_per_page +
+    search +
+    sort +
+    min +
+    max;
   console.log("Cache key:" + key);
   RedisClient.get(key, (error, data) => {
     if (error) {
@@ -78,9 +89,10 @@ module.exports.resourceCache = (req, res, next) => {
     if (data != null) {
       res.render("pages/products", {
         msg: "ValidatorError",
-        query: {
-          search: search || "",
-        },
+        min,
+        max,
+        query: search || "",
+        sort,
         ...JSON.parse(data),
       });
     } else {

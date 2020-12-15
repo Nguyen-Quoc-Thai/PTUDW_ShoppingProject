@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const enumStatus = {
   values: ["waiting", "confirmed", "transferring", "delivered", "canceled"],
-  message: `Status must be 'waiting', 'confirmed', 'transferring', 'delivered' or 'canceled'!`,
+  message: `Trạng thái phải là 'waiting', 'confirmed', 'transferring', 'delivered' or 'canceled'!`,
 };
 
 const enumPaymentMethod = {
   values: ["cod", "paypal", "banking"],
-  message: `Status must be 'cod', 'paypal' or 'banking'!`,
+  message: `Phương thức thanh toán phải là 'cod', 'paypal' or 'banking'!`,
 };
 
 const checkoutSchema = mongoose.Schema({
@@ -72,7 +72,7 @@ const checkoutSchema = mongoose.Schema({
   },
   totalPayment: {
     type: Number,
-    required: [true, "Total payment is required!"],
+    required: [true, "Tổng tiền phải trả là bắt buộc!"],
   },
   date: {
     type: Date,

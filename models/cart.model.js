@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const enumStatus = {
   values: ["waiting", "staging", "paid"],
-  message: `Status must be 'waiting', 'staging' or 'paid'!`,
+  message: `Trạng thái phải là 'waiting', 'staging' or 'paid'!`,
 };
 
 const cartSchema = mongoose.Schema({

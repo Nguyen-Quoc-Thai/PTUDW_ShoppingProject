@@ -13,7 +13,7 @@ module.exports.getSearch = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const item_per_page = parseInt(req.query.item_per_page) || 12;
   // Filter and sort
-  const { sort = "asc", min = 0, max = 100000000 } = req.query;
+  const { sort, min = 0, max = 100000000 } = req.query;
 
   // Pagination
   if (page < 1) page = 1;
@@ -22,12 +22,37 @@ module.exports.getSearch = async (req, res, next) => {
     const searchSlug = slug(q);
     const regex = new RegExp(searchSlug, "i");
 
-    let [result, len] = await Promise.all([
-      Product.find({ slugName: regex })
-        .skip((page - 1) * item_per_page)
-        .limit(item_per_page),
-      Product.find({ slugName: regex }).countDocuments(),
-    ]);
+    // let [result, len] = await Promise.all([
+    //   Product.find({ slugName: regex })
+    //     .skip((page - 1) * item_per_page)
+    //     .limit(item_per_page),
+    //   Product.find({ slugName: regex }).countDocuments(),
+    // ]);
+
+    let result = await Product.find({ slugName: regex });
+
+    // Filter price
+    result = result.filter(
+      (product) =>
+        parsePrice(product.price) >= min && parsePrice(product.price) < max
+    );
+    // Sort
+    if (sort && sort === "asc") {
+      result = result.sort((a, b) => {
+        return parsePrice(a.price) - parsePrice(b.price);
+      });
+    } else if (sort && sort === "desc") {
+      result = result.sort((a, b) => {
+        return -parsePrice(a.price) + parsePrice(b.price);
+      });
+    }
+
+    const len = result.length;
+
+    result = result.slice(
+      (page - 1) * item_per_page,
+      item_per_page + (page - 1) * item_per_page
+    );
 
     const request = {};
     request.currentPage = page;
@@ -48,35 +73,40 @@ module.exports.getSearch = async (req, res, next) => {
     }
 
     const respond = {
+      type: "global",
       msg: "success",
       request,
     };
 
-    // Sort
-    if (sort === "asc") {
-      result = result.sort((a, b) => {
-        return parsePrice(a.price) - parsePrice(b.price);
-      });
-    } else {
-      result = result.sort((a, b) => {
-        return -parsePrice(a.price) + parsePrice(b.price);
-      });
-    }
+    // // Sort
+    // if (sort && sort === "asc") {
+    //   result = result.sort((a, b) => {
+    //     return parsePrice(a.price) - parsePrice(b.price);
+    //   });
+    // } else if (sort && sort === "desc") {
+    //   result = result.sort((a, b) => {
+    //     return -parsePrice(a.price) + parsePrice(b.price);
+    //   });
+    // }
 
     // Our brand
     const statisticPerType = await statistic(Product, { type: "" }, "producer");
 
     if (statisticPerType.length > 9) statisticPerType.length = 9;
 
+    res.locals.sort = sort || "";
+    res.locals.query = q || "";
+    res.locals.min = min || 0;
+    res.locals.max = max || 100000000;
+    res.locals.ourBrands = statisticPerType || null;
+
     res.render("pages/products", {
       msg: "success",
-      query: q,
       data: result || null,
-      ourBrands: statisticPerType || null,
       respond,
     });
 
-    const key = q + page + item_per_page + sort;
+    const key = q + page + item_per_page + sort + min + max;
     RedisClient.setex(
       key,
       cache_life,
@@ -108,7 +138,7 @@ module.exports.getResourceProducts = async (req, res, next) => {
   if (page < 1) page = 1;
 
   // Filter and sort
-  const { search = "", sort = "asc", min = 0, max = 100000000 } = req.query;
+  const { search = "", sort, min = 0, max = 100000000 } = req.query;
 
   const validResourceSlugName = allCategory.map((cate) => cate.slugName);
 
@@ -125,9 +155,6 @@ module.exports.getResourceProducts = async (req, res, next) => {
       type: mapValue.name,
     };
 
-    const query = {};
-    query.search = search || "";
-
     // Search
     const searchSlug = slug(search);
     const regex = new RegExp(searchSlug, "i");
@@ -137,12 +164,30 @@ module.exports.getResourceProducts = async (req, res, next) => {
       objQuery["producer"] = producer;
     }
 
-    let [result, len] = await Promise.all([
-      Product.find(objQuery)
-        .skip((page - 1) * item_per_page)
-        .limit(item_per_page),
-      Product.find(objQuery).countDocuments(),
-    ]);
+    let result = await Product.find(objQuery);
+
+    // Filter price
+    result = result.filter(
+      (product) =>
+        parsePrice(product.price) >= min && parsePrice(product.price) < max
+    );
+    // Sort
+    if (sort && sort === "asc") {
+      result = result.sort((a, b) => {
+        return parsePrice(a.price) - parsePrice(b.price);
+      });
+    } else if (sort && sort === "desc") {
+      result = result.sort((a, b) => {
+        return -parsePrice(a.price) + parsePrice(b.price);
+      });
+    }
+
+    const len = result.length;
+
+    result = result.slice(
+      (page - 1) * item_per_page,
+      item_per_page + (page - 1) * item_per_page
+    );
 
     const request = {};
     request.currentPage = page;
@@ -167,19 +212,6 @@ module.exports.getResourceProducts = async (req, res, next) => {
       request,
     };
 
-    // Sort
-    if (sort === "asc") {
-      result = result.sort((a, b) => {
-        return parsePrice(a.price) - parsePrice(b.price);
-      });
-    } else {
-      result = result.sort((a, b) => {
-        return -parsePrice(a.price) + parsePrice(b.price);
-      });
-    }
-
-    // Filter
-
     const statisticPerType = await statistic(
       Product,
       { type: mapValue.name },
@@ -188,17 +220,27 @@ module.exports.getResourceProducts = async (req, res, next) => {
 
     if (statisticPerType.length > 9) statisticPerType.length = 9;
 
-    console.log(respond);
+    res.locals.sort = sort || "";
+    res.locals.query = search || "";
+    res.locals.min = min || 0;
+    res.locals.max = max || 100000000;
+    res.locals.ourBrands = statisticPerType || null;
+
     res.render("pages/products", {
       msg: "success",
-      query: query,
       data: result || null,
-      ourBrands: statisticPerType || null,
       respond,
     });
 
     const key =
-      resourceSlugName + producer + page + item_per_page + search + sort;
+      resourceSlugName +
+      producer +
+      page +
+      item_per_page +
+      search +
+      sort +
+      min +
+      max;
     RedisClient.setex(
       key,
       cache_life,
@@ -233,11 +275,12 @@ module.exports.getProductDetails = async (req, res, next) => {
     const statisticPerType = await statistic(Product, { type }, "producer");
     if (statisticPerType.length > 9) statisticPerType.length = 9;
 
+    res.locals.ourBrands = statisticPerType || null;
+
     res.render("pages/productDetail", {
       msg: "success",
       data: product || null,
       relatedProducts: relativeProducts || null,
-      ourBrands: statisticPerType || null,
     });
   } catch (error) {
     console.log(error);

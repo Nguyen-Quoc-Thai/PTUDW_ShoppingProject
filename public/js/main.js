@@ -247,6 +247,10 @@
   $(".custom-control.custom-radio").click(function () {
     $(".text-danger-checkout").html("");
   });
+  // Payment method choose
+  $("#newaccount").click(function () {
+    $(".text-danger-checkout").html("");
+  });
 
   // Submit
   $(".submit-checkout").click(function (e) {
@@ -268,6 +272,12 @@
       return;
     }
 
+    if (!$("input[name=createAcc]:checked").length) {
+      $(".text-danger-checkout").html(
+        "Bạn chưa có tài khoản. Vui lòng chọn tạo tài khoản!"
+      );
+      return;
+    }
     if (!$("#checkout-payment input").is(":checked")) {
       $(".text-danger-checkout").html("Vui lòng chọn phương thức thanh toán!");
       return;
@@ -328,7 +338,7 @@
     const html = `<form class="forgot-form" method="POST" action="/user/forgot">
     <div class="row">
       <div class="col-md-6 user-login">
-        <label>E-mail / Username</label>
+        <label>E-mail / Tên người dùng</label>
         <input
           class="form-control"
           type="text"
@@ -344,10 +354,10 @@
             id="newaccount"
           />
           <label class="custom-control-label" for="newaccount"
-            >Keep me signed in.</label
+            >Giữ đăng nhập.</label
           >
           <a href="/user/auth" style="display: inline-block"
-            >&nbsp;Sign in?</a
+            >&nbsp;Đã có tài khoản?</a
           >
         </div>
       </div>

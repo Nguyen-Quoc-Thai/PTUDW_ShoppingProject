@@ -1,7 +1,6 @@
 const User = require("./../models/user.model");
 const Cart = require("./../models/cart.model");
 const Checkout = require("./../models/checkout.model");
-const Province = require("./../models/dist/province.model");
 
 const { postSignUp } = require("./user.controller");
 
@@ -29,10 +28,15 @@ module.exports.postCheckout = async (req, res, next) => {
   const { user, body } = req;
 
   try {
-    // if (!user) {
-    //   await postSignUp(req, res, next);
-    // }
+    if (!user) {
+      if (req.body.createAcc === "on") {
+        return await postSignUp(req, res, next);
+      } else {
+        return res.redirect("back");
+      }
+    }
 
+    console.log(123);
     const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
 
     const { userId, _id, status, items, totalQuantity, totalCost } = cart;

@@ -27,13 +27,14 @@
               <div class="col-md-12">
                 <div class="product-view-top">
                   <div class="row">
+                    <%if(respond.type!=='global'){%>
                     <div class="col-md-4">
                       <div class="product-search">
                         <input
                           type="text"
                           placeholder="Từ khóa"
                           name="search"
-                          value="<%=query.search%>"
+                          value="<%=query%>"
                         />
                         <a href="" id="search">
                           <button type="submit">
@@ -42,12 +43,24 @@
                         </a>
                       </div>
                     </div>
+                    <%}%>
+
                     <div class="col-md-4">
                       <div class="product-short">
                         <div class="dropdown">
+                          <%if(sort === 'asc'){%>
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            Tăng dần
+                          </div>
+                          <%}else if(sort === 'desc') {%>
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            Giảm dần
+                          </div>
+                          <%}else {%>
                           <div class="dropdown-toggle" data-toggle="dropdown">
                             Giá
                           </div>
+                          <%}%>
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               href=""
@@ -70,9 +83,24 @@
                     <div class="col-md-4">
                       <div class="product-price-range">
                         <div class="dropdown">
+                          <%if(min==0 && max == 100000000){%>
                           <div class="dropdown-toggle" data-toggle="dropdown">
                             Giá thuộc phạm vi
                           </div>
+                          <%}else if(min==0 && max != 100000000){%>
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            Dưới 200.000đ
+                          </div>
+                          <%}else if(max == 100000000){%>
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            Trên 25.000.000đ
+                          </div>
+                          <%}else{%>
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            <%=min%>đ - <%=max%>đ
+                          </div>
+                          <%}%>
+
                           <div class="dropdown-menu dropdown-menu-right filter">
                             <a
                               href=""
@@ -237,7 +265,7 @@
           </div>
 
           <%- include('../partials/productSidebar', {col: 3, type: data[0] ?
-          data[0].type : 'Laptop & Macbook', categories, ourBrands}); %>
+          data[0].type : 'Laptop & Macbook'}); %>
         </div>
       </div>
     </div>
