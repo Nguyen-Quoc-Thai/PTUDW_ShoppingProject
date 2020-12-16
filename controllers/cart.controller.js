@@ -18,9 +18,9 @@ module.exports.getCart = async (req, res, next) => {
       } else cart = userCart;
     }
 
-    console.log(cart.items.length);
+    console.log(cart.totalQuantity);
 
-    req.session.cart = cart;
+    req.app.locals.cart = cart;
     return res.render("pages/cart", {
       msg: "success",
     });

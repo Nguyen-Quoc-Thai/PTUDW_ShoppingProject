@@ -22,9 +22,28 @@ module.exports = function (passport) {
       (email = "", password = "", done) => {
         User.findOne({ email })
           .then((user) => {
+            // Validator
             if (!user) {
               return done(null, false, {
-                email: "Email has not been registered!",
+                email: "Tài khoản chưa đăng kí!",
+              });
+            }
+
+            if (!user.isVerified) {
+              return done(null, false, {
+                account: "Bạn cần xác thực tài khoản để đăng nhập!",
+              });
+            }
+
+            if (user.google.id || user.facebook.id) {
+              return done(null, false, {
+                account: "Đây là tài khoản liên kết!",
+              });
+            }
+
+            if (user.status != "active") {
+              return done(null, false, {
+                account: "Tài khoản của bạn đã bị khóa!",
               });
             }
 
@@ -34,7 +53,7 @@ module.exports = function (passport) {
               if (matched) return done(null, user);
               else
                 return done(null, false, {
-                  password: "Password does not match!",
+                  password: "Mật khẩu không đúng!",
                 });
             });
           })

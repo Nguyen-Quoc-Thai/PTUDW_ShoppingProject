@@ -33,7 +33,7 @@
                 <div class="col-md-6">
                   <label>Họ</label>
                   <input
-                    class="form-control name"
+                    class="form-control"
                     type="text"
                     name="firstName"
                     value=""
@@ -43,7 +43,7 @@
                 <div class="col-md-6">
                   <label>Tên</label>
                   <input
-                    class="form-control name"
+                    class="form-control"
                     type="text"
                     name="lastName"
                     value=""
@@ -93,13 +93,20 @@
                 <div style="padding: 0 0 20px 15px">
                   <span class="text-success"><%=respond.success%></span>
                 </div>
+                <%}%> <%if(respond.msg==='ValidatorError'){%>
+                <div id="err-sign" style="padding: 0 0 20px 15px">
+                  <span class="text-danger"><%=respond.err%></span>
+                </div>
                 <%}%>
                 <div class="col-md-12">
-                  <button class="btn" type="submit">Đăng kí</button>
+                  <button id="sign-up" class="btn" type="submit">
+                    Đăng kí
+                  </button>
                 </div>
               </div>
             </div>
           </form>
+
           <div class="col-lg-6" id="form-toggle">
             <form class="login-form" method="POST" action="/user/login">
               <div class="row">
@@ -126,9 +133,9 @@
                 </div>
                 <%if(respond.msg==='ValidatorError2'){%>
                 <span
-                  style="font-size: 12px; margin: -10px 0 15px 15px"
+                  style="font-size: 12px; margin: -8px 0 25px 15px"
                   class="text-danger"
-                  ><%=respond.user%></span
+                  ><%=respond.err%></span
                 >
                 <%}%>
                 <div class="col-12 d-flex">
@@ -179,6 +186,7 @@
                     ><%=respond.success2%></span
                   >
                   <%}%>
+
                   <div class="custom-control custom-checkbox">
                     <input
                       type="checkbox"

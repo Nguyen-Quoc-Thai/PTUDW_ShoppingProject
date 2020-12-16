@@ -26,6 +26,8 @@
             <div class="checkout-inner">
               <div class="billing-address">
                 <h2>Thông tin hóa đơn</h2>
+                <%if(user){%>
+
                 <form
                   id="form-val"
                   method="POST"
@@ -161,21 +163,7 @@
                         </option>
                       </select>
                     </div>
-                    <%if (!user._id) {%>
-                    <div class="col-md-12">
-                      <div class="custom-control custom-checkbox">
-                        <input
-                          type="checkbox"
-                          class="custom-control-input"
-                          name="createAcc"
-                          id="newaccount"
-                        />
-                        <label class="custom-control-label" for="newaccount"
-                          >Tạo tài khoản</label
-                        >
-                      </div>
-                    </div>
-                    <%}else{%>
+
                     <div class="col-md-12">
                       <div class="custom-control custom-checkbox">
                         <input
@@ -189,10 +177,132 @@
                         >
                       </div>
                     </div>
-                    <%}%>
                   </div>
                 </form>
+                <%}else{%>
+
+                <form id="form-val" method="POST" action="/checkout" user-id="">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label>Họ</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="firstName"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Tên</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="lastName"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>E-mail</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="email"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Điện thoại</label>
+
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="phone"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Mật khẩu</label>
+                      <input
+                        class="form-control"
+                        type="password"
+                        name="password"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Nhập lại mật khẩu</label>
+                      <input
+                        class="form-control"
+                        type="password"
+                        name="retypePassword"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-12">
+                      <label>Địa chỉ</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="address"
+                        value=""
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Lãnh thổ</label>
+                      <select class="custom-select">
+                        <option selected>Việt nam</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Tỉnh - Thành phố</label>
+                      <select class="custom-select" id="province" name="city">
+                        <option value="" selected></option>
+                        <%provinces.forEach((province) => {%>
+                        <option
+                          name="city"
+                          value="<%=province.name%>"
+                          code="<%=province.code%>"
+                        >
+                          <%=province.name%>
+                        </option>
+                        <%})%>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Quận - Huyện</label>
+                      <select
+                        class="custom-select"
+                        id="district"
+                        name="district"
+                      >
+                        <option selected value=""></option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Xã - Phường - Thị trấn</label>
+                      <select class="custom-select" id="village" name="village">
+                        <option selected value=""></option>
+                      </select>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="custom-control custom-checkbox">
+                        <input
+                          type="checkbox"
+                          class="custom-control-input"
+                          name="createAcc"
+                          id="newaccount"
+                        />
+                        <label class="custom-control-label" for="newaccount"
+                          >Tạo tài khoản</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <%}%>
               </div>
+
+              <%if(user){%>
 
               <div class="shipping-address">
                 <h2>Thông tin hóa đơn</h2>
@@ -295,13 +405,14 @@
                   </div>
                 </div>
               </div>
+              <%}%>
             </div>
           </div>
           <div class="col-lg-4">
             <div class="checkout-inner">
               <div class="checkout-summary">
                 <h1>Thông tin giỏ hàng</h1>
-                <hr />
+                <br />
                 <%cart.items.forEach ((item, index) => {%>
                 <p class="text-wrap">
                   <strong><%=(index+1)%>. </strong> <%=item.name%> x

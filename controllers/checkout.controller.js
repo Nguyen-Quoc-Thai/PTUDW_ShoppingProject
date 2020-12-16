@@ -7,13 +7,9 @@ const { postSignUp } = require("./user.controller");
 const { initCart } = require("./../utils/constant");
 
 module.exports.getCheckout = async (req, res, next) => {
-  const { user } = req;
-
   try {
     res.render("pages/checkout", {
       msg: "success",
-      user: "Page checkout loaded!",
-      user: user || {},
     });
   } catch (error) {
     console.log(error.message);

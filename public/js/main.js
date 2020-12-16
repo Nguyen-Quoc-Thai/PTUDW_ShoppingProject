@@ -430,8 +430,24 @@
       const curr = $(this);
       curr.next().addClass("d-none");
       curr.next().removeClass("d-block text-danger");
+      $("#err-sign").addClass("d-none");
     });
 
+  $("body>div.login>div>div>form")
+    .find("input")
+    .blur(function () {
+      if (!$(this).val()) {
+        $(this).next().removeClass("d-none");
+        $(this).next().addClass("d-block text-danger");
+
+        $(this).next().html("Trường này lằ bắt buộc!");
+        $(this).next().css("font-size", "12px");
+        $(this).next().css("margin", "-10px 0 10px");
+      } else {
+        $(this).css("border-color", "green");
+        $(this).css("border-width", "2px");
+      }
+    });
   $("input[name=retypePassword]").blur(function (e) {
     const retype = $("input[name=password]").val();
     const pass = $(this).val();
@@ -447,6 +463,12 @@
       $(this).css("border-color", "green");
       $(this).css("border-width", "2px");
     }
+  });
+
+  $("#sign-up").one("click", function (e) {
+    e.preventDefault();
+    if ($(".d-block.text-danger").length) return;
+    $(this).click();
   });
 
   $("input[name=retypePassword]").click(function () {

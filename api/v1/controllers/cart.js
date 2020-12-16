@@ -2,6 +2,7 @@ const Cart = require("./../../../models/cart.model");
 const Product = require("../../../models/product.model");
 
 const { parsePrice } = require("../../../utils/statistic");
+const slug = require("slug");
 
 module.exports.addToCart = async (req, res, next) => {
   const { user } = req;
@@ -29,11 +30,12 @@ module.exports.addToCart = async (req, res, next) => {
     const { _id, name, price, images } = product;
 
     for (let i = 0; i < cart.items.length; i++) {
-      if (cart.items[i].name === name) {
+      if (cart.items[i].slugName === slugName) {
         cart.items[i].quantity++;
         cart.items[i].total += parsePrice(price);
 
         flagNewItem = false;
+        break;
       }
     }
 
@@ -53,10 +55,9 @@ module.exports.addToCart = async (req, res, next) => {
     cart.totalCost += parsePrice(price);
 
     if (user) {
+      cart.markModified("items");
       await cart.save();
     }
-
-    console.log(cart);
 
     req.session.cart = cart;
     res.status(200).json({
@@ -76,12 +77,10 @@ module.exports.addToCart = async (req, res, next) => {
 module.exports.putUpdate = async (req, res, next) => {
   const enumType = [-1, 1, 0];
 
-  const { bias } = req.body;
+  const bias = parseInt(req.body.bias);
   const { slugName } = req.params;
   const { user } = req;
   let { cart } = req.session;
-
-  console.log(cart);
 
   try {
     if (user) {
@@ -91,7 +90,7 @@ module.exports.putUpdate = async (req, res, next) => {
       });
 
       if (!userCart) {
-        cart = await Cart.create({ userId: user._id });
+        cart = new Cart({ userId: user._id });
       } else cart = userCart;
     }
 
@@ -109,8 +108,6 @@ module.exports.putUpdate = async (req, res, next) => {
         if (item.quantity === 1 && bias === -1) {
           cart.totalQuantity += bias;
           cart.totalCost += bias * parsePrice(item.price);
-          item.quantity += bias;
-          item.total += bias * parsePrice(item.price);
 
           return null;
         } else {
@@ -124,18 +121,12 @@ module.exports.putUpdate = async (req, res, next) => {
       return item;
     });
 
-    cart.items = cart.items.filter((item) => item !== null);
+    cart.items = cart.items.filter((item) => item);
 
     if (user) {
-      await Cart.updateOne(
-        { userId: user._id },
-        {
-          $set: cart,
-        }
-      );
+      cart.markModified("items");
+      await cart.save();
     }
-
-    console.log(cart);
 
     req.session.cart = cart;
     res.status(200).json({

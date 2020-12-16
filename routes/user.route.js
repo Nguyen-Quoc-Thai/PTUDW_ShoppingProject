@@ -44,10 +44,7 @@ router.get(
 router.get(
   "/google/callback",
   checkNotAuthenticated,
-  passport.authenticate("google", {
-    successRedirect: "/",
-    failureRedirect: "/user/auth",
-  })
+  userController.getGoogleCallback
 );
 
 // Facebook login
@@ -59,10 +56,7 @@ router.get(
 router.get(
   "/facebook/callback",
   checkNotAuthenticated,
-  passport.authenticate("facebook", {
-    successRedirect: "/",
-    failureRedirect: "/user/auth",
-  })
+  userController.getFacebookCallback
 );
 
 // API

@@ -19,14 +19,14 @@ exports.putUpdatePassword = async (req, res, next) => {
     if (!validOldPassword) {
       return res.status(200).json({
         msg: "ValidatorError",
-        user: "Old password invalid!",
+        user: "Mật khẩu hiện tại không đúng!",
       });
     }
 
     if (password !== retypePassword) {
       return res.status(200).json({
         msg: "ValidatorError",
-        user: "Password and retype password does not match!",
+        user: "Nhập lại mật khẩu không đúng!",
       });
     }
 
@@ -40,7 +40,7 @@ exports.putUpdatePassword = async (req, res, next) => {
 
     res.status(200).json({
       msg: "success",
-      user: "Your password has been updated!",
+      user: "Cập nhật mật khẩu mới thành công!",
       data: user,
     });
   } catch (error) {
@@ -78,7 +78,7 @@ exports.putUpdateInfo = async (req, res, next) => {
 
     res.status(200).json({
       msg: "success",
-      user: "Your information has been updated!",
+      user: "Cập nhật thông tin thành công!",
       data: user,
     });
   } catch (error) {

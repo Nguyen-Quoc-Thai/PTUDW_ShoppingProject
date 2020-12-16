@@ -39,8 +39,6 @@ module.exports.postSignUp = async (req, res, next) => {
     village = "",
   } = req.body;
 
-  console.log(req.body);
-
   try {
     if (password !== retypePassword)
       return res.render("pages/auth", {
@@ -51,23 +49,23 @@ module.exports.postSignUp = async (req, res, next) => {
         },
       });
 
-    if (password.length < 6)
-      return res.render("pages/auth", {
-        data: req.body,
-        respond: {
-          msg: "ValidatorError",
-          password: "Chiều dài mật khẩu tối thiểu là 6!",
-        },
-      });
+    // if (password.length < 6)
+    //   return res.render("pages/auth", {
+    //     data: req.body,
+    //     respond: {
+    //       msg: "ValidatorError",
+    //       err: "Chiều dài mật khẩu tối thiểu là 6!",
+    //     },
+    //   });
 
-    if (password.length > 20)
-      return res.render("pages/auth", {
-        data: req.body,
-        respond: {
-          msg: "ValidatorError",
-          password: "Chiều dài mật khẩu tối đa là 2020!",
-        },
-      });
+    // if (password.length > 20)
+    //   return res.render("pages/auth", {
+    //     data: req.body,
+    //     respond: {
+    //       msg: "ValidatorError",
+    //       err: "Chiều dài mật khẩu tối đa là 2020!",
+    //     },
+    //   });
 
     const encryptedPassword = await bcrypt.hash(password, 10);
     const passwordResetToken = crypto.randomBytes(16).toString("hex");
@@ -86,29 +84,45 @@ module.exports.postSignUp = async (req, res, next) => {
       village,
     };
 
-    const user = new User(userObj);
-    const result = await user.save();
+    try {
+      const user = new User(userObj);
+      const result = await user.save();
 
-    const token = jwt.sign({ _id: result._id }, jwtKey, {
-      expiresIn: tokenLife,
-    });
-    sendMail(req, result.email, token, "confirmation");
+      const token = jwt.sign({ _id: result._id }, jwtKey, {
+        expiresIn: tokenLife,
+      });
+      sendMail(req, result.email, token, "confirmation");
 
-    res.render("pages/auth", {
-      respond: {
-        msg: "success",
-        success: "Đăng kí tài khoản thành công!",
-      },
-      data: "",
-    });
+      res.render("pages/auth", {
+        respond: {
+          msg: "success",
+          success: "Đăng kí tài khoản thành công!",
+        },
+        data: "",
+      });
+    } catch (error) {
+      console.log(error);
+      let ret = {
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+        },
+      };
+      if (error.errors) {
+        ret.respond.err = error.errors[Object.keys(error.errors)[0]].message;
+      }
+
+      console.log(ret);
+      res.render("pages/auth", {
+        ...ret,
+      });
+    }
   } catch (error) {
-    let respond = { msg: "ValidatorError" };
-    error.errors &&
-      Object.keys(error.errors).forEach(
-        (err) => (respond[err] = error.errors[err].message)
-      );
-
-    res.render("pages/auth", { respond, data: req.body });
+    console.log(error.message);
+    res.render("error", {
+      message: error.message,
+      error,
+    });
   }
 };
 
@@ -121,23 +135,12 @@ module.exports.postSignIn = async (req, res, next) => {
     if (!user) {
       const respond = {
         msg: "ValidatorError2",
-        [Object.keys(info)[0]]: info[Object.keys(info)[0]],
+        err: info[Object.keys(info)[0]],
       };
 
       return res.render("pages/auth", {
         respond,
         data: JSON.parse(JSON.stringify(req.body)),
-      });
-    }
-
-    if (!user.isVerified) {
-      return res.render("pages/auth", {
-        // render page co nut resend email confirm acc
-        respond: {
-          msg: "ValidatorError2",
-          user: "Bạn chưa xác thực email!",
-        },
-        data: req.body,
       });
     }
 
@@ -155,13 +158,7 @@ module.exports.postSignIn = async (req, res, next) => {
         res.redirect("/");
       });
     } else {
-      res.render("pages/auth", {
-        respond: {
-          msg: "ValidatorError2",
-          user: "Tài khoản của bạn đã bị khóa!",
-        },
-        data: req.body,
-      });
+      res.redirect("/user/auth");
     }
   })(req, res, next);
 };
@@ -331,6 +328,49 @@ exports.postResetPassword = async (req, res, next) => {
 
 exports.getWishlist = async (req, res, next) => {
   res.render("pages/wishlist", { user: req.user });
+};
+
+// OAuth
+exports.getGoogleCallback = (req, res, next) => {
+  passport.authenticate("google", function (err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/user/auth");
+    }
+    req.logIn(user, async function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      const cart = await mergeCart(Cart, user._id, req.session.cart);
+      req.session.cart = cart;
+
+      return res.redirect("/");
+    });
+  })(req, res, next);
+};
+
+exports.getFacebookCallback = (req, res, next) => {
+  passport.authenticate("facebook", function (err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/user/auth");
+    }
+    req.logIn(user, async function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      const cart = await mergeCart(Cart, user._id, req.session.cart);
+      req.session.cart = cart;
+
+      return res.redirect("/");
+    });
+  })(req, res, next);
 };
 
 // exports.postResend = async (req, res, next) => {
