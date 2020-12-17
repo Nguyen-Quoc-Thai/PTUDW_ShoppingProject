@@ -40,6 +40,24 @@ module.exports.postSignUp = async (req, res, next) => {
   } = req.body;
 
   try {
+    if (password.length < 6)
+      return res.render("pages/auth", {
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+          err: "Chiều dài mật khẩu tối thiểu là 6!",
+        },
+      });
+
+    if (password.length > 20)
+      return res.render("pages/auth", {
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+          err: "Chiều dài mật khẩu tối đa là 20!",
+        },
+      });
+
     if (password !== retypePassword)
       return res.render("pages/auth", {
         data: req.body,
@@ -48,24 +66,6 @@ module.exports.postSignUp = async (req, res, next) => {
           retypePassword: "Nhập lại mật khẩu không khớp!",
         },
       });
-
-    // if (password.length < 6)
-    //   return res.render("pages/auth", {
-    //     data: req.body,
-    //     respond: {
-    //       msg: "ValidatorError",
-    //       err: "Chiều dài mật khẩu tối thiểu là 6!",
-    //     },
-    //   });
-
-    // if (password.length > 20)
-    //   return res.render("pages/auth", {
-    //     data: req.body,
-    //     respond: {
-    //       msg: "ValidatorError",
-    //       err: "Chiều dài mật khẩu tối đa là 2020!",
-    //     },
-    //   });
 
     const encryptedPassword = await bcrypt.hash(password, 10);
     const passwordResetToken = crypto.randomBytes(16).toString("hex");
@@ -234,7 +234,6 @@ exports.postForgotPassword = async (req, res, next) => {
 
     res.render("pages/email", {
       msg: "success",
-      user: "Gửi thành công email reset mật khẩu!",
       email,
     });
   } catch (error) {
@@ -273,13 +272,10 @@ exports.getResetPassword = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.render("pages/forgot", {
-      respond: {
-        msg: "ValidatorError",
-        user: error.message,
-        token,
-      },
+    console.log(error.message);
+    res.render("error", {
+      message: error.message,
+      error,
     });
   }
 };
@@ -298,30 +294,55 @@ exports.postResetPassword = async (req, res, next) => {
       throw new Error("User not found!");
     }
 
-    if (password !== retypePassword) {
+    if (password.length < 6)
+      return res.render("pages/forgot", {
+        data: req.body,
+        respond: {
+          msg: "ValidatorError",
+          passVal: password,
+          password: "Chiều dài mật khẩu tối thiểu là 6!",
+          token,
+        },
+      });
+
+    if (password.length > 20)
+      return res.render("pages/forgot", {
+        respond: {
+          msg: "ValidatorError",
+          passVal: password,
+          password: "Chiều dài mật khẩu tối đa là 20!",
+          token,
+        },
+      });
+
+    if (password !== retypePassword)
       return res.render("pages/forgot", {
         respond: {
           msg: "ValidatorError",
           passVal: password,
           retypePassword: "Nhập lại mật khẩu không khớp!",
+          token,
         },
       });
-    }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
     user.password = encryptedPassword;
 
     await User.updateOne({ _id: user._id }, { $set: user });
 
-    res.redirect("/user/auth");
-  } catch (error) {
-    console.log(error);
-    res.render("pages/forgot", {
+    // res.redirect("/user/auth");
+    res.render("pages/auth", {
+      data: {},
       respond: {
-        msg: "ValidatorError",
-        user: error.message,
-        token,
+        success2: "Reset mật khẩu thành công!",
+        msg: "success",
       },
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.render("error", {
+      message: error.message,
+      error,
     });
   }
 };

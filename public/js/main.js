@@ -1,23 +1,54 @@
 (function ($) {
   "use strict";
 
-  // Dropdown on mouse hover
   $(document).ready(function () {
-    function toggleNavbarMethod() {
-      if ($(window).width() > 768) {
-        $(".navbar .dropdown")
-          .on("mouseover", function () {
-            $(".dropdown-toggle", this).trigger("click");
-          })
-          .on("mouseout", function () {
-            $(".dropdown-toggle", this).trigger("click").blur();
-          });
-      } else {
-        $(".navbar .dropdown").off("mouseover").off("mouseout");
-      }
+    if (!$.browser.webkit) {
+      $(".wrapper").html("<p>Sorry! Non webkit users. :(</p>");
     }
-    toggleNavbarMethod();
-    $(window).resize(toggleNavbarMethod);
+  });
+
+  // Dropdown on mouse hover
+  // $(document).ready(function () {
+  //   function toggleNavbarMethod() {
+  //     if ($(window).width() > 768) {
+  //       $(".navbar .dropdown")
+  //         .on("mouseover", function () {
+  //           // $(this).find(".dropdown-menu").first().stop(true, true).slideDown();
+  //           // $(".dropdown-toggle", this).trigger("click");
+  //         })
+  //         .on("mouseout", function () {
+  //           // $(this).find(".dropdown-menu").first().stop(true, true).slideUp();
+  //           // $(".dropdown-toggle", this).trigger("click");
+  //         });
+  //     } else {
+  //       $(".navbar .dropdown").off("mouseover").off("mouseout");
+  //     }
+  //   }
+  //   toggleNavbarMethod();
+  //   $(window).resize(toggleNavbarMethod);
+  // });
+
+  // $(".nav-link.dropdown-toggle").hover(
+  //   function () {
+  //     $(this).trigger("click");
+  //     $(".dropdown-menu.show").mouseover(function () {
+  //       $(this).mouseout(function () {
+  //         console.log(123);
+  //       });
+  //       // $(".nav-link.dropdown-toggle").trigger("click");
+  //     });
+  //   },
+  //   function () {}
+  // );
+
+  // Add slideDown animation to Bootstrap dropdown when expanding.
+  $(".dropdown").on("show.bs.dropdown", function () {
+    $(this).find(".dropdown-menu").first().stop(true, true).slideDown();
+  });
+
+  // Add slideUp animation to Bootstrap dropdown when collapsing.
+  $(".dropdown").on("hide.bs.dropdown", function () {
+    $(this).find(".dropdown-menu").first().stop(true, true).slideUp();
   });
 
   // Back to top button

@@ -415,11 +415,19 @@
                 <br />
                 <%cart.items.forEach ((item, index) => {%>
                 <p class="text-wrap">
-                  <strong><%=(index+1)%>. </strong> <%=item.name%> x
-                  <b><%=item.quantity%></b
+                  <strong style="color: #ff6f61"><%=(index+1)%></strong>&nbsp;
+                  <%=item.name%> x <b><%=item.quantity%></b
                   ><span
+                    style="
+                      border-right: 5px solid #ff6f61;
+                      border-radius: 5px;
+                      margin: 0.3rem 0.5rem;
+                      padding: 0.3rem 0.5rem;
+                    "
                     ><strong
-                      ><b><%=item.total.toLocaleString('vi-VN')%></b></strong
+                      ><b style="color: coral"
+                        ><%=item.total.toLocaleString('vi-VN')%></b
+                      ></strong
                     >
                   </span>
                 </p>
