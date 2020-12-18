@@ -40,6 +40,8 @@ $(".trash-like").click(function (e) {
 $("#change-info").submit(function (e) {
   e.preventDefault();
 
+  $(this).find(".update-info").addClass("d-none");
+
   let formData = new FormData();
   var d = $("#thumbnail")[0].files[0];
   formData.append("thumbnail", d);
@@ -68,9 +70,10 @@ $("#change-info").submit(function (e) {
       let className = "";
 
       if (data.msg !== "success") {
-        className = "text-warning";
+        className = "text-danger";
       } else className = "text-success";
-      const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
+
+      const result = `<div class="update-info" style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
       $(".change-info").prepend(result);
     }
   });
@@ -79,6 +82,8 @@ $("#change-info").submit(function (e) {
 // Handle change password
 $("#change-password").submit(function (e) {
   e.preventDefault();
+
+  $(this).find(".update-password").addClass("d-none");
 
   const url = $(this).attr("action");
   let data = {};
@@ -105,9 +110,10 @@ $("#change-password").submit(function (e) {
       let className = "";
 
       if (data.msg !== "success") {
-        className = "text-warning";
+        className = "text-danger";
       } else className = "text-success";
-      const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
+
+      const result = `<div class="update-password" style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
       $(".change-password").prepend(result);
     }
   });
@@ -143,8 +149,8 @@ $("body>div.login>div>div>form")
             curr.next().css("font-size", "12px");
             curr.next().css("margin", "-10px 0 10px");
           } else {
-            curr.css("border-color", "green");
-            curr.css("border-width", "2px");
+            // curr.css("border-color", "green");
+            // curr.css("border-width", "2px");
             curr.next().addClass("d-none");
             curr.next().removeClass("d-block text-danger");
           }
@@ -179,8 +185,8 @@ $("#form-toggle>form>div>div:nth-child(1)>input").blur(function () {
         curr.next().css("font-size", "12px");
         curr.next().css("margin", "-10px 0 10px");
       } else {
-        curr.css("border-color", "green");
-        curr.css("border-width", "2px");
+        // curr.css("border-color", "green");
+        // curr.css("border-width", "2px");
         curr.next().addClass("d-none");
         curr.next().removeClass("d-block text-danger");
       }

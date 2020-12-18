@@ -184,9 +184,15 @@
           >
         </div>
         <div class="row align-items-center product-slider product-slider-4">
-          <% cate.forEach(cat => { %>
+          <% cate.forEach((cat, index) => { %>
           <div class="col-lg-3">
-            <div class="product-item">
+            <div
+              class="product-item"
+              data-aos="flip-right"
+              data-aos-offset="100"
+              data-aos-delay="<%=((index + 1)*50)%>"
+              data-aos-duration="500"
+            >
               <div class="product-title">
                 <a href="/products/<%=cat.slugName%>"><%= cat.name %></a>
                 <div class="ratting">
@@ -230,7 +236,7 @@
 
     <!-- Review Start -->
     <div class="review">
-      <div class="container-fluid">
+      <div class="container-fluid" style="margin-top: 5rem">
         <div class="row align-items-center review-slider normal-slider">
           <div class="col-md-6">
             <div class="review-slider-item">

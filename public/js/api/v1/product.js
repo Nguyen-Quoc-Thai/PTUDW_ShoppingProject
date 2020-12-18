@@ -11,7 +11,7 @@ $("#comment").submit(function (e) {
   if (!data.name || !data.email || !data.review) {
     console.log($("span.comment-warning span").val());
     if ($("span.comment-warning span").val()) return;
-    const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-warning">Bạn phải điền đây đủ thông tin</span></div>`;
+    const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-danger">Bạn phải điền đây đủ thông tin</span></div>`;
     $(".leave-comment").prepend(warning);
     return;
   }

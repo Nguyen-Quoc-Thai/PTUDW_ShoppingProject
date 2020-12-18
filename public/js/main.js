@@ -1,10 +1,11 @@
 (function ($) {
   "use strict";
+  document.addEventListener("aos:in", ({ detail }) => {
+    console.log("animated in", detail);
+  });
 
-  $(document).ready(function () {
-    if (!$.browser.webkit) {
-      $(".wrapper").html("<p>Sorry! Non webkit users. :(</p>");
-    }
+  document.addEventListener("aos:out", ({ detail }) => {
+    console.log("animated out", detail);
   });
 
   // Dropdown on mouse hover
@@ -474,9 +475,6 @@
         $(this).next().html("Trường này lằ bắt buộc!");
         $(this).next().css("font-size", "12px");
         $(this).next().css("margin", "-10px 0 10px");
-      } else {
-        $(this).css("border-color", "green");
-        $(this).css("border-width", "2px");
       }
     });
   $("input[name=retypePassword]").blur(function (e) {
@@ -490,9 +488,6 @@
       $(this).next().html("Nhập lại mật khẩu không chính xác!");
       $(this).next().css("font-size", "12px");
       $(this).next().css("margin", "-10px 0 10px");
-    } else {
-      $(this).css("border-color", "green");
-      $(this).css("border-width", "2px");
     }
   });
 

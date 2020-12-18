@@ -156,9 +156,15 @@
                   </div>
                 </div>
               </div>
-              <% if (data.length) { data.forEach(product => { %>
+              <% if (data.length) { data.forEach((product, index) => { %>
               <div class="col-md-4">
-                <div class="product-item">
+                <div
+                  class="product-item"
+                  data-aos="flip-right"
+                  data-aos-offset="100"
+                  data-aos-delay="<%=((index + 1)*50)%>"
+                  data-aos-duration="500"
+                >
                   <div class="product-title">
                     <a href="/products/<%= product.slugName %>"
                       ><%= product.name %></a

@@ -152,7 +152,7 @@ module.exports.postSignIn = async (req, res, next) => {
 
         const cart = await mergeCart(Cart, req.user._id, req.session.cart);
         req.session.cart = cart;
-        if (req.body.remember) {
+        if (req.body.remember && req.session.cookie) {
           req.session.cookie.maxAge = +remember_life; // 7 days
         }
         res.redirect("/");
@@ -164,7 +164,7 @@ module.exports.postSignIn = async (req, res, next) => {
 };
 
 module.exports.postSignOut = (req, res, next) => {
-  req.logout();
+  req.logOut();
   req.session.cart = null;
   req.user = null;
   res.redirect("/");

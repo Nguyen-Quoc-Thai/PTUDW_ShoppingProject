@@ -10,8 +10,8 @@
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a href="#">Sản phẩm</a></li>
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
           <li class="breadcrumb-item active">Thông tin chi tiết</li>
         </ul>
       </div>
@@ -203,10 +203,10 @@
                         <%=comment.name%>&nbsp;&nbsp;&nbsp;
                         <span
                           ><%=new Intl.DateTimeFormat( ['ban', 'id'], { year:
-                          'numeric', month: 'numeric', day: 'numeric', hour:
-                          'numeric', minute: 'numeric', second: 'numeric',
-                          hour12: false, timeZone: 'America/Los_Angeles' }
-                          ).format(comment.date)%></span
+                          "numeric", month: "numeric", day: "numeric", hour:
+                          "numeric", minute: "numeric", second: "numeric",
+                          hour12: false, timeZone: "America/Los_Angeles", }
+                          ).format(new Date(comment.date))%></span
                         >
                       </div>
                       <div class="ratting">
@@ -301,9 +301,15 @@
               <div
                 class="row align-items-center product-slider product-slider-3"
               >
-                <% relatedProducts.forEach(product => { %>
+                <% relatedProducts.forEach((product, index) => { %>
                 <div class="col-lg-8">
-                  <div class="product-item">
+                  <div
+                    class="product-item"
+                    data-aos="flip-right"
+                    data-aos-offset="100"
+                    data-aos-delay="<%=((index + 1)*50)%>"
+                    data-aos-duration="500"
+                  >
                     <div class="product-title">
                       <a href="/products/<%=product.slugName%>"
                         ><%= product.name %></a
