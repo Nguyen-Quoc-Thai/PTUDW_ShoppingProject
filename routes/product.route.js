@@ -3,15 +3,16 @@ var router = express.Router();
 const productController = require("../controllers/product.controller");
 const productApiController = require("../api/v1/controllers/product");
 
-// const {
-//   searchCache,
-//   resourceCache,
-// } = require("./../middlewares/redis.middleware");
+const {
+  searchCache,
+  resourceCache,
+} = require("./../middlewares/redis.middleware");
 
 // Controller
-router.get("/search", productController.getSearch);
+router.get("/search", searchCache, productController.getSearch);
 router.get(
   "/resource/:resourceSlugName",
+  resourceCache,
   productController.getResourceProducts
 );
 router.get("/:productSlugName", productController.getProductDetails);

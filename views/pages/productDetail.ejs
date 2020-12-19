@@ -315,11 +315,10 @@
                         ><%= product.name %></a
                       >
                       <div class="ratting">
+                        <%Array(+product.rating).fill(0).forEach((num, index) =>
+                        {%>
                         <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
+                        <%})%>
                       </div>
                     </div>
                     <div class="product-image">
