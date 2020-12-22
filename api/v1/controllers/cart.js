@@ -2,7 +2,6 @@ const Cart = require("./../../../models/cart.model");
 const Product = require("../../../models/product.model");
 
 const { parsePrice } = require("../../../utils/statistic");
-const slug = require("slug");
 
 module.exports.addToCart = async (req, res, next) => {
   const { user } = req;
@@ -27,7 +26,7 @@ module.exports.addToCart = async (req, res, next) => {
       slugName,
     });
     if (!product) throw new Error("Không tìm thấy sản phẩm!");
-    const { _id, name, price, images } = product;
+    const { _id, name, price, images, type } = product;
 
     for (let i = 0; i < cart.items.length; i++) {
       if (cart.items[i].slugName === slugName) {
@@ -44,6 +43,7 @@ module.exports.addToCart = async (req, res, next) => {
         itemId: _id,
         name,
         slugName,
+        type,
         thumbnail: images[0],
         price,
         quantity: 1,
