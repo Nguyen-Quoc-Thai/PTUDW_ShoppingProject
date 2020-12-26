@@ -543,4 +543,38 @@
       }
     });
   });
+
+  // See more details
+  $(".toggle-see-more").click(function () {
+    const val = $(this).text().trim();
+    const offset = $(".anchor").offset();
+
+    if (val === "See more") {
+      $(this).html("See less &nbsp;<i class='fas fa-arrow-up'></i>");
+      $(".hidden-row").removeClass("d-none");
+    } else {
+      $(this).html("See more &nbsp;<i class='fas fa-arrow-down'></i>");
+      $(".hidden-row").addClass("d-none");
+      $("html, body").animate(
+        {
+          scrollTop: offset.top,
+          scrollLeft: offset.left,
+        },
+        100
+      );
+    }
+  });
+
+  // Scroll on change tab
+  $("div.row.product-detail-bottom>div>ul>li").click(function () {
+    const offset = $(".anchor").offset();
+    console.log(123);
+    $("html, body").animate(
+      {
+        scrollTop: offset.top,
+        scrollLeft: offset.left,
+      },
+      100
+    );
+  });
 })(jQuery);

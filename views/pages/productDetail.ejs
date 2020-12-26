@@ -32,7 +32,7 @@
                     <img src="<%= src %>" alt="Product Image" />
                     <% }) %>
                   </div>
-
+                  <div class="anchor"></div>
                   <div class="product-slider-single-nav normal-slider">
                     <% data.images.forEach(src => { %>
                     <div class="slider-nav-img">
@@ -155,10 +155,10 @@
                   <div id="description" class="container tab-pane active">
                     <h4>Thông số kĩ thuật</h4>
                     <br />
-                    <table class="table table-bordered">
+                    <table class="table">
                       <tbody>
-                        <%Object.keys(data.details).forEach((field, index) =>
-                        {%>
+                        <%Object.keys(data.details).slice(0, 5).forEach((field,
+                        index) => {%>
                         <tr>
                           <th scope="row"><%=(index + 1)%></th>
                           <td><%=field%></td>
@@ -167,31 +167,84 @@
                           </td>
                         </tr>
                         <%})%>
+                        <%Object.keys(data.details).slice(5).forEach((field,
+                        index) => {%>
+                        <tr class="hidden-row d-none">
+                          <th scope="row"><%=(index + 6)%></th>
+                          <td><%=field%></td>
+                          <td class="text-center">
+                            <%=data.details[field].replace(/^[\s,'"-.\(\)]+|\s+$/gm,'');%>
+                          </td>
+                        </tr>
+                        <%})%>
                       </tbody>
                     </table>
+                    <div
+                      class="toggle-see-more"
+                      style="
+                        padding: 10px;
+                        user-select: none;
+                        cursor: pointer;
+                        text-align: center;
+                      "
+                    >
+                      See more &nbsp;<i class="fas fa-arrow-down"></i>
+                    </div>
                   </div>
 
                   <div id="specification" class="container tab-pane fade">
-                    <h4><strong>Mô tả sản phẩm</strong></h4>
+                    <h4>Mô tả sản phẩm</h4>
                     <hr />
                     <ul>
-                      <%data.descriptions.forEach(field => {%> <%if(field.title)
-                      {%>
-                      <h5><strong><%=field.title%></strong></h5>
-                      <%}%> <%if(field.content) {%>
-                      <p><%=field.content%></p>
-                      <%}%> <%if(field.img && field.content) {%>
-                      <p><%=field.content%></p>
-                      <a href="<%=field.img%>">
-                        <img
-                          src="<%=field.img%>"
-                          alt="<%=field.title%>"
-                          style="max-width: 100%"
-                        />
-                      </a>
-                      <%}%>
-                      <br /><br /><%})%>
+                      <%data.descriptions.slice(0, 2).forEach(field => {%>
+                      <%if(field.title) {%>
+                      <div>
+                        <h5><strong><%=field.title%></strong></h5>
+                        <%}%> <%if(field.content) {%>
+                        <p><%=field.content%></p>
+                        <%}%> <%if(field.img && field.content) {%>
+                        <p><%=field.content%></p>
+                        <a href="<%=field.img%>">
+                          <img
+                            src="<%=field.img%>"
+                            alt="<%=field.title%>"
+                            style="max-width: 100%"
+                          />
+                        </a>
+                        <%}%>
+                        <br /><br />
+                      </div>
+                      <%})%> <%data.descriptions.slice(2).forEach(field => {%>
+                      <%if(field.title) {%>
+                      <div class="hidden-row d-none">
+                        <h5><strong><%=field.title%></strong></h5>
+                        <%}%> <%if(field.content) {%>
+                        <p><%=field.content%></p>
+                        <%}%> <%if(field.img && field.content) {%>
+                        <p><%=field.content%></p>
+                        <a href="<%=field.img%>">
+                          <img
+                            src="<%=field.img%>"
+                            alt="<%=field.title%>"
+                            style="max-width: 100%"
+                          />
+                        </a>
+                        <%}%>
+                        <br /><br />
+                      </div>
+                      <%})%>
                     </ul>
+                    <div
+                      class="toggle-see-more"
+                      style="
+                        padding: 10px;
+                        user-select: none;
+                        cursor: pointer;
+                        text-align: center;
+                      "
+                    >
+                      See more &nbsp;<i class="fas fa-arrow-down"></i>
+                    </div>
                   </div>
                   <div id="reviews" class="container tab-pane fade">
                     <%data.comments.forEach((comment) => {%>
@@ -343,7 +396,10 @@
                     </div>
                     <div class="product-price">
                       <h3><span>$</span><%= product.price %></h3>
-                      <a class="btn" href="/checkout"
+                      <a
+                        class="btn buy-now"
+                        href="/checkout"
+                        value="<%=product.slugName%>"
                         ><i class="fa fa-shopping-cart"></i>Mua</a
                       >
                     </div>

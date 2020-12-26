@@ -2515,3 +2515,12 @@ select:hover {
 .avatar-wrapper .upload-button:hover .fa-arrow-circle-up {
   opacity: 0.9;
 }
+
+.hidden-row {
+  transition: 1s;
+}
+
+#toggle-see-more:hover {
+  background: #d4d1d1;
+  transition: 0.5s;
+}
