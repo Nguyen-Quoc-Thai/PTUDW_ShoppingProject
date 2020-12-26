@@ -1,6 +1,13 @@
 // Add to cart
 $(".add-to-cart").click(function (e) {
   e.preventDefault();
+
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 300);
+
   const slugName = $(this).attr("value");
 
   $.post(`/cart/api/v1/${slugName}`, {}, function (data, status) {
@@ -26,6 +33,12 @@ $(".change-val").click(function (e) {
     if (re == false) return false;
     $(this).parent().parent().css("display", "none");
   }
+
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 300);
 
   const request = $.ajax({
     url: `/cart/api/v1/${slugName}`,

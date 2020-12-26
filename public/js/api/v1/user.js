@@ -2,6 +2,12 @@
 $(".add-to-like").click(function (e) {
   e.preventDefault();
 
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 300);
+
   const slugName = $(this).attr("value");
   const url = `/user/api/v1/like/${slugName}`;
   $.post(url, {}, function (data, status) {
@@ -26,6 +32,12 @@ $(".trash-like").click(function (e) {
     $(this).parent().parent().css("display", "none");
   }
 
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 300);
+
   const slugName = $(this).attr("name");
   const url = `/user/api/v1/unlike/${slugName}`;
   $.post(url, {}, function (data, status) {
@@ -39,6 +51,15 @@ $(".trash-like").click(function (e) {
 // Handle change info
 $("#change-info").submit(function (e) {
   e.preventDefault();
+
+  // Loading
+  $("#loading").addClass("loading");
+
+  if (!$("#thumbnail")[0].files[0]) {
+    setTimeout(function () {
+      $("#loading").removeClass("loading");
+    }, 300);
+  }
 
   $(this).find(".update-info").addClass("d-none");
 
@@ -76,12 +97,20 @@ $("#change-info").submit(function (e) {
       const result = `<div class="update-info" style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
       $(".change-info").prepend(result);
     }
+
+    $("#loading").removeClass("loading");
   });
 });
 
 // Handle change password
 $("#change-password").submit(function (e) {
   e.preventDefault();
+
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 300);
 
   $(this).find(".update-password").addClass("d-none");
 

@@ -2,6 +2,12 @@
 $("#comment").submit(function (e) {
   e.preventDefault();
 
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 300);
+
   const url = $(this).attr("action");
   let data = {};
   $("#comment :input").each(function () {
