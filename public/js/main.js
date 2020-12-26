@@ -1,3 +1,23 @@
+$(document).ready(function () {
+  $("#loading").removeClass("loading");
+
+  $(".navbar-nav a, .product-action a, nav-item a, ul li a[href*='?producer=']")
+    .not('a[href="#"]')
+    .click(function () {
+      $("#loading").addClass("loading");
+    });
+
+  $(".wishlist, .cart").click(function () {
+    $("#loading").addClass("loading");
+  });
+
+  $(".pagination > .page-item")
+    .not(".disabled, .active")
+    .click(function () {
+      $("#loading").addClass("loading");
+    });
+});
+
 (function ($) {
   "use strict";
   document.addEventListener("aos:in", ({ detail }) => {
@@ -7,40 +27,6 @@
   document.addEventListener("aos:out", ({ detail }) => {
     console.log("animated out", detail);
   });
-
-  // Dropdown on mouse hover
-  // $(document).ready(function () {
-  //   function toggleNavbarMethod() {
-  //     if ($(window).width() > 768) {
-  //       $(".navbar .dropdown")
-  //         .on("mouseover", function () {
-  //           // $(this).find(".dropdown-menu").first().stop(true, true).slideDown();
-  //           // $(".dropdown-toggle", this).trigger("click");
-  //         })
-  //         .on("mouseout", function () {
-  //           // $(this).find(".dropdown-menu").first().stop(true, true).slideUp();
-  //           // $(".dropdown-toggle", this).trigger("click");
-  //         });
-  //     } else {
-  //       $(".navbar .dropdown").off("mouseover").off("mouseout");
-  //     }
-  //   }
-  //   toggleNavbarMethod();
-  //   $(window).resize(toggleNavbarMethod);
-  // });
-
-  // $(".nav-link.dropdown-toggle").hover(
-  //   function () {
-  //     $(this).trigger("click");
-  //     $(".dropdown-menu.show").mouseover(function () {
-  //       $(this).mouseout(function () {
-  //         console.log(123);
-  //       });
-  //       // $(".nav-link.dropdown-toggle").trigger("click");
-  //     });
-  //   },
-  //   function () {}
-  // );
 
   // Add slideDown animation to Bootstrap dropdown when expanding.
   $(".dropdown").on("show.bs.dropdown", function () {
@@ -63,7 +49,14 @@
     }
   });
   $(".back-to-top").click(function () {
-    $("html, body").animate({ scrollTop: 0 }, 500);
+    // Loading
+    $("#loading").addClass("loading");
+
+    $("html, body").animate({ scrollTop: 0 }, 700, function () {
+      setTimeout(function () {
+        $("#loading").removeClass("loading");
+      }, 1200);
+    });
     return false;
   });
 
@@ -266,6 +259,7 @@
   });
 
   // Handle submit place order
+
   // Form focus
   $("#form-val>div")
     .children()
@@ -288,6 +282,9 @@
   $(".submit-checkout").click(function (e) {
     e.preventDefault();
 
+    // Loading
+    $("#loading").addClass("loading");
+
     let invalid = false;
 
     $("#form-val>div")
@@ -301,6 +298,9 @@
 
     if (invalid) {
       $(".text-danger-checkout").html("Bạn phải điền đầy đủ thông tin!");
+      setTimeout(function () {
+        $("#loading").removeClass("loading");
+      }, 300);
       return;
     }
 
@@ -311,14 +311,23 @@
       $(".text-danger-checkout").html(
         "Bạn chưa có tài khoản. Vui lòng chọn tạo tài khoản!"
       );
+      setTimeout(function () {
+        $("#loading").removeClass("loading");
+      }, 300);
       return;
     }
     if (!$("#checkout-payment input").is(":checked")) {
       $(".text-danger-checkout").html("Vui lòng chọn phương thức thanh toán!");
+      setTimeout(function () {
+        $("#loading").removeClass("loading");
+      }, 300);
       return;
     }
     if ($("#total-quantity>strong").html() == 0) {
       $(".text-danger-checkout").html("Không có vật phẩm trong giỏ hàng!");
+      setTimeout(function () {
+        $("#loading").removeClass("loading");
+      }, 300);
       return;
     }
 
@@ -335,6 +344,9 @@
   $("#search").click(function (e) {
     e.preventDefault();
 
+    // Loading
+    $("#loading").addClass("loading");
+
     const search = $("input[name=search]").val();
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -346,6 +358,9 @@
   $("a[name=sort]").click(function (e) {
     e.preventDefault();
 
+    // Loading
+    $("#loading").addClass("loading");
+
     const val = $(this).attr("data");
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -356,6 +371,9 @@
   // Search filter price
   $(".filter a").click(function (e) {
     e.preventDefault();
+
+    // Loading
+    $("#loading").addClass("loading");
 
     const min = $(this).attr("min");
     const max = $(this).attr("max");
@@ -409,7 +427,7 @@
   $(".page-item").click(function (e) {
     e.preventDefault();
 
-    if ($(this).hasClass("disabled")) return;
+    if ($(this).hasClass("disabled") || $(this).hasClass("active")) return;
     const val = $(this).attr("value");
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -420,6 +438,9 @@
   // Global search
   $(".btn-search-global").click(function (e) {
     e.preventDefault();
+
+    // Loading
+    $("#loading").addClass("loading");
 
     const val = $(".text-search-global").val();
 
@@ -512,6 +533,12 @@
   // Select option dependance
   // Province/City change
   $("#province").on("change", function () {
+    // Loading
+    $("#loading").addClass("loading");
+    setTimeout(function () {
+      $("#loading").removeClass("loading");
+    }, 300);
+
     $("#district").html("");
     const code = $(this).children("option:selected").attr("code");
     console.log(code);
@@ -529,6 +556,12 @@
 
   // District change
   $("#district").on("change", function () {
+    // Loading
+    $("#loading").addClass("loading");
+    setTimeout(function () {
+      $("#loading").removeClass("loading");
+    }, 300);
+
     $("#village").html("");
     const code = $(this).children("option:selected").attr("code");
     console.log(code);
@@ -542,6 +575,15 @@
         });
       }
     });
+  });
+
+  // Village change
+  $("#village").on("change", function () {
+    // Loading
+    $("#loading").addClass("loading");
+    setTimeout(function () {
+      $("#loading").removeClass("loading");
+    }, 300);
   });
 
   // See more details

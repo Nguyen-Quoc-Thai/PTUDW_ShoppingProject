@@ -9,7 +9,7 @@ $(".view-checkout").click(function (e) {
 
     const modal_header = `<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header" style="background-color: blanchedalmond;">
             <h5 class="modal-title" id="exampleModalLongTitle">
               Thông tin mua hàng
             </h5>
@@ -101,6 +101,12 @@ $(".view-checkout").click(function (e) {
 // Get buy now
 $(".buy-now").click(function (e) {
   e.preventDefault();
+
+  // Loading
+  $("#loading").addClass("loading");
+  setTimeout(function () {
+    $("#loading").removeClass("loading");
+  }, 700);
 
   const slugName = $(this).attr("value");
 
