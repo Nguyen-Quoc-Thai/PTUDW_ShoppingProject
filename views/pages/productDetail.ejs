@@ -382,13 +382,20 @@
                         />
                       </a>
                       <div class="product-action">
-                        <a href="#"><i class="fa fa-cart-plus"></i></a>
-                        <a href="#"
-                          ><i
-                            class="fa fa-heart add-to-like"
-                            value="<%=product.slugName%>"
-                          ></i
+                        <a
+                          href="#"
+                          class="add-to-cart"
+                          value="<%=product.slugName%>"
+                        >
+                          <i class="fa fa-cart-plus"></i
                         ></a>
+                        <a
+                          href="#"
+                          class="add-to-like"
+                          value="<%=product.slugName%>"
+                        >
+                          <i class="fa fa-heart"></i>
+                        </a>
                         <a href="/products/<%= product.slugName %>"
                           ><i class="fa fa-search"></i
                         ></a>

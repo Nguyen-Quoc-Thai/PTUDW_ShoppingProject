@@ -7,6 +7,7 @@ $(".add-to-like").click(function (e) {
 
   const cart = $(".btn.wishlist");
   const imgToDrag = $(this).parent().prev().find("img").eq(0);
+  console.log(imgToDrag);
 
   const slugName = $(this).attr("value");
   const url = `/user/api/v1/like/${slugName}`;

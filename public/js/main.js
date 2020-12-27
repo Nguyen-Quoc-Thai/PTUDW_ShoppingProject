@@ -258,6 +258,12 @@ $(document).ready(function () {
     }
   });
 
+  // Req checkout
+  $(".cart-btn button").click(function () {
+    // Loading
+    $("#loading").addClass("loading");
+  });
+
   // Handle submit place order
 
   // Form focus

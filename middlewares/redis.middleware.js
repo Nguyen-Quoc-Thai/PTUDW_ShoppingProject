@@ -12,11 +12,13 @@ module.exports.homeCache = (req, res, next) => {
     }
 
     if (data != null) {
+      console.log("Cache hit!");
       res.render("pages/index", {
         msg: "success",
         data: JSON.parse(data) || [],
       });
     } else {
+      console.log("Cache miss!");
       next();
     }
   });
@@ -42,6 +44,7 @@ module.exports.searchCache = (req, res, next) => {
     }
 
     if (data != null) {
+      console.log("Cache hit!");
       res.render("pages/products", {
         msg: "ValidatorError",
         min,
@@ -51,6 +54,7 @@ module.exports.searchCache = (req, res, next) => {
         ...JSON.parse(data),
       });
     } else {
+      console.log("Cache miss!");
       next();
     }
   });
@@ -87,6 +91,7 @@ module.exports.resourceCache = (req, res, next) => {
     }
 
     if (data != null) {
+      console.log("Cache hit!");
       res.render("pages/products", {
         msg: "ValidatorError",
         min,
@@ -96,6 +101,7 @@ module.exports.resourceCache = (req, res, next) => {
         ...JSON.parse(data),
       });
     } else {
+      console.log("Cache miss!");
       next();
     }
   });

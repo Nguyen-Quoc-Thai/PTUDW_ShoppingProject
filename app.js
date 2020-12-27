@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
-const cookieSession = require("cookie-session");
 const cors = require("cors");
 
 const connectDB = require("./config/db");
@@ -53,13 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public"), cacheOptions));
 
-app.use(
-  cookieSession({
-    name: "e-store-session",
-    keys: ["key_1", "key_2"],
-  })
-);
-
+// Passport require
 app.use(
   session({
     secret: session_secret,
@@ -67,7 +60,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 
