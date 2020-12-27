@@ -2,11 +2,51 @@
 $(".add-to-cart").click(function (e) {
   e.preventDefault();
 
-  // Loading
-  $("#loading").addClass("loading");
+  if ($(this).hasClass("disabled")) return;
+  $(".add-to-cart").addClass("disabled");
   setTimeout(function () {
-    $("#loading").removeClass("loading");
-  }, 300);
+    $(".add-to-cart").removeClass("disabled");
+  }, 500);
+
+  const cart = $(".btn.cart");
+  const imgToDrag = $(this).parent().prev().find("img").eq(0);
+
+  if (imgToDrag) {
+    const imgClone = imgToDrag
+      .clone()
+      .offset({
+        top: imgToDrag.offset().top,
+        left: imgToDrag.offset().left,
+      })
+      .css({
+        opacity: "0.8",
+        position: "absolute",
+        height: "100px",
+        width: "100px",
+        "z-index": "101",
+      })
+      .appendTo($("body"))
+      .animate(
+        {
+          top: cart.offset().top + 10,
+          left: cart.offset().left + 10,
+          width: 75,
+          height: 75,
+        },
+        1000,
+        "easeInOutExpo"
+      );
+
+    imgClone.animate(
+      {
+        width: 0,
+        height: 0,
+      },
+      function () {
+        $(this).detach();
+      }
+    );
+  }
 
   const slugName = $(this).attr("value");
 

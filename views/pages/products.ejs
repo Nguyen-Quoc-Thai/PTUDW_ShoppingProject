@@ -234,17 +234,21 @@
                       class="page-item disabled pag-minus"
                       value="<%=(+respond.request.currentPage-1)%>"
                     >
-                      <a class="page-link" href=""><</a>
+                      <a class="page-link" href="">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
                     </li>
                     <%}else{%>
                     <li
                       class="page-item"
                       value="<%=(+respond.request.currentPage-1)%>"
                     >
-                      <a class="page-link" href=""><</a>
+                      <a class="page-link" href="">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
                     </li>
-                    <%}%>
-                    <%Array(+respond.request.totalPages).fill(0).forEach((page,
+                    <%}%> <%if(+respond.request.totalPages <= 10)
+                    Array(+respond.request.totalPages).fill(0).forEach((page,
                     index) => {%>
                     <%if((index+1)===+respond.request.currentPage){%>
                     <li class="page-item active" value="<%=(index+1)%>">
@@ -259,14 +263,18 @@
                       class="page-item disabled"
                       value="<%=(+respond.request.currentPage+1)%>"
                     >
-                      <a class="page-link" href="">></a>
+                      <a class="page-link" href="">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
                     </li>
                     <%}else{%>
                     <li
                       class="page-item pag-plus"
                       value="<%=(+respond.request.currentPage+1)%>"
                     >
-                      <a class="page-link" href="">></a>
+                      <a class="page-link" href="">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
                     </li>
                     <%}%>
                   </ul>

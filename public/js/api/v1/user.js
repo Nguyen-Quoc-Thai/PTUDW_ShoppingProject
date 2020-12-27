@@ -2,11 +2,11 @@
 $(".add-to-like").click(function (e) {
   e.preventDefault();
 
-  // Loading
-  $("#loading").addClass("loading");
-  setTimeout(function () {
-    $("#loading").removeClass("loading");
-  }, 300);
+  if ($(this).hasClass("disabled")) return;
+  $(this).addClass("disabled");
+
+  const cart = $(".btn.wishlist");
+  const imgToDrag = $(this).parent().prev().find("img").eq(0);
 
   const slugName = $(this).attr("value");
   const url = `/user/api/v1/like/${slugName}`;
@@ -14,6 +14,43 @@ $(".add-to-like").click(function (e) {
     if (data.msg === "success" && status === "success") {
       const oldVal = parseInt($(".cart-count-like").html().slice(1));
       $(".cart-count-like").html(`(${oldVal + 1})`);
+
+      if (imgToDrag) {
+        const imgClone = imgToDrag
+          .clone()
+          .offset({
+            top: imgToDrag.offset().top,
+            left: imgToDrag.offset().left,
+          })
+          .css({
+            opacity: "0.8",
+            position: "absolute",
+            height: "100px",
+            width: "100px",
+            "z-index": "101",
+          })
+          .appendTo($("body"))
+          .animate(
+            {
+              top: cart.offset().top + 10,
+              left: cart.offset().left + 10,
+              width: 75,
+              height: 75,
+            },
+            1000,
+            "easeInOutExpo"
+          );
+
+        imgClone.animate(
+          {
+            width: 0,
+            height: 0,
+          },
+          function () {
+            $(this).detach();
+          }
+        );
+      }
     }
   });
 });
