@@ -9,7 +9,7 @@ $(".view-checkout").click(function (e) {
 
     const modal_header = `<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
-          <div class="modal-header" style="background-color: blanchedalmond;">
+          <div class="modal-header" style="background-color: honeydew;">
             <h5 class="modal-title" id="exampleModalLongTitle">
               Thông tin mua hàng
             </h5>

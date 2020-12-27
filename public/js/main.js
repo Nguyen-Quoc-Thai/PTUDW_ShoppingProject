@@ -258,6 +258,12 @@ $(document).ready(function () {
     }
   });
 
+  // Req checkout
+  $(".cart-btn button").click(function () {
+    // Loading
+    $("#loading").addClass("loading");
+  });
+
   // Handle submit place order
 
   // Form focus
@@ -348,10 +354,16 @@ $(document).ready(function () {
     $("#loading").addClass("loading");
 
     const search = $("input[name=search]").val();
-
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("search", search);
-    window.location.search = urlParams;
+
+    if (search === "") urlParams.delete("search");
+    else urlParams.set("search", search);
+
+    urlParams.delete("page");
+    urlParams.delete("q");
+    window.location.assign(
+      `${window.location.href.split(/[?#]/)[0]}?${urlParams}`
+    );
   });
 
   // Search sort price
@@ -364,7 +376,13 @@ $(document).ready(function () {
     const val = $(this).attr("data");
 
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("sort", val);
+
+    if (val === "none") {
+      urlParams.delete("sort");
+    } else {
+      urlParams.set("sort", val);
+    }
+
     window.location.search = urlParams;
   });
 
@@ -379,8 +397,15 @@ $(document).ready(function () {
     const max = $(this).attr("max");
 
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("min", min);
-    urlParams.set("max", max);
+
+    if (min === "0" && max === "100000000") {
+      urlParams.delete("min");
+      urlParams.delete("max");
+    } else {
+      urlParams.set("min", min);
+      urlParams.set("max", max);
+    }
+
     window.location.search = urlParams;
   });
 
@@ -445,7 +470,11 @@ $(document).ready(function () {
     const val = $(".text-search-global").val();
 
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("q", val);
+    if (val === "") urlParams.delete("q");
+    else urlParams.set("q", val);
+
+    urlParams.delete("page");
+    urlParams.delete("search");
     window.location.assign(`/products/search?${urlParams}`);
   });
 
