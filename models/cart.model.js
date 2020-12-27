@@ -19,7 +19,6 @@ const cartSchema = mongoose.Schema({
     type: Array,
     default: [],
   },
-  // {itemId, name, thumbnail, price, quantity, total}
   totalQuantity: {
     type: Number,
     default: 0,

@@ -57,7 +57,6 @@ const checkoutSchema = mongoose.Schema({
     type: Array,
     default: [],
   },
-  // {itemId, name, price, quantity}
   totalQuantity: {
     type: Number,
     default: 0,

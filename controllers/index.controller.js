@@ -1,4 +1,4 @@
-const RedisClient = require("./../config/redis");
+// const RedisClient = require("./../config/redis");
 const cache_life = process.env.CACHE_LIFE;
 
 const Product = require("./../models/product.model");
@@ -31,7 +31,7 @@ module.exports.index = async (req, res, next) => {
       data: result || [],
     });
 
-    RedisClient.setex("/", cache_life, JSON.stringify(result));
+    // RedisClient.setex("/", cache_life, JSON.stringify(result));
   } catch (error) {
     res.render("error", {
       message: error.message,

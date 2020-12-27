@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 const slug = require("mongoose-slug-updater");
 
-const enumType = {
-  values: ["computer", "laptop", "mobile"],
-  message: `Loại sản phẩm phải là 'computer', 'laptop' or 'mobile'!`,
-};
-
 const productSchema = mongoose.Schema({
   name: {
     type: String,
@@ -32,19 +27,14 @@ const productSchema = mongoose.Schema({
     slug: "price",
   },
   type: {
-    // chua co
     type: String,
     default: "",
-    // enum: enumType,
-    // required: [true, "Type is required!"],
   },
   images: {
     type: Array,
     default: [],
   },
   quantity: {
-    // type: String, // String or Number
-    // required: [true, "Quantity is required!"],
     default: "",
   },
   tags: {
@@ -110,30 +100,6 @@ const productSchema = mongoose.Schema({
       default: "",
     },
   },
-  // } [
-  //     {
-  //         userId: {
-  //             type: mongoose.Types.ObjectId,
-  //             ref: 'User'
-  //         },
-  //         name: {
-  //             type: String,
-  //             default: 'Anonymous'
-  //         },
-  //         content: {
-  //             type: String,
-  //             default: 'No content'
-  //         },
-  //         rating: {
-  //             type: Number,
-  //             default: 5
-  //         },
-  //         date: {
-  //             type: Date,
-  //             default: new Date()
-  //         },
-  //     }
-  // ]
 });
 
 // Add plugins

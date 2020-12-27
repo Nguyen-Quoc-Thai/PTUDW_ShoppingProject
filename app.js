@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const createError = require("http-errors");
 const express = require("express");
+const compression = require("compression");
+const minify = require("express-minify");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -10,7 +12,7 @@ const passport = require("passport");
 const cors = require("cors");
 
 const connectDB = require("./config/db");
-const session_secret = process.env.SESSION_SECRET || "session_secret";
+const session_secret = process.env.SESSION_SECRET;
 
 const indexRouter = require("./routes/index.route");
 const userRouter = require("./routes/user.route");
@@ -24,6 +26,19 @@ require("./config/passport")(passport);
 const { init } = require("./middlewares/init.middleware");
 
 const app = express();
+app.use(
+  compression({
+    level: 6,
+    threshold: 25 * 1000,
+  })
+);
+app.use(
+  minify({
+    css_match: /css/,
+    js_match: /javascript/,
+    blacklist: [/\.min\.(css|js)$/],
+  })
+);
 
 // Connect DB
 connectDB();
@@ -32,12 +47,12 @@ connectDB();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Cache control
 const cacheOptions = {
   etag: true,
-  maxAge: 3600 * 24,
-  expires: 3600 * 24,
-  redirect: true,
+  maxAge: 1000 * 60 * 5,
   cacheControl: "public",
+  immutable: true,
   setHeaders: function (res, path, stat) {
     res.set({
       "x-timestamp": Date.now(),
@@ -63,6 +78,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Middleware update info
 app.use(init);
 
 app.use("/", indexRouter);

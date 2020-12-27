@@ -1,4 +1,4 @@
-const RedisClient = require("./../config/redis");
+// const RedisClient = require("./../config/redis");
 const cache_life = process.env.CACHE_LIFE;
 
 const slug = require("slug");
@@ -96,15 +96,15 @@ module.exports.getSearch = async (req, res, next) => {
     });
 
     const key = q + page + item_per_page + sort + min + max;
-    RedisClient.setex(
-      key,
-      cache_life,
-      JSON.stringify({
-        data: result || null,
-        ourBrands: statisticPerType || null,
-        respond,
-      })
-    );
+    // RedisClient.setex(
+    //   key,
+    //   cache_life,
+    //   JSON.stringify({
+    //     data: result || null,
+    //     ourBrands: statisticPerType || null,
+    //     respond,
+    //   })
+    // );
   } catch (error) {
     console.log(error);
     res.render("pages/products", {
@@ -230,15 +230,15 @@ module.exports.getResourceProducts = async (req, res, next) => {
       sort +
       min +
       max;
-    RedisClient.setex(
-      key,
-      cache_life,
-      JSON.stringify({
-        data: result || null,
-        ourBrands: statisticPerType || null,
-        respond,
-      })
-    );
+    // RedisClient.setex(
+    //   key,
+    //   cache_life,
+    //   JSON.stringify({
+    //     data: result || null,
+    //     ourBrands: statisticPerType || null,
+    //     respond,
+    //   })
+    // );
   } catch (error) {
     res.render("error", {
       message: error.message,
