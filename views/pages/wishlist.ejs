@@ -1,83 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body>
-    <%- include('../partials/header', {query:''}); %>
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<%- include('../partials/header', {query:''}); %>
 
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb-wrap">
-      <div class="container-fluid">
-        <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
-          <li class="breadcrumb-item active">Yêu thích</li>
-        </ul>
-      </div>
-    </div>
-    <!-- Breadcrumb End -->
+		<!-- Breadcrumb Start -->
+		<div class="breadcrumb-wrap">
+			<div class="container-fluid">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+					<li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+					<li class="breadcrumb-item active">Yêu thích</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Breadcrumb End -->
 
-    <!-- Wishlist Start -->
-    <div class="wishlist-page">
-      <div class="container-fluid">
-        <div class="wishlist-page-inner">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                    <%if(user.likes.length) {%>
-                    <tr>
-                      <th>Sản phẩm</th>
-                      <th>Giá</th>
-                      <th>Xóa</th>
-                    </tr>
-                    <%}%>
-                  </thead>
-                  <tbody class="align-middle">
-                    <%if (user.likes.length) { user.likes.forEach((item,
-                    index)=>{%>
-                    <tr>
-                      <td>
-                        <div class="img unlike">
-                          <a href="/products/<%=item.slugName%>"
-                            ><img src="<%=item.images[0]%>" alt="Image"
-                          /></a>
-                          <p><%=item.name%></p>
-                        </div>
-                      </td>
-                      <td><%=item.price%></td>
-                      <td class="trash">
-                        <button
-                          class="trash-like"
-                          value="0"
-                          name="<%=item.slugName%>"
-                        >
-                          <i class="fa fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <%})}else{%>
-                    <h3>Không có sản phẩm yêu thích nào!</h3>
-                    <h6 class="pt-3">
-                      <span
-                        ><a class="text-success" href="/"
-                          >Tiếp tục mua sắm</a
-                        ></span
-                      >
-                    </h6>
-                    <%}%>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Wishlist End -->
+		<!-- Wishlist Start -->
+		<div class="wishlist-page">
+			<div class="container-fluid">
+				<div class="wishlist-page-inner">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-bordered">
+									<thead class="thead-dark">
+										<%if(user.likes.length) {%>
+										<tr>
+											<th>Sản phẩm</th>
+											<th>Giá</th>
+											<th>Xóa</th>
+										</tr>
+										<%}%>
+									</thead>
+									<tbody class="align-middle">
+										<%if (user.likes.length) { user.likes.forEach((item,
+										index)=>{%>
+										<tr>
+											<td>
+												<div class="img unlike">
+													<a href="/products/<%=item.slugName%>"
+														><img src="<%=item.images[0]%>" alt="Image"
+													/></a>
+													<p><%=item.name%></p>
+												</div>
+											</td>
+											<td><%=item.price%></td>
+											<td class="trash">
+												<button
+													class="trash-like"
+													value="0"
+													name="<%=item.slugName%>"
+												>
+													<i class="fa fa-trash"></i>
+												</button>
+											</td>
+										</tr>
+										<%})}else{%>
+										<h3>Không có sản phẩm yêu thích nào!</h3>
+										<h6 class="pt-3">
+											<span
+												><a class="text-success" href="/"
+													>Tiếp tục mua sắm</a
+												></span
+											>
+										</h6>
+										<%}%>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Wishlist End -->
 
-    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
-  </body>
+		<%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+	</body>
 </html>

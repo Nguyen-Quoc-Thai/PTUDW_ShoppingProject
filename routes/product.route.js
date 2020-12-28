@@ -1,7 +1,7 @@
-var express = require("express");
-var router = express.Router();
-const productController = require("../controllers/product.controller");
-const productApiController = require("../api/v1/controllers/product");
+const express = require('express');
+const router = express.Router();
+const productController = require('../controllers/product.controller');
+const productApiController = require('../api/v1/controllers/product');
 
 // const {
 //   searchCache,
@@ -9,17 +9,17 @@ const productApiController = require("../api/v1/controllers/product");
 // } = require("./../middlewares/redis.middleware");
 
 // Controller
-router.get("/search", productController.getSearch);
+router.get('/search', productController.getSearch);
 router.get(
-  "/resource/:resourceSlugName",
-  productController.getResourceProducts
+	'/resource/:resourceSlugName',
+	productController.getResourceProducts
 );
-router.get("/:productSlugName", productController.getProductDetails);
+router.get('/:productSlugName', productController.getProductDetails);
 
 // API
 router.post(
-  "/api/v1/comment/:productSlugName",
-  productApiController.postComment
+	'/api/v1/comment/:productSlugName',
+	productApiController.postComment
 );
 
 // router.get('/', productController.getAll);

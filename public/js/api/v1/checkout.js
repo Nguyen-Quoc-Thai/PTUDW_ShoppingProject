@@ -1,13 +1,13 @@
 // View history
-$(".view-checkout").click(function (e) {
-  e.preventDefault();
+$('.view-checkout').click(function (e) {
+	e.preventDefault();
 
-  const id = $(this).attr("value");
+	const id = $(this).attr('value');
 
-  $.get(`/checkout/api/v1/${id}`, function (data) {
-    if (data.msg !== "success") return;
+	$.get(`/checkout/api/v1/${id}`, function (data) {
+		if (data.msg !== 'success') return;
 
-    const modal_header = `<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		const modal_header = `<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header" style="background-color: honeydew;">
             <h5 class="modal-title" id="exampleModalLongTitle">
@@ -24,10 +24,10 @@ $(".view-checkout").click(function (e) {
           </div>
           <div class="modal-body">
           <div class="mb-3"><span><b>Người nhận:</b>&nbsp;${
-            data.data.receiver
-          }&nbsp;&nbsp;${
-      data.data.phone
-    }<strong>&nbsp;${data.data.paymentMethod.toUpperCase()}</strong></span></div>
+						data.data.receiver
+					}&nbsp;&nbsp;${
+			data.data.phone
+		}<strong>&nbsp;${data.data.paymentMethod.toUpperCase()}</strong></span></div>
             <div class="table-responsive">
               <table class="table table-bordered">
                 <thead class="thead-dark">
@@ -41,7 +41,7 @@ $(".view-checkout").click(function (e) {
                 </thead>
                 <tbody class="align-middle" id="cart">`;
 
-    const modal_footer = `<tr>
+		const modal_footer = `<tr>
                 <td>Sum
                 </td>
                 <td>
@@ -49,7 +49,7 @@ $(".view-checkout").click(function (e) {
                 <td></td>
                 <td>${data.data.totalQuantity}
                 </td>
-                <td>${data.data.totalPayment.toLocaleString("vi-VN")} đ</td>
+                <td>${data.data.totalPayment.toLocaleString('vi-VN')} đ</td>
               </tr>
             </tbody>
           </table>
@@ -66,8 +66,8 @@ $(".view-checkout").click(function (e) {
           </div>
           </div>`;
 
-    const modal_content = data.data.items.map((item, index) => {
-      return `
+		const modal_content = data.data.items.map((item, index) => {
+			return `
                     <tr>
                       <td>
                         ${index + 1}
@@ -76,8 +76,8 @@ $(".view-checkout").click(function (e) {
                         <div class="img d-flex align-items-center">
                           <a href="/products/${item.slugName}"
                             ><img style="width: 45px; height: auto;" src="${
-                              item.thumbnail
-                            }" alt="Image"
+															item.thumbnail
+														}" alt="Image"
                           /></a>
                           <p class="m-0">${item.name}</p>
                         </div>
@@ -85,40 +85,40 @@ $(".view-checkout").click(function (e) {
                       <td>${item.price}</td>
                       <td>${item.quantity}
                       </td>
-                      <td>${item.total.toLocaleString("vi-VN")} đ</td>
+                      <td>${item.total.toLocaleString('vi-VN')} đ</td>
                     </tr>
                     `;
-    });
+		});
 
-    $("#exampleModalCenter").html(
-      modal_header + modal_content.join("") + modal_footer
-    );
+		$('#exampleModalCenter').html(
+			modal_header + modal_content.join('') + modal_footer
+		);
 
-    $("#show-model").trigger("click");
-  });
+		$('#show-model').trigger('click');
+	});
 });
 
 // Get buy now
-$(".buy-now").click(function (e) {
-  e.preventDefault();
+$('.buy-now').click(function (e) {
+	e.preventDefault();
 
-  // Loading
-  $("#loading").addClass("loading");
-  setTimeout(function () {
-    $("#loading").removeClass("loading");
-  }, 700);
+	// Loading
+	$('#loading').addClass('loading');
+	setTimeout(function () {
+		$('#loading').removeClass('loading');
+	}, 700);
 
-  const slugName = $(this).attr("value");
+	const slugName = $(this).attr('value');
 
-  $.post(`/cart/api/v1/${slugName}`, {}, function (data, status) {
-    if (data.msg === "success" && status === "success") {
-      const curCount = parseInt(
-        $(".cart-count-add").html().replace(/[()]/g, "")
-      );
+	$.post(`/cart/api/v1/${slugName}`, {}, function (data, status) {
+		if (data.msg === 'success' && status === 'success') {
+			const curCount = parseInt(
+				$('.cart-count-add').html().replace(/[()]/g, '')
+			);
 
-      $(".cart-count-add").html(`(${curCount + 1})`);
+			$('.cart-count-add').html(`(${curCount + 1})`);
 
-      window.location.replace("/checkout");
-    }
-  });
+			window.location.replace('/checkout');
+		}
+	});
 });

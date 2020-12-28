@@ -1,45 +1,45 @@
 // Handle comment
-$("#comment").submit(function (e) {
-  e.preventDefault();
+$('#comment').submit(function (e) {
+	e.preventDefault();
 
-  // Loading
-  $("#loading").addClass("loading");
-  setTimeout(function () {
-    $("#loading").removeClass("loading");
-  }, 300);
+	// Loading
+	$('#loading').addClass('loading');
+	setTimeout(function () {
+		$('#loading').removeClass('loading');
+	}, 300);
 
-  const url = $(this).attr("action");
-  let data = {};
-  $("#comment :input").each(function () {
-    data[$(this).attr("name")] = $(this).val();
-  });
+	const url = $(this).attr('action');
+	let data = {};
+	$('#comment :input').each(function () {
+		data[$(this).attr('name')] = $(this).val();
+	});
 
-  if (!data.name || !data.email || !data.review) {
-    console.log($("span.comment-warning span").val());
-    if ($("span.comment-warning span").val()) return;
-    const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-danger">Bạn phải điền đây đủ thông tin</span></div>`;
-    $(".leave-comment").prepend(warning);
-    return;
-  }
+	if (!data.name || !data.email || !data.review) {
+		console.log($('span.comment-warning span').val());
+		if ($('span.comment-warning span').val()) return;
+		const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-danger">Bạn phải điền đây đủ thông tin</span></div>`;
+		$('.leave-comment').prepend(warning);
+		return;
+	}
 
-  $.post(url, { ...data }, function (data, status) {
-    const options = {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-      hour12: false,
-      timeZone: "America/Los_Angeles",
-    };
+	$.post(url, { ...data }, function (data, status) {
+		const options = {
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric',
+			second: 'numeric',
+			hour12: false,
+			timeZone: 'America/Los_Angeles',
+		};
 
-    const time = Intl.DateTimeFormat(["ban", "id"], options).format(
-      new Date(data.data.date)
-    );
+		const time = Intl.DateTimeFormat(['ban', 'id'], options).format(
+			new Date(data.data.date)
+		);
 
-    if (data.msg === "success" && status === "success") {
-      const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
+		if (data.msg === 'success' && status === 'success') {
+			const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
         <div class="reviewer">
           ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${time}</span>
         </div>
@@ -52,8 +52,8 @@ $("#comment").submit(function (e) {
         </div>
         <p>${data.data.review}</p>
       </div>`;
-      $(".reviews-submit").before(html);
-      $("textarea[name='review']").val("");
-    }
-  });
+			$('.reviews-submit').before(html);
+			$("textarea[name='review']").val('');
+		}
+	});
 });

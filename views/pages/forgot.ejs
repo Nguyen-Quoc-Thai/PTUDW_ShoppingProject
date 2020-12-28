@@ -1,85 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body>
-    <%- include('../partials/header', {query:''}); %>
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<%- include('../partials/header', {query:''}); %>
 
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb-wrap">
-      <div class="container-fluid">
-        <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
-          <li class="breadcrumb-item active">Đăng nhập & Đăng kí</li>
-        </ul>
-      </div>
-    </div>
-    <!-- Breadcrumb End -->
+		<!-- Breadcrumb Start -->
+		<div class="breadcrumb-wrap">
+			<div class="container-fluid">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+					<li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+					<li class="breadcrumb-item active">Đăng nhập & Đăng kí</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Breadcrumb End -->
 
-    <!-- Login Start -->
-    <div class="login">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-6" id="forgot-form">
-            <form
-              class="forgot-form"
-              method="POST"
-              action="/user/reset?token=<%=respond.token%>"
-            >
-              <div class="row">
-                <div class="col-md-6 user-login">
-                  <label>Mật khẩu mới</label>
-                  <%if (respond.msg === 'ValidatorError') {%>
-                  <input
-                    class="form-control"
-                    type="password"
-                    name="password"
-                    value="<%=respond.passVal%>"
-                  />
-                  <%}else{%>
-                  <input
-                    class="form-control"
-                    type="password"
-                    name="password"
-                    value=""
-                  />
-                  <%}%> <%if (respond.msg === "ValidatorError" &&
-                  respond.password){%>
-                  <div class="alert p-1 t-1"><%=respond.password%></div>
-                  <%}%>
-                </div>
-                <div class="col-md-6 user-forgot">
-                  <label>Nhập lại mật khẩu</label>
-                  <input
-                    class="form-control"
-                    type="password"
-                    name="retypePassword"
-                  />
-                  <%if (respond.msg === "ValidatorError" &&
-                  respond.retypePassword) {%>
-                  <div class="alert p-1 t-1"><%=respond.retypePassword%></div>
-                  <%}%>
-                </div>
-                <%if(respond.success){%>
-                <div style="font-size: 12px; margin: -10px 0 20px 15px">
-                  <span class="text-success"><%=respond.success%></span>
-                </div>
-                <%}%>
-                <div class="col-md-12">
-                  <button class="btn" type="submit" style="margin-bottom: 25px">
-                    Thanh đổi
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Login End -->
+		<!-- Login Start -->
+		<div class="login">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-6" id="forgot-form">
+						<form
+							class="forgot-form"
+							method="POST"
+							action="/user/reset?token=<%=respond.token%>"
+						>
+							<div class="row">
+								<div class="col-md-6 user-login">
+									<label>Mật khẩu mới</label>
+									<%if (respond.msg === 'ValidatorError') {%>
+									<input
+										class="form-control"
+										type="password"
+										name="password"
+										value="<%=respond.passVal%>"
+									/>
+									<%}else{%>
+									<input
+										class="form-control"
+										type="password"
+										name="password"
+										value=""
+									/>
+									<%}%> <%if (respond.msg === "ValidatorError" &&
+									respond.password){%>
+									<div class="alert p-1 t-1"><%=respond.password%></div>
+									<%}%>
+								</div>
+								<div class="col-md-6 user-forgot">
+									<label>Nhập lại mật khẩu</label>
+									<input
+										class="form-control"
+										type="password"
+										name="retypePassword"
+									/>
+									<%if (respond.msg === "ValidatorError" &&
+									respond.retypePassword) {%>
+									<div class="alert p-1 t-1"><%=respond.retypePassword%></div>
+									<%}%>
+								</div>
+								<%if(respond.success){%>
+								<div style="font-size: 12px; margin: -10px 0 20px 15px">
+									<span class="text-success"><%=respond.success%></span>
+								</div>
+								<%}%>
+								<div class="col-md-12">
+									<button class="btn" type="submit" style="margin-bottom: 25px">
+										Thanh đổi
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Login End -->
 
-    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
-  </body>
+		<%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+	</body>
 </html>

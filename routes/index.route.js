@@ -1,12 +1,12 @@
-var express = require("express");
-var router = express.Router();
-const indexController = require("../controllers/index.controller");
+const express = require('express');
+const router = express.Router();
+const indexController = require('../controllers/index.controller');
 
 // const { homeCache } = require("./../middlewares/redis.middleware");
 
 /* GET home page. */
 // router.get("/", indexController.get);
-router.get("/", indexController.index);
+router.get('/', indexController.index);
 
 // router.get("/products/computers", productController.getAllComputer);
 // router.get("/products/laptops", productController.getAllLaptop);

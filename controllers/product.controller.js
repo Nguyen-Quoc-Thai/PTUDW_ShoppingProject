@@ -1,286 +1,286 @@
 // const RedisClient = require("./../config/redis");
 const cache_life = process.env.CACHE_LIFE;
 
-const slug = require("slug");
+const slug = require('slug');
 
-const Product = require("../models/product.model");
+const Product = require('../models/product.model');
 
-const { allCategory } = require("./../utils/constant");
-const { statistic, parsePrice } = require("./../utils/statistic");
+const { allCategory } = require('./../utils/constant');
+const { statistic, parsePrice } = require('./../utils/statistic');
 
 module.exports.getSearch = async (req, res, next) => {
-  const { q = "" } = req.query;
-  const page = parseInt(req.query.page) || 1;
-  const item_per_page = parseInt(req.query.item_per_page) || 12;
-  // Filter and sort
-  const { sort, min = 0, max = 100000000 } = req.query;
+	const { q = '' } = req.query;
+	const page = parseInt(req.query.page) || 1;
+	const item_per_page = parseInt(req.query.item_per_page) || 12;
+	// Filter and sort
+	const { sort, min = 0, max = 100000000 } = req.query;
 
-  // Pagination
-  if (page < 1) page = 1;
+	// Pagination
+	if (page < 1) page = 1;
 
-  try {
-    const searchSlug = slug(q);
-    const regex = new RegExp(searchSlug, "i");
+	try {
+		const searchSlug = slug(q);
+		const regex = new RegExp(searchSlug, 'i');
 
-    // let [result, len] = await Promise.all([
-    //   Product.find({ slugName: regex })
-    //     .skip((page - 1) * item_per_page)
-    //     .limit(item_per_page),
-    //   Product.find({ slugName: regex }).countDocuments(),
-    // ]);
+		// let [result, len] = await Promise.all([
+		//   Product.find({ slugName: regex })
+		//     .skip((page - 1) * item_per_page)
+		//     .limit(item_per_page),
+		//   Product.find({ slugName: regex }).countDocuments(),
+		// ]);
 
-    let result = await Product.find({ slugName: regex });
+		let result = await Product.find({ slugName: regex });
 
-    // Filter price
-    result = result.filter(
-      (product) =>
-        parsePrice(product.price) >= min && parsePrice(product.price) < max
-    );
-    // Sort
-    if (sort && sort === "asc") {
-      result = result.sort((a, b) => {
-        return parsePrice(a.price) - parsePrice(b.price);
-      });
-    } else if (sort && sort === "desc") {
-      result = result.sort((a, b) => {
-        return -parsePrice(a.price) + parsePrice(b.price);
-      });
-    }
+		// Filter price
+		result = result.filter(
+			(product) =>
+				parsePrice(product.price) >= min && parsePrice(product.price) < max
+		);
+		// Sort
+		if (sort && sort === 'asc') {
+			result = result.sort((a, b) => {
+				return parsePrice(a.price) - parsePrice(b.price);
+			});
+		} else if (sort && sort === 'desc') {
+			result = result.sort((a, b) => {
+				return -parsePrice(a.price) + parsePrice(b.price);
+			});
+		}
 
-    const len = result.length;
+		const len = result.length;
 
-    result = result.slice(
-      (page - 1) * item_per_page,
-      item_per_page + (page - 1) * item_per_page
-    );
+		result = result.slice(
+			(page - 1) * item_per_page,
+			item_per_page + (page - 1) * item_per_page
+		);
 
-    const request = {};
-    request.currentPage = page;
-    request.totalPages = Math.ceil(len / item_per_page);
+		const request = {};
+		request.currentPage = page;
+		request.totalPages = Math.ceil(len / item_per_page);
 
-    if (page > 1) {
-      request.previous = {
-        page: page - 1,
-        limit: item_per_page,
-      };
-    }
+		if (page > 1) {
+			request.previous = {
+				page: page - 1,
+				limit: item_per_page,
+			};
+		}
 
-    if (page * item_per_page < len) {
-      request.next = {
-        page: page + 1,
-        limit: item_per_page,
-      };
-    }
+		if (page * item_per_page < len) {
+			request.next = {
+				page: page + 1,
+				limit: item_per_page,
+			};
+		}
 
-    const respond = {
-      type: "global",
-      msg: "success",
-      request,
-    };
+		const respond = {
+			type: 'global',
+			msg: 'success',
+			request,
+		};
 
-    // Our brand
-    const statisticPerType = await statistic(Product, { type: "" }, "producer");
+		// Our brand
+		const statisticPerType = await statistic(Product, { type: '' }, 'producer');
 
-    if (statisticPerType.length > 9) statisticPerType.length = 9;
+		if (statisticPerType.length > 9) statisticPerType.length = 9;
 
-    res.locals.sort = sort || "";
-    res.locals.query = q || "";
-    res.locals.min = min || 0;
-    res.locals.max = max || 100000000;
-    res.locals.ourBrands = statisticPerType || null;
+		res.locals.sort = sort || '';
+		res.locals.query = q || '';
+		res.locals.min = min || 0;
+		res.locals.max = max || 100000000;
+		res.locals.ourBrands = statisticPerType || null;
 
-    res.render("pages/products", {
-      msg: "success",
-      data: result || null,
-      respond,
-    });
+		res.render('pages/products', {
+			msg: 'success',
+			data: result || null,
+			respond,
+		});
 
-    const key = q + page + item_per_page + sort + min + max;
-    // RedisClient.setex(
-    //   key,
-    //   cache_life,
-    //   JSON.stringify({
-    //     data: result || null,
-    //     ourBrands: statisticPerType || null,
-    //     respond,
-    //   })
-    // );
-  } catch (error) {
-    console.log(error);
-    res.render("pages/products", {
-      msg: "ValidatorError",
-      query: q,
-      data: result || null,
-      ourBrands: statisticPerType || null,
-      respond: {},
-    });
-  }
+		const key = q + page + item_per_page + sort + min + max;
+		// RedisClient.setex(
+		//   key,
+		//   cache_life,
+		//   JSON.stringify({
+		//     data: result || null,
+		//     ourBrands: statisticPerType || null,
+		//     respond,
+		//   })
+		// );
+	} catch (error) {
+		console.log(error);
+		res.render('pages/products', {
+			msg: 'ValidatorError',
+			query: q,
+			data: result || null,
+			ourBrands: statisticPerType || null,
+			respond: {},
+		});
+	}
 };
 
 module.exports.getResourceProducts = async (req, res, next) => {
-  const { resourceSlugName } = req.params;
-  const { producer } = req.query;
-  const page = parseInt(req.query.page) || 1;
-  const item_per_page = parseInt(req.query.item_per_page) || 12;
+	const { resourceSlugName } = req.params;
+	const { producer } = req.query;
+	const page = parseInt(req.query.page) || 1;
+	const item_per_page = parseInt(req.query.item_per_page) || 12;
 
-  // Pagination
-  if (page < 1) page = 1;
+	// Pagination
+	if (page < 1) page = 1;
 
-  // Filter and sort
-  const { search = "", sort, min = 0, max = 100000000 } = req.query;
+	// Filter and sort
+	const { search = '', sort, min = 0, max = 100000000 } = req.query;
 
-  const validResourceSlugName = allCategory.map((cate) => cate.slugName);
+	const validResourceSlugName = allCategory.map((cate) => cate.slugName);
 
-  try {
-    if (!validResourceSlugName.includes(resourceSlugName)) {
-      throw new Error("Invalid url!");
-    }
+	try {
+		if (!validResourceSlugName.includes(resourceSlugName)) {
+			throw new Error('Invalid url!');
+		}
 
-    let mapValue = allCategory.find(
-      (cate) => cate.slugName === resourceSlugName
-    );
+		let mapValue = allCategory.find(
+			(cate) => cate.slugName === resourceSlugName
+		);
 
-    const objQuery = {
-      type: mapValue.name,
-    };
+		const objQuery = {
+			type: mapValue.name,
+		};
 
-    // Search
-    const searchSlug = slug(search);
-    const regex = new RegExp(searchSlug, "i");
-    objQuery.slugName = regex;
+		// Search
+		const searchSlug = slug(search);
+		const regex = new RegExp(searchSlug, 'i');
+		objQuery.slugName = regex;
 
-    if (producer) {
-      objQuery["producer"] = producer;
-    }
+		if (producer) {
+			objQuery['producer'] = producer;
+		}
 
-    let result = await Product.find(objQuery);
+		let result = await Product.find(objQuery);
 
-    // Filter price
-    result = result.filter(
-      (product) =>
-        parsePrice(product.price) >= min && parsePrice(product.price) < max
-    );
-    // Sort
-    if (sort && sort === "asc") {
-      result = result.sort((a, b) => {
-        return parsePrice(a.price) - parsePrice(b.price);
-      });
-    } else if (sort && sort === "desc") {
-      result = result.sort((a, b) => {
-        return -parsePrice(a.price) + parsePrice(b.price);
-      });
-    }
+		// Filter price
+		result = result.filter(
+			(product) =>
+				parsePrice(product.price) >= min && parsePrice(product.price) < max
+		);
+		// Sort
+		if (sort && sort === 'asc') {
+			result = result.sort((a, b) => {
+				return parsePrice(a.price) - parsePrice(b.price);
+			});
+		} else if (sort && sort === 'desc') {
+			result = result.sort((a, b) => {
+				return -parsePrice(a.price) + parsePrice(b.price);
+			});
+		}
 
-    const len = result.length;
+		const len = result.length;
 
-    result = result.slice(
-      (page - 1) * item_per_page,
-      item_per_page + (page - 1) * item_per_page
-    );
+		result = result.slice(
+			(page - 1) * item_per_page,
+			item_per_page + (page - 1) * item_per_page
+		);
 
-    const request = {};
-    request.currentPage = page;
-    request.totalPages = Math.ceil(len / item_per_page);
+		const request = {};
+		request.currentPage = page;
+		request.totalPages = Math.ceil(len / item_per_page);
 
-    if (page > 1) {
-      request.previous = {
-        page: page - 1,
-        limit: item_per_page,
-      };
-    }
+		if (page > 1) {
+			request.previous = {
+				page: page - 1,
+				limit: item_per_page,
+			};
+		}
 
-    if (page * item_per_page < len) {
-      request.next = {
-        page: page + 1,
-        limit: item_per_page,
-      };
-    }
+		if (page * item_per_page < len) {
+			request.next = {
+				page: page + 1,
+				limit: item_per_page,
+			};
+		}
 
-    const respond = {
-      msg: "success",
-      request,
-    };
+		const respond = {
+			msg: 'success',
+			request,
+		};
 
-    const statisticPerType = await statistic(
-      Product,
-      { type: mapValue.name },
-      "producer"
-    );
+		const statisticPerType = await statistic(
+			Product,
+			{ type: mapValue.name },
+			'producer'
+		);
 
-    if (statisticPerType.length > 9) statisticPerType.length = 9;
+		if (statisticPerType.length > 9) statisticPerType.length = 9;
 
-    res.locals.sort = sort || "";
-    res.locals.query = search || "";
-    res.locals.min = min || 0;
-    res.locals.max = max || 100000000;
-    res.locals.ourBrands = statisticPerType || null;
+		res.locals.sort = sort || '';
+		res.locals.query = search || '';
+		res.locals.min = min || 0;
+		res.locals.max = max || 100000000;
+		res.locals.ourBrands = statisticPerType || null;
 
-    res.render("pages/products", {
-      msg: "success",
-      data: result || null,
-      respond,
-    });
+		res.render('pages/products', {
+			msg: 'success',
+			data: result || null,
+			respond,
+		});
 
-    const key =
-      resourceSlugName +
-      producer +
-      page +
-      item_per_page +
-      search +
-      sort +
-      min +
-      max;
-    // RedisClient.setex(
-    //   key,
-    //   cache_life,
-    //   JSON.stringify({
-    //     data: result || null,
-    //     ourBrands: statisticPerType || null,
-    //     respond,
-    //   })
-    // );
-  } catch (error) {
-    res.render("error", {
-      message: error.message,
-      error,
-    });
-  }
+		const key =
+			resourceSlugName +
+			producer +
+			page +
+			item_per_page +
+			search +
+			sort +
+			min +
+			max;
+		// RedisClient.setex(
+		//   key,
+		//   cache_life,
+		//   JSON.stringify({
+		//     data: result || null,
+		//     ourBrands: statisticPerType || null,
+		//     respond,
+		//   })
+		// );
+	} catch (error) {
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
 module.exports.getProductDetails = async (req, res, next) => {
-  const { productSlugName } = req.params;
+	const { productSlugName } = req.params;
 
-  try {
-    const product = await Product.findOne({
-      slugName: productSlugName,
-    });
+	try {
+		const product = await Product.findOne({
+			slugName: productSlugName,
+		});
 
-    const { type, producer } = product;
-    const relativeProducts = await Product.find({
-      type,
-      producer,
-    }).limit(8);
+		const { type, producer } = product;
+		const relativeProducts = await Product.find({
+			type,
+			producer,
+		}).limit(8);
 
-    const statisticPerType = await statistic(Product, { type }, "producer");
-    if (statisticPerType.length > 9) statisticPerType.length = 9;
+		const statisticPerType = await statistic(Product, { type }, 'producer');
+		if (statisticPerType.length > 9) statisticPerType.length = 9;
 
-    res.locals.ourBrands = statisticPerType || null;
+		res.locals.ourBrands = statisticPerType || null;
 
-    product.countView++;
-    await product.save();
+		product.countView++;
+		await product.save();
 
-    res.render("pages/productDetail", {
-      msg: "success",
-      data: product || null,
-      relatedProducts: relativeProducts || null,
-    });
-  } catch (error) {
-    console.log(error);
-    res.render("error", {
-      message: error.message,
-      error,
-    });
-  }
+		res.render('pages/productDetail', {
+			msg: 'success',
+			data: product || null,
+			relatedProducts: relativeProducts || null,
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
 // AJAX

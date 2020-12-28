@@ -1,23 +1,23 @@
-const Checkout = require("../../../models/checkout.model");
+const Checkout = require('../../../models/checkout.model');
 
 // AJAX
 module.exports.getCheckoutHistory = async (req, res, next) => {
-  const { id } = req.params;
+	const { id } = req.params;
 
-  try {
-    const checkout = await Checkout.findById(id);
+	try {
+		const checkout = await Checkout.findById(id);
 
-    res.status(200).json({
-      msg: "success",
-      data: checkout,
-    });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({
-      msg: error.message,
-      error,
-    });
-  }
+		res.status(200).json({
+			msg: 'success',
+			data: checkout,
+		});
+	} catch (error) {
+		console.log(error.message);
+		res.status(500).json({
+			msg: error.message,
+			error,
+		});
+	}
 };
 
 // AJAX
