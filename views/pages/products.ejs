@@ -1,326 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body>
-    <%- include('../partials/header'); %>
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<%- include('../partials/header'); %>
 
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb-wrap">
-      <div class="container-fluid">
-        <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-          <li class="breadcrumb-item active">Sản phẩm</li>
-        </ul>
-      </div>
-    </div>
-    <!-- Breadcrumb End -->
+		<!-- Breadcrumb Start -->
+		<div class="breadcrumb-wrap">
+			<div class="container-fluid">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+					<li class="breadcrumb-item active">Sản phẩm</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Breadcrumb End -->
 
-    <!-- Product List Start -->
-    <div class="product-view">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-9">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="product-view-top">
-                  <div class="row">
-                    <%if(respond.type!=='global'){%>
-                    <div class="col-md-4">
-                      <div class="product-search">
-                        <input
-                          type="text"
-                          placeholder="Từ khóa"
-                          name="search"
-                          value="<%=query%>"
-                        />
-                        <a href="" id="search">
-                          <button type="submit">
-                            <i class="fa fa-search"></i>
-                          </button>
-                        </a>
-                      </div>
-                    </div>
-                    <%}%>
-                    <div class="col-md-4">
-                      <div class="product-short">
-                        <div class="dropdown">
-                          <%if(sort === 'asc'){%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            Tăng dần
-                          </div>
-                          <%}else if(sort === 'desc') {%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            Giảm dần
-                          </div>
-                          <%}else {%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            Giá
-                          </div>
-                          <%}%>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              href=""
-                              class="dropdown-item query"
-                              name="sort"
-                              data="none"
-                              >Không</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item query"
-                              name="sort"
-                              data="asc"
-                              >Tăng dần</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item query"
-                              name="sort"
-                              data="desc"
-                              >Giảm dần</a
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="product-price-range">
-                        <div class="dropdown">
-                          <%if(min==0 && max == 100000000){%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            Giá thuộc phạm vi
-                          </div>
-                          <%}else if(min==0 && max != 100000000){%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            Dưới 200.000đ
-                          </div>
-                          <%}else if(max == 100000000){%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            Trên 25.000.000đ
-                          </div>
-                          <%}else{%>
-                          <div class="dropdown-toggle" data-toggle="dropdown">
-                            <%=min%>đ - <%=max%>đ
-                          </div>
-                          <%}%>
+		<!-- Product List Start -->
+		<div class="product-view">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-9">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="product-view-top">
+									<div class="row">
+										<%if(respond.type!=='global'){%>
+										<div class="col-md-4">
+											<div class="product-search">
+												<input
+													type="text"
+													placeholder="Từ khóa"
+													name="search"
+													value="<%=query%>"
+												/>
+												<a href="" id="search">
+													<button type="submit">
+														<i class="fa fa-search"></i>
+													</button>
+												</a>
+											</div>
+										</div>
+										<%}%>
+										<div class="col-md-4">
+											<div class="product-short">
+												<div class="dropdown">
+													<%if(sort === 'asc'){%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														Tăng dần
+													</div>
+													<%}else if(sort === 'desc') {%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														Giảm dần
+													</div>
+													<%}else {%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														Giá
+													</div>
+													<%}%>
+													<div class="dropdown-menu dropdown-menu-right">
+														<a
+															href=""
+															class="dropdown-item query"
+															name="sort"
+															data="none"
+															>Không</a
+														>
+														<a
+															href=""
+															class="dropdown-item query"
+															name="sort"
+															data="asc"
+															>Tăng dần</a
+														>
+														<a
+															href=""
+															class="dropdown-item query"
+															name="sort"
+															data="desc"
+															>Giảm dần</a
+														>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="product-price-range">
+												<div class="dropdown">
+													<%if(min==0 && max == 100000000){%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														Giá thuộc phạm vi
+													</div>
+													<%}else if(min==0 && max != 100000000){%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														Dưới 200.000đ
+													</div>
+													<%}else if(max == 100000000){%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														Trên 25.000.000đ
+													</div>
+													<%}else{%>
+													<div class="dropdown-toggle" data-toggle="dropdown">
+														<%=min%>đ - <%=max%>đ
+													</div>
+													<%}%>
 
-                          <div class="dropdown-menu dropdown-menu-right filter">
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="0"
-                              max="100000000"
-                              >Không</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="0"
-                              max="200000"
-                              >Dưới 200.000đ</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="200000"
-                              max="500000"
-                              >200.000đ - 500.000đ</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="500000"
-                              max="1000000"
-                              >500.000đ - 1.000.000đ</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="1000000"
-                              max="5000000"
-                              >1.000.000đ - 5.000.000đ</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="5000000"
-                              max="10000000"
-                              >5.000.000đ - 10.000.000đ</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="10000000"
-                              max="25000000"
-                              >10.000.000đ - 25.000.000đ</a
-                            >
-                            <a
-                              href=""
-                              class="dropdown-item"
-                              min="25000000"
-                              max="100000000"
-                              >Trên 25.000.000đ</a
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <% if (data.length) { data.forEach((product, index) => { %>
-              <div class="col-md-4">
-                <div
-                  class="product-item"
-                  data-aos="flip-right"
-                  data-aos-offset="100"
-                  data-aos-delay="<%=((index + 1)*50)%>"
-                  data-aos-duration="500"
-                >
-                  <div class="product-title">
-                    <a href="/products/<%= product.slugName %>"
-                      ><%= product.name %></a
-                    >
-                    <div class="ratting">
-                      <%Array(+product.rating).fill(0).forEach((num, index) =>
-                      {%>
-                      <i class="fa fa-star"></i>
-                      <%})%>
-                    </div>
-                  </div>
-                  <div class="product-image">
-                    <a href="/products/<%= product.slugName %>">
-                      <img src="<%= product.images[0] %>" alt="Product Image" />
-                    </a>
-                    <div class="product-action">
-                      <a
-                        href="#"
-                        class="add-to-cart"
-                        value="<%=product.slugName%>"
-                        ><i class="fa fa-cart-plus"></i
-                      ></a>
-                      <a href="#"
-                        ><i
-                          class="fa fa-heart add-to-like"
-                          value="<%=product.slugName%>"
-                        ></i
-                      ></a>
-                      <a href="/products/<%= product.slugName %>"
-                        ><i class="fa fa-search"></i
-                      ></a>
-                    </div>
-                  </div>
-                  <div class="product-price">
-                    <h3><span>$</span><%= product.price %></h3>
-                    <a
-                      class="btn buy-now"
-                      href="/checkout"
-                      value="<%= product.slugName %>"
-                      ><i class="fa fa-shopping-cart"></i>Mua</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <% }) %>
+													<div class="dropdown-menu dropdown-menu-right filter">
+														<a
+															href=""
+															class="dropdown-item"
+															min="0"
+															max="100000000"
+															>Không</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="0"
+															max="200000"
+															>Dưới 200.000đ</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="200000"
+															max="500000"
+															>200.000đ - 500.000đ</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="500000"
+															max="1000000"
+															>500.000đ - 1.000.000đ</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="1000000"
+															max="5000000"
+															>1.000.000đ - 5.000.000đ</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="5000000"
+															max="10000000"
+															>5.000.000đ - 10.000.000đ</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="10000000"
+															max="25000000"
+															>10.000.000đ - 25.000.000đ</a
+														>
+														<a
+															href=""
+															class="dropdown-item"
+															min="25000000"
+															max="100000000"
+															>Trên 25.000.000đ</a
+														>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<% if (data.length) { data.forEach((product, index) => { %>
+							<div class="col-md-4">
+								<div
+									class="product-item"
+									data-aos="flip-right"
+									data-aos-offset="100"
+									data-aos-delay="<%=((index + 1)*50)%>"
+									data-aos-duration="500"
+								>
+									<div class="product-title">
+										<a href="/products/<%= product.slugName %>"
+											><%= product.name %></a
+										>
+										<div class="ratting">
+											<%Array(+product.rating).fill(0).forEach((num, index) =>
+											{%>
+											<i class="fa fa-star"></i>
+											<%})%>
+										</div>
+									</div>
+									<div class="product-image">
+										<a href="/products/<%= product.slugName %>">
+											<img src="<%= product.images[0] %>" alt="Product Image" />
+										</a>
+										<div class="product-action">
+											<a
+												href="#"
+												class="add-to-cart"
+												value="<%=product.slugName%>"
+												><i class="fa fa-cart-plus"></i
+											></a>
+											<a
+												href="#"
+												class="add-to-like"
+												value="<%=product.slugName%>"
+												><i class="fa fa-heart"></i
+											></a>
+											<a href="/products/<%= product.slugName %>"
+												><i class="fa fa-search"></i
+											></a>
+										</div>
+									</div>
+									<div class="product-price">
+										<h3><span>$</span><%= product.price %></h3>
+										<a
+											class="btn buy-now"
+											href="/checkout"
+											value="<%= product.slugName %>"
+											><i class="fa fa-shopping-cart"></i>Mua</a
+										>
+									</div>
+								</div>
+							</div>
+							<% }) %>
+							<!-- Pagination Start -->
+							<div class="col-md-12">
+								<nav aria-label="Page navigation example">
+									<ul class="pagination justify-content-center">
+										<%if(!respond.request.previous) {%>
+										<li
+											class="page-item disabled pag-minus"
+											value="<%=(+respond.request.currentPage-1)%>"
+										>
+											<a class="page-link" href="">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+										<%}else{%>
+										<li
+											class="page-item"
+											value="<%=(+respond.request.currentPage-1)%>"
+										>
+											<a class="page-link" href="">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+										<%}%> <%if(+respond.request.totalPages <= 10)
+										Array(+respond.request.totalPages).fill(0).forEach((page,
+										index) => {%>
+										<%if((index+1)===+respond.request.currentPage){%>
+										<li class="page-item active" value="<%=(index+1)%>">
+											<a class="page-link" href=""><%=(index+1)%></a>
+										</li>
+										<%}else{%>
+										<li class="page-item" value="<%=(index+1)%>">
+											<a class="page-link" href=""><%=(index+1)%></a>
+										</li>
+										<%}%> <%})%> <%if(!respond.request.next) {%>
+										<li
+											class="page-item disabled"
+											value="<%=(+respond.request.currentPage+1)%>"
+										>
+											<a class="page-link" href="">
+												<span aria-hidden="true">&raquo;</span>
+											</a>
+										</li>
+										<%}else{%>
+										<li
+											class="page-item pag-plus"
+											value="<%=(+respond.request.currentPage+1)%>"
+										>
+											<a class="page-link" href="">
+												<span aria-hidden="true">&raquo;</span>
+											</a>
+										</li>
+										<%}%>
+									</ul>
+								</nav>
+							</div>
+							<% } else {%>
+							<div class="col-md-12">
+								<h4 class="text-info pl-4">Không tìm thấy sản phẩm!</h4>
+							</div>
+							<% } %>
+						</div>
+					</div>
+					<%- include('../partials/productSidebar', {col: 3, type: data[0] ?
+					data[0].type : 'Laptop & Macbook'}); %>
+				</div>
+			</div>
+		</div>
+		<!-- Product List End -->
 
-              <!-- Pagination Start -->
-              <div class="col-md-12">
-                <nav aria-label="Page navigation example">
-                  <ul class="pagination justify-content-center">
-                    <%if(!respond.request.previous) {%>
-                    <li
-                      class="page-item disabled pag-minus"
-                      value="<%=(+respond.request.currentPage-1)%>"
-                    >
-                      <a class="page-link" href="">
-                        <span aria-hidden="true">&laquo;</span>
-                      </a>
-                    </li>
-                    <%}else{%>
-                    <li
-                      class="page-item"
-                      value="<%=(+respond.request.currentPage-1)%>"
-                    >
-                      <a class="page-link" href="">
-                        <span aria-hidden="true">&laquo;</span>
-                      </a>
-                    </li>
-                    <%}%> <%if(+respond.request.totalPages <= 10)
-                    Array(+respond.request.totalPages).fill(0).forEach((page,
-                    index) => {%>
-                    <%if((index+1)===+respond.request.currentPage){%>
-                    <li class="page-item active" value="<%=(index+1)%>">
-                      <a class="page-link" href=""><%=(index+1)%></a>
-                    </li>
-                    <%}else{%>
-                    <li class="page-item" value="<%=(index+1)%>">
-                      <a class="page-link" href=""><%=(index+1)%></a>
-                    </li>
-                    <%}%> <%})%> <%if(!respond.request.next) {%>
-                    <li
-                      class="page-item disabled"
-                      value="<%=(+respond.request.currentPage+1)%>"
-                    >
-                      <a class="page-link" href="">
-                        <span aria-hidden="true">&raquo;</span>
-                      </a>
-                    </li>
-                    <%}else{%>
-                    <li
-                      class="page-item pag-plus"
-                      value="<%=(+respond.request.currentPage+1)%>"
-                    >
-                      <a class="page-link" href="">
-                        <span aria-hidden="true">&raquo;</span>
-                      </a>
-                    </li>
-                    <%}%>
-                  </ul>
-                </nav>
-              </div>
-              <% } else {%>
-              <div class="col-md-12">
-                <h4 class="text-info pl-4">Không tìm thấy sản phẩm!</h4>
-              </div>
-              <% } %>
-            </div>
-          </div>
-          <%- include('../partials/productSidebar', {col: 3, type: data[0] ?
-          data[0].type : 'Laptop & Macbook'}); %>
-        </div>
-      </div>
-    </div>
-    <!-- Product List End -->
+		<!-- Brand Start -->
+		<div class="brand">
+			<div class="container-fluid">
+				<div class="brand-slider">
+					<div class="brand-item">
+						<img src="/img/brand-1.png" alt="" />
+					</div>
+					<div class="brand-item">
+						<img src="/img/brand-2.png" alt="" />
+					</div>
+					<div class="brand-item">
+						<img src="/img/brand-3.png" alt="" />
+					</div>
+					<div class="brand-item">
+						<img src="/img/brand-4.png" alt="" />
+					</div>
+					<div class="brand-item">
+						<img src="/img/brand-5.png" alt="" />
+					</div>
+					<div class="brand-item">
+						<img src="/img/brand-6.png" alt="" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Brand End -->
 
-    <!-- Brand Start -->
-    <div class="brand">
-      <div class="container-fluid">
-        <div class="brand-slider">
-          <div class="brand-item">
-            <img src="/img/brand-1.png" alt="" />
-          </div>
-          <div class="brand-item">
-            <img src="/img/brand-2.png" alt="" />
-          </div>
-          <div class="brand-item">
-            <img src="/img/brand-3.png" alt="" />
-          </div>
-          <div class="brand-item">
-            <img src="/img/brand-4.png" alt="" />
-          </div>
-          <div class="brand-item">
-            <img src="/img/brand-5.png" alt="" />
-          </div>
-          <div class="brand-item">
-            <img src="/img/brand-6.png" alt="" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Brand End -->
-
-    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
-  </body>
+		<%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+		<div id="api-msg"></div>
+	</body>
 </html>

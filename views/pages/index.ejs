@@ -1,323 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body>
-    <%- include('../partials/header', {query:''}); %>
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<%- include('../partials/header', {query:''}); %>
 
-    <!-- Main Slider Start -->
-    <div class="header">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-3">
-            <nav class="navbar bg-light">
-              <ul class="navbar-nav">
-                <% categories.forEach(cate => { %>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    href="/products/resource/<%=cate.slugName%>"
-                    ><i class="fa fa-<%=cate.icon%>"></i><%=cate.name%></a
-                  >
-                </li>
-                <%})%>
-              </ul>
-            </nav>
-          </div>
-          <div class="col-md-6">
-            <div class="header-slider normal-slider">
-              <div class="header-slider-item">
-                <img
-                  src="https://cdn.trendhunterstatic.com/thumbs/tech-store.jpeg"
-                  alt="Slider Image"
-                />
-                <div class="header-slider-caption">
-                  <p>Top các sản phẩm bán chạy</p>
-                  <a class="btn" href="/"
-                    ><i class="fa fa-shopping-cart"></i>Mua sắm ngay</a
-                  >
-                </div>
-              </div>
-              <div class="header-slider-item">
-                <img
-                  src="https://centaur-wp.s3.eu-central-1.amazonaws.com/econsultancy/prod/content/uploads/2019/01/21111315/nike-speed-shop.jpg?auto=compress,format&q=60&w=826&h=546"
-                  alt="Slider Image"
-                />
-                <div class="header-slider-caption">
-                  <p>Kinh nghiệm mua hàng</p>
-                  <p>Tham khảo</p>
-                  <a class="btn" href="/"
-                    ><i class="fa fa-shopping-cart"></i>Get</a
-                  >
-                </div>
-              </div>
-              <div class="header-slider-item">
-                <img
-                  src="https://retaildesignblog.net/wp-content/uploads/2012/10/Samsung-shop-Selfridges-Dalziel-and-Pow-London.jpg"
-                  alt="Slider Image"
-                />
-                <div class="header-slider-caption">
-                  <p>Some text goes here that describes the store</p>
-                  <a class="btn" href="/"
-                    ><i class="fa fa-shopping-cart"></i>Shop Now</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="header-img">
-              <div class="img-item">
-                <img
-                  src="https://www.idgcdn.com.au/article/images/740x500/dimg/dreamstime_m_121137480.jpg"
-                />
-                <a class="img-text" href="">
-                  <p>Some text goes here that describes the image</p>
-                </a>
-              </div>
-              <div class="img-item">
-                <img
-                  src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/201810/stockvault-person-studying-and-learning---knowledge-concept178241_0.jpeg?yCXmhi7e2ARwUtzHHlvtcrgETnDgFwCK"
-                />
-                <a class="img-text" href="">
-                  <p>Some text goes here that describes the image</p>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Main Slider End -->
+		<!-- Main Slider Start -->
+		<div class="header">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-3">
+						<nav class="navbar bg-light">
+							<ul class="navbar-nav">
+								<% categories.forEach(cate => { %>
+								<li class="nav-item">
+									<a
+										class="nav-link"
+										href="/products/resource/<%=cate.slugName%>"
+										><i class="fa fa-<%=cate.icon%>"></i><%=cate.name%></a
+									>
+								</li>
+								<%})%>
+							</ul>
+						</nav>
+					</div>
+					<div class="col-md-6">
+						<div class="header-slider normal-slider">
+							<div class="header-slider-item">
+								<img
+									src="https://cdn.trendhunterstatic.com/thumbs/tech-store.jpeg"
+									alt="Slider Image"
+								/>
+								<div class="header-slider-caption">
+									<p>Top các sản phẩm bán chạy</p>
+									<a class="btn" href="/"
+										><i class="fa fa-shopping-cart"></i>Mua sắm ngay</a
+									>
+								</div>
+							</div>
+							<div class="header-slider-item">
+								<img
+									src="https://centaur-wp.s3.eu-central-1.amazonaws.com/econsultancy/prod/content/uploads/2019/01/21111315/nike-speed-shop.jpg?auto=compress,format&q=60&w=826&h=546"
+									alt="Slider Image"
+								/>
+								<div class="header-slider-caption">
+									<p>Kinh nghiệm mua hàng</p>
+									<p>Tham khảo</p>
+									<a class="btn" href="/"
+										><i class="fa fa-shopping-cart"></i>Get</a
+									>
+								</div>
+							</div>
+							<div class="header-slider-item">
+								<img
+									src="https://retaildesignblog.net/wp-content/uploads/2012/10/Samsung-shop-Selfridges-Dalziel-and-Pow-London.jpg"
+									alt="Slider Image"
+								/>
+								<div class="header-slider-caption">
+									<p>Some text goes here that describes the store</p>
+									<a class="btn" href="/"
+										><i class="fa fa-shopping-cart"></i>Shop Now</a
+									>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="header-img">
+							<div class="img-item">
+								<img
+									src="https://www.idgcdn.com.au/article/images/740x500/dimg/dreamstime_m_121137480.jpg"
+								/>
+								<a class="img-text" href="">
+									<p>Some text goes here that describes the image</p>
+								</a>
+							</div>
+							<div class="img-item">
+								<img
+									src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/201810/stockvault-person-studying-and-learning---knowledge-concept178241_0.jpeg?yCXmhi7e2ARwUtzHHlvtcrgETnDgFwCK"
+								/>
+								<a class="img-text" href="">
+									<p>Some text goes here that describes the image</p>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Main Slider End -->
 
-    <!-- Brand Start -->
-    <div class="brand">
-      <div class="container-fluid">
-        <div class="brand-slider">
-          <div class="brand-item"><img src="img/brand-1.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-2.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-3.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-4.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-5.png" alt="" /></div>
-          <div class="brand-item"><img src="img/brand-6.png" alt="" /></div>
-        </div>
-      </div>
-    </div>
-    <!-- Brand End -->
+		<!-- Brand Start -->
+		<div class="brand">
+			<div class="container-fluid">
+				<div class="brand-slider">
+					<div class="brand-item"><img src="img/brand-1.png" alt="" /></div>
+					<div class="brand-item"><img src="img/brand-2.png" alt="" /></div>
+					<div class="brand-item"><img src="img/brand-3.png" alt="" /></div>
+					<div class="brand-item"><img src="img/brand-4.png" alt="" /></div>
+					<div class="brand-item"><img src="img/brand-5.png" alt="" /></div>
+					<div class="brand-item"><img src="img/brand-6.png" alt="" /></div>
+				</div>
+			</div>
+		</div>
+		<!-- Brand End -->
 
-    <!-- Feature Start-->
-    <div class="feature">
-      <div class="container-fluid">
-        <div class="row align-items-center">
-          <div class="col-lg-3 col-md-6 feature-col">
-            <div class="feature-content">
-              <i class="fab fa-cc-mastercard"></i>
-              <h2>Bảo mật thanh toán</h2>
-              <p>Lorem ipsum dolor sit amet consectetur elit</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 feature-col">
-            <div class="feature-content">
-              <i class="fa fa-truck"></i>
-              <h2>Vận chuyển toàn quốc</h2>
-              <p>Lorem ipsum dolor sit amet consectetur elit</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 feature-col">
-            <div class="feature-content">
-              <i class="fa fa-sync-alt"></i>
-              <h2>Đổi trả 30 ngày</h2>
-              <p>Lorem ipsum dolor sit amet consectetur elit</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 feature-col">
-            <div class="feature-content">
-              <i class="fa fa-comments"></i>
-              <h2>Hỗ trợ trực tuyến 24/7</h2>
-              <p>Lorem ipsum dolor sit amet consectetur elit</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Feature End-->
+		<!-- Feature Start-->
+		<div class="feature">
+			<div class="container-fluid">
+				<div class="row align-items-center">
+					<div class="col-lg-3 col-md-6 feature-col">
+						<div class="feature-content">
+							<i class="fab fa-cc-mastercard"></i>
+							<h2>Bảo mật thanh toán</h2>
+							<p>Lorem ipsum dolor sit amet consectetur elit</p>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6 feature-col">
+						<div class="feature-content">
+							<i class="fa fa-truck"></i>
+							<h2>Vận chuyển toàn quốc</h2>
+							<p>Lorem ipsum dolor sit amet consectetur elit</p>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6 feature-col">
+						<div class="feature-content">
+							<i class="fa fa-sync-alt"></i>
+							<h2>Đổi trả 30 ngày</h2>
+							<p>Lorem ipsum dolor sit amet consectetur elit</p>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6 feature-col">
+						<div class="feature-content">
+							<i class="fa fa-comments"></i>
+							<h2>Hỗ trợ trực tuyến 24/7</h2>
+							<p>Lorem ipsum dolor sit amet consectetur elit</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Feature End-->
 
-    <!-- Call to Action Start -->
-    <div class="call-to-action">
-      <div class="container-fluid">
-        <div class="row align-items-center">
-          <div class="col-md-6">
-            <h1>Liên hệ ngay với chúng tôi</h1>
-          </div>
-          <div class="col-md-6">
-            <a href="tel:0123456789">+012-345-6789</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Call to Action End -->
+		<!-- Call to Action Start -->
+		<div class="call-to-action">
+			<div class="container-fluid">
+				<div class="row align-items-center">
+					<div class="col-md-6">
+						<h1>Liên hệ ngay với chúng tôi</h1>
+					</div>
+					<div class="col-md-6">
+						<a href="tel:0123456789">+012-345-6789</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Call to Action End -->
 
-    <!-- Newsletter Start -->
-    <div class="newsletter">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-6">
-            <h1>Đăng kí để nhận các thông tin mới nhất</h1>
-          </div>
-          <div class="col-md-6">
-            <div class="form">
-              <input type="email" placeholder="Your email here" />
-              <button>Gửi</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Newsletter End -->
-    <% data.forEach((cate, index) => {%>
-    <div class="featured-product product" id="computers-index">
-      <div class="container-fluid">
-        <div class="section-header">
-          <a href="/products/resource/<%=categories[index].slugName%>"
-            ><h4><%=cate[0].type%></h4></a
-          >
-        </div>
-        <div class="row align-items-center product-slider product-slider-4">
-          <% cate.forEach((cat, index) => { %>
-          <div class="col-lg-3">
-            <div
-              class="product-item"
-              data-aos="flip-right"
-              data-aos-offset="100"
-              data-aos-delay="<%=((index + 1)*50)%>"
-              data-aos-duration="500"
-            >
-              <div class="product-title">
-                <a href="/products/<%=cat.slugName%>"><%= cat.name %></a>
-                <div class="ratting">
-                  <%Array(+cat.rating).fill(0).forEach((num, index) => {%>
-                  <i class="fa fa-star"></i>
-                  <%})%>
-                </div>
-              </div>
-              <div class="product-image">
-                <a href="/products/<%=cat.slugName%>">
-                  <img src="<%= cat.images[0] %>" alt="Product Image" />
-                </a>
-                <div class="product-action">
-                  <a href="#" class="add-to-cart" value="<%=cat.slugName%>"
-                    ><i class="fa fa-cart-plus"></i
-                  ></a>
-                  <a href="#" class="add-to-like" value="<%=cat.slugName%>"
-                    ><i class="fa fa-heart"></i
-                  ></a>
-                  <a href="/products/<%= cat.slugName %>"
-                    ><i class="fa fa-search"></i
-                  ></a>
-                </div>
-              </div>
-              <div class="product-price">
-                <h3><span>$</span><%= cat.price %></h3>
-                <a
-                  class="btn buy-now"
-                  href="/checkout"
-                  value="<%=cat.slugName%>"
-                  ><i class="fa fa-shopping-cart"></i>Mua</a
-                >
-              </div>
-            </div>
-          </div>
-          <%})%>
-        </div>
-      </div>
-    </div>
-    <%})%>
+		<!-- Newsletter Start -->
+		<div class="newsletter">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-6">
+						<h1>Đăng kí để nhận các thông tin mới nhất</h1>
+					</div>
+					<div class="col-md-6">
+						<div class="form">
+							<input type="email" placeholder="Your email here" />
+							<button>Gửi</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Newsletter End -->
+		<% data.forEach((cate, index) => {%>
+		<div class="featured-product product" id="computers-index">
+			<div class="container-fluid">
+				<div class="section-header">
+					<a href="/products/resource/<%=categories[index].slugName%>"
+						><h4><%=cate[0].type%></h4></a
+					>
+				</div>
+				<div class="row align-items-center product-slider product-slider-4">
+					<% cate.forEach((cat, index) => { %>
+					<div class="col-lg-3">
+						<div
+							class="product-item"
+							data-aos="flip-right"
+							data-aos-offset="100"
+							data-aos-delay="<%=((index + 1)*50)%>"
+							data-aos-duration="500"
+						>
+							<div class="product-title">
+								<a href="/products/<%=cat.slugName%>"><%= cat.name %></a>
+								<div class="ratting">
+									<%Array(+cat.rating).fill(0).forEach((num, index) => {%>
+									<i class="fa fa-star"></i>
+									<%})%>
+								</div>
+							</div>
+							<div class="product-image">
+								<a href="/products/<%=cat.slugName%>">
+									<img src="<%= cat.images[0] %>" alt="Product Image" />
+								</a>
+								<div class="product-action">
+									<a href="#" class="add-to-cart" value="<%=cat.slugName%>"
+										><i class="fa fa-cart-plus"></i
+									></a>
+									<a href="#" class="add-to-like" value="<%=cat.slugName%>"
+										><i class="fa fa-heart"></i
+									></a>
+									<a href="/products/<%= cat.slugName %>"
+										><i class="fa fa-search"></i
+									></a>
+								</div>
+							</div>
+							<div class="product-price">
+								<h3><span>$</span><%= cat.price %></h3>
+								<a
+									class="btn buy-now"
+									href="/checkout"
+									value="<%=cat.slugName%>"
+									><i class="fa fa-shopping-cart"></i>Mua</a
+								>
+							</div>
+						</div>
+					</div>
+					<%})%>
+				</div>
+			</div>
+		</div>
+		<%})%>
 
-    <!-- Review Start -->
-    <div class="review">
-      <div class="container-fluid" style="margin-top: 5rem">
-        <div class="row align-items-center review-slider normal-slider">
-          <div class="col-md-6">
-            <div class="review-slider-item">
-              <div class="review-img">
-                <img
-                  src="https://avatars0.githubusercontent.com/u/43308712?s=460&u=8b6ed204b75572c997feb821441da52c86b4b067&v=4"
-                  alt="Image"
-                />
-              </div>
-              <div class="review-text">
-                <h2>Nguyễn Quốc Thái</h2>
-                <h3>Profession</h3>
-                <div class="ratting">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                </div>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Curabitur vitae nunc eget leo finibus luctus et vitae lorem
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="review-slider-item">
-              <div class="review-img">
-                <img
-                  src="https://scontent-hkg4-2.xx.fbcdn.net/v/t1.0-1/p320x320/83875007_180876493399535_8876794129030863897_o.jpg?_nc_cat=104&ccb=2&_nc_sid=7206a8&_nc_ohc=QAqhPmg-L0EAX85lmsk&_nc_ht=scontent-hkg4-2.xx&tp=6&oh=13e2419250e6e026ddc35634c8feb7dc&oe=5FF64DAF"
-                  alt="Image"
-                />
-              </div>
-              <div class="review-text">
-                <h2>Hồng Minh Thắng</h2>
-                <h3>Profession</h3>
-                <div class="ratting">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                </div>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Curabitur vitae nunc eget leo finibus luctus et vitae lorem
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="review-slider-item">
-              <div class="review-img">
-                <img
-                  src="https://scontent.fvca1-2.fna.fbcdn.net/v/t1.0-1/c0.24.320.320a/p320x320/116587304_1628009257374712_3929212169417010960_n.jpg?_nc_cat=100&ccb=2&_nc_sid=7206a8&_nc_ohc=IBzB9EZMtxwAX_FT7Xg&_nc_ht=scontent.fvca1-2.fna&tp=27&oh=f272e1565df96bcb00ee2e251063cf51&oe=5FF504F0"
-                  alt="Image"
-                />
-              </div>
-              <div class="review-text">
-                <h2>Võ Minh Tân</h2>
-                <h3>Profession</h3>
-                <div class="ratting">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                </div>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Curabitur vitae nunc eget leo finibus luctus et vitae lorem
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Review End -->
+		<!-- Review Start -->
+		<div class="review">
+			<div class="container-fluid" style="margin-top: 5rem">
+				<div class="row align-items-center review-slider normal-slider">
+					<div class="col-md-6">
+						<div class="review-slider-item">
+							<div class="review-img">
+								<img
+									src="https://avatars0.githubusercontent.com/u/43308712?s=460&u=8b6ed204b75572c997feb821441da52c86b4b067&v=4"
+									alt="Image"
+								/>
+							</div>
+							<div class="review-text">
+								<h2>Nguyễn Quốc Thái</h2>
+								<h3>Profession</h3>
+								<div class="ratting">
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+								</div>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur vitae nunc eget leo finibus luctus et vitae lorem
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="review-slider-item">
+							<div class="review-img">
+								<img
+									src="https://scontent-hkg4-2.xx.fbcdn.net/v/t1.0-1/p320x320/83875007_180876493399535_8876794129030863897_o.jpg?_nc_cat=104&ccb=2&_nc_sid=7206a8&_nc_ohc=QAqhPmg-L0EAX85lmsk&_nc_ht=scontent-hkg4-2.xx&tp=6&oh=13e2419250e6e026ddc35634c8feb7dc&oe=5FF64DAF"
+									alt="Image"
+								/>
+							</div>
+							<div class="review-text">
+								<h2>Hồng Minh Thắng</h2>
+								<h3>Profession</h3>
+								<div class="ratting">
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+								</div>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur vitae nunc eget leo finibus luctus et vitae lorem
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="review-slider-item">
+							<div class="review-img">
+								<img
+									src="https://scontent.fvca1-2.fna.fbcdn.net/v/t1.0-1/c0.24.320.320a/p320x320/116587304_1628009257374712_3929212169417010960_n.jpg?_nc_cat=100&ccb=2&_nc_sid=7206a8&_nc_ohc=IBzB9EZMtxwAX_FT7Xg&_nc_ht=scontent.fvca1-2.fna&tp=27&oh=f272e1565df96bcb00ee2e251063cf51&oe=5FF504F0"
+									alt="Image"
+								/>
+							</div>
+							<div class="review-text">
+								<h2>Võ Minh Tân</h2>
+								<h3>Profession</h3>
+								<div class="ratting">
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+								</div>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur vitae nunc eget leo finibus luctus et vitae lorem
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Review End -->
 
-    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
-  </body>
+		<%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+		<div id="api-msg"></div>
+	</body>
 </html>

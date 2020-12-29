@@ -1,246 +1,246 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const request = require("request-promise");
-const cheerio = require("cheerio");
-const puppeteer = require("puppeteer");
+const request = require('request-promise');
+const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 
-const { parsePrice } = require("./utils/statistic");
+const { parsePrice } = require('./utils/statistic');
 
-const connectDB = require("./config/db");
-const Product = require("./models/product.model");
+const connectDB = require('./config/db');
+const Product = require('./models/product.model');
 
-const BASE_URL = "https://phongvu.vn";
+const BASE_URL = 'https://phongvu.vn';
 
 process.setMaxListeners(0);
 
 (async () => await connectDB())();
 
 const options = {
-  args: [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-accelerated-2d-canvas",
-    "--no-first-run",
-    "--no-zygote",
-    "--single-process", // <- this one doesn't works in Windows
-    "--disable-gpu",
-  ],
-  headless: true,
+	args: [
+		'--no-sandbox',
+		'--disable-setuid-sandbox',
+		'--disable-dev-shm-usage',
+		'--disable-accelerated-2d-canvas',
+		'--no-first-run',
+		'--no-zygote',
+		'--single-process', // <- this one doesn't works in Windows
+		'--disable-gpu',
+	],
+	headless: true,
 };
 
 const getAllCategory = async () => {
-  try {
-    const html = await request.get(BASE_URL);
-    const $ = cheerio.load(html);
+	try {
+		const html = await request.get(BASE_URL);
+		const $ = cheerio.load(html);
 
-    return $("div[data-content-region-name='megaMenu']")
-      .map((index, item) => {
-        const el = $(item);
+		return $("div[data-content-region-name='megaMenu']")
+			.map((index, item) => {
+				const el = $(item);
 
-        return {
-          category: el.attr("data-content-name"),
-          href: BASE_URL + el.children("a").attr("href"),
-        };
-      })
-      .get()
-      .reverse()
-      .slice(1);
-  } catch (error) {
-    console.log(error.message);
-  }
+				return {
+					category: el.attr('data-content-name'),
+					href: BASE_URL + el.children('a').attr('href'),
+				};
+			})
+			.get()
+			.reverse()
+			.slice(1);
+	} catch (error) {
+		console.log(error.message);
+	}
 };
 
 const getMaxPagination = async (url) => {
-  try {
-    const html = await request.get(url);
-    const $ = cheerio.load(html);
+	try {
+		const html = await request.get(url);
+		const $ = cheerio.load(html);
 
-    return $("li[data-content-name='gotoPage']")
-      .last()
-      .attr("data-content-target");
-  } catch (error) {
-    console.log(error.message);
-  }
+		return $("li[data-content-name='gotoPage']")
+			.last()
+			.attr('data-content-target');
+	} catch (error) {
+		console.log(error.message);
+	}
 };
 
 const getAllLinkProductOfPage = async (url, nthPage) => {
-  try {
-    const browser = await puppeteer.launch(options);
-    const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(0);
-    await page.goto(url + `&page=${nthPage}`, { waitUntil: "networkidle2" });
-    const html = await page.content();
-    await browser.close();
+	try {
+		const browser = await puppeteer.launch(options);
+		const page = await browser.newPage();
+		page.setDefaultNavigationTimeout(0);
+		await page.goto(url + `&page=${nthPage}`, { waitUntil: 'networkidle2' });
+		const html = await page.content();
+		await browser.close();
 
-    const $ = cheerio.load(html);
+		const $ = cheerio.load(html);
 
-    return $("a.css-1rhapru")
-      .map((index, item) => {
-        const el = $(item);
-        return BASE_URL + el.attr("href");
-      })
-      .get();
-  } catch (error) {
-    console.log(error.message);
-  }
+		return $('a.css-1rhapru')
+			.map((index, item) => {
+				const el = $(item);
+				return BASE_URL + el.attr('href');
+			})
+			.get();
+	} catch (error) {
+		console.log(error.message);
+	}
 };
 
 const getProductDetails = async (url) => {
-  try {
-    const browser = await puppeteer.launch(options);
-    const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(0);
-    await page.goto(url, { waitUntil: "networkidle2" });
-    const html = await page.content();
-    await browser.close();
+	try {
+		const browser = await puppeteer.launch(options);
+		const page = await browser.newPage();
+		page.setDefaultNavigationTimeout(0);
+		await page.goto(url, { waitUntil: 'networkidle2' });
+		const html = await page.content();
+		await browser.close();
 
-    const $ = cheerio.load(html);
+		const $ = cheerio.load(html);
 
-    const result = {};
+		const result = {};
 
-    // Images
-    result.images = $("div.css-bkflzc")
-      .children()
-      .map((index, item) => {
-        const el = $(item);
-        return el.children("img").attr("src");
-      })
-      .get();
+		// Images
+		result.images = $('div.css-bkflzc')
+			.children()
+			.map((index, item) => {
+				const el = $(item);
+				return el.children('img').attr('src');
+			})
+			.get();
 
-    // Basic info
-    result.name = $("div.css-1jpdzyd").text();
-    result.producer = $("div.css-5nimvs").children("a").text();
-    result.code = $("div.css-5nimvs").text().split(" ").reverse()[0];
+		// Basic info
+		result.name = $('div.css-1jpdzyd').text();
+		result.producer = $('div.css-5nimvs').children('a').text();
+		result.code = $('div.css-5nimvs').text().split(' ').reverse()[0];
 
-    result.price = $("div.css-1etdbj7").children("span").text();
-    result.oldPrice = $("span.css-11dop4x").text();
+		result.price = $('div.css-1etdbj7').children('span').text();
+		result.oldPrice = $('span.css-11dop4x').text();
 
-    result.quantity = $("div.css-1wn7dgo").text().split(" ")[2] || 0;
-    result.promotion = {
-      code: $("div.css-1rggx5t").find("strong").text(),
-      desc: $("span.css-15lsrru").text(),
-      link: $("div.css-1rggx5t").find("a").attr("href"),
-    };
+		result.quantity = $('div.css-1wn7dgo').text().split(' ')[2] || 0;
+		result.promotion = {
+			code: $('div.css-1rggx5t').find('strong').text(),
+			desc: $('span.css-15lsrru').text(),
+			link: $('div.css-1rggx5t').find('a').attr('href'),
+		};
 
-    // Details info
-    result.details = {};
-    const details = $("span.css-6z2lgz")
-      .map((index, item) => {
-        const el = $(item);
+		// Details info
+		result.details = {};
+		const details = $('span.css-6z2lgz')
+			.map((index, item) => {
+				const el = $(item);
 
-        const elKey = el.text().replace(/\./g, "");
-        const elVal = el.parent().find("div.css-111s35w").text();
+				const elKey = el.text().replace(/\./g, '');
+				const elVal = el.parent().find('div.css-111s35w').text();
 
-        return {
-          [elKey]: elVal,
-        };
-      })
-      .get();
+				return {
+					[elKey]: elVal,
+				};
+			})
+			.get();
 
-    details.forEach((item) => {
-      result.details[Object.keys(item)[0]] = item[Object.keys(item)[0]];
-    });
+		details.forEach((item) => {
+			result.details[Object.keys(item)[0]] = item[Object.keys(item)[0]];
+		});
 
-    // Description
-    result.descriptions = $("div.css-111s35w")
-      .children()
-      .map((index, item) => {
-        const el = $(item);
+		// Description
+		result.descriptions = $('div.css-111s35w')
+			.children()
+			.map((index, item) => {
+				const el = $(item);
 
-        if (!el || !el["0"]) return 0;
-        if (!["h2", "h3"].includes(el["0"].name)) return 0;
+				if (!el || !el['0']) return 0;
+				if (!['h2', 'h3'].includes(el['0'].name)) return 0;
 
-        let content = "";
-        let cursorContent = el.next();
+				let content = '';
+				let cursorContent = el.next();
 
-        while (cursorContent["0"] && cursorContent["0"].name === "p") {
-          content += cursorContent.text();
-          content += "\n";
-          cursorContent = cursorContent.next();
-        }
+				while (cursorContent['0'] && cursorContent['0'].name === 'p') {
+					content += cursorContent.text();
+					content += '\n';
+					cursorContent = cursorContent.next();
+				}
 
-        return {
-          title: el.find("strong").text() || el.text(),
-          content,
-          img: cursorContent.find("img").attr("src") || "",
-        };
-      })
-      .get()
-      .filter((ele) => ele !== 0);
+				return {
+					title: el.find('strong').text() || el.text(),
+					content,
+					img: cursorContent.find('img').attr('src') || '',
+				};
+			})
+			.get()
+			.filter((ele) => ele !== 0);
 
-    return result;
-  } catch (error) {
-    console.log(error.message);
-  }
+		return result;
+	} catch (error) {
+		console.log(error.message);
+	}
 };
 
 (async () => {
-  const url =
-    "https://phongvu.vn/thiet-bi-van-phong-1569.cat?pv_medium=m-thiet-bi-van-phong";
-  const type = "Thiết bị văn phòng";
+	const url =
+		'https://phongvu.vn/thiet-bi-van-phong-1569.cat?pv_medium=m-thiet-bi-van-phong';
+	const type = 'Thiết bị văn phòng';
 
-  try {
-    const maxPagination = await getMaxPagination(url);
+	try {
+		const maxPagination = await getMaxPagination(url);
 
-    for (let j = 3; j < maxPagination; j++) {
-      try {
-        const allLinkProductOfPage = await getAllLinkProductOfPage(url, j + 1);
+		for (let j = 3; j < maxPagination; j++) {
+			try {
+				const allLinkProductOfPage = await getAllLinkProductOfPage(url, j + 1);
 
-        const allLinkLen = allLinkProductOfPage.length;
-        let product = {};
-        console.log("Page " + (j + 1) + " found: " + allLinkLen + "!");
-        for (let k = 0; k < allLinkLen; k++) {
-          console.log(
-            "-+-+-+-+-+-+>> Fetching product: " +
-              (k + 1) +
-              " of page " +
-              (j + 1) +
-              "!"
-          );
+				const allLinkLen = allLinkProductOfPage.length;
+				let product = {};
+				console.log('Page ' + (j + 1) + ' found: ' + allLinkLen + '!');
+				for (let k = 0; k < allLinkLen; k++) {
+					console.log(
+						'-+-+-+-+-+-+>> Fetching product: ' +
+							(k + 1) +
+							' of page ' +
+							(j + 1) +
+							'!'
+					);
 
-          try {
-            product = await getProductDetails(allLinkProductOfPage[k]);
-            console.log("-+-+-+-+-+-+>> Fetched: " + product.name);
+					try {
+						product = await getProductDetails(allLinkProductOfPage[k]);
+						console.log('-+-+-+-+-+-+>> Fetched: ' + product.name);
 
-            product.type = type;
-            product.countView = Math.ceil(Math.random() * (2000 - 1) + 1);
-            product.countLike = Math.ceil(Math.random() * (800 - 1) + 1);
-            product.countRating = Math.ceil(Math.random() * (200 - 1) + 1);
-            product.countSale = Math.ceil(Math.random() * (200 - 1) + 1);
+						product.type = type;
+						product.countView = Math.ceil(Math.random() * (2000 - 1) + 1);
+						product.countLike = Math.ceil(Math.random() * (800 - 1) + 1);
+						product.countRating = Math.ceil(Math.random() * (200 - 1) + 1);
+						product.countSale = Math.ceil(Math.random() * (200 - 1) + 1);
 
-            if (
-              Object.keys(product.details) < 5 ||
-              product.descriptions.length < 5
-            )
-              continue;
+						if (
+							Object.keys(product.details) < 5 ||
+							product.descriptions.length < 5
+						)
+							continue;
 
-            const newProduct = new Product(product);
-            await newProduct.save(product);
-            console.log("-+-+-+-+-+-+>> Saved to DB!");
+						const newProduct = new Product(product);
+						await newProduct.save(product);
+						console.log('-+-+-+-+-+-+>> Saved to DB!');
 
-            // console.log(product);
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  } catch (error) {
-    console.log(error);
-  }
+						// console.log(product);
+					} catch (error) {
+						console.log(error);
+					}
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	} catch (error) {
+		console.log(error);
+	}
 
-  // try {
-  //   const products = await Product.find({});
-  //   products.forEach(async (product) => {
-  //     product.rating = Math.round(Math.random() * (5 - 1) + 1);
-  //     await product.save();
-  //   });
+	// try {
+	//   const products = await Product.find({});
+	//   products.forEach(async (product) => {
+	//     product.rating = Math.round(Math.random() * (5 - 1) + 1);
+	//     await product.save();
+	//   });
 
-  //   console.log("Done");
-  // } catch (error) {
-  //   console.log(error.message);
-  // }
+	//   console.log("Done");
+	// } catch (error) {
+	//   console.log(error.message);
+	// }
 })();
