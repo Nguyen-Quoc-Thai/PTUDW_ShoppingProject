@@ -106,23 +106,53 @@ $('.trash-like').click(function (e) {
 			'Bạn chắc chắn muốn xóa vật phẩm khỏi danh sách quan tâm ?'
 		);
 		if (re == false) return false;
-		$(this).parent().parent().css('display', 'none');
+		$(this).parent().parent().addClass('d-none');
+		if (
+			$('.table.table-bordered > .align-middle tr').not('tr[class="d-none"]')
+				.length === 0
+		) {
+			$('.table.table-bordered').html(`
+			<h3>Không có sản phẩm yêu thích nào!</h3>
+			<h6 class="pt-3">
+				<span
+					><a class="text-success" href="/"
+						>Tiếp tục mua sắm</a
+					></span
+				>
+			</h6>`);
+			$('.table.table-bordered').removeClass('table table-bordered');
+		}
 	}
 
-	// Loading
-	$('#loading').addClass('loading');
-	setTimeout(function () {
-		$('#loading').removeClass('loading');
-	}, 300);
+	let resource = 'Cart';
+	let textCol = 'success';
+	let msg = 'Đã xóa khỏi danh sách yêu thích!';
+
+	let html = `
+	<div class="toast" data-autohide="false" style="width: 250px;">
+		<div class="toast-header">
+			<strong class="mr-auto text-${textCol}">${resource}</strong>
+			<small class="text-muted">just now</small>
+			<button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+				&times;
+			</button>
+		</div>
+		<div class="toast-body">${msg}</div>
+	</div>`;
 
 	const slugName = $(this).attr('name');
 	const url = `/user/api/v1/unlike/${slugName}`;
 	$.post(url, {}, function (data, status) {
-		console.log(data);
 		if (data.msg === 'success' && status === 'success') {
 			$('span.cart-count-like').html(`(${data.data.length})`);
 		}
 	});
+
+	$('#api-msg').html(html);
+	$('.toast').toast('show');
+	setTimeout(function () {
+		$('.toast').toast('hide');
+	}, 3000);
 });
 
 // Handle change info

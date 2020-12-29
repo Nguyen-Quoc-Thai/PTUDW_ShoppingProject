@@ -93,7 +93,7 @@ h2 {
 *.disabled,
 *:disabled,
 input:read-only {
-	cursor: not-allowed;
+	cursor: not-allowed !important;
 	pointer-events: all !important;
 }
 .disable:hover {
@@ -2757,4 +2757,15 @@ select:hover {
 	60% {
 		transform: translate3d(4px, 0, 0);
 	}
+}
+
+.toast {
+	background-color: lightblue;
+}
+
+#api-msg {
+	position: fixed;
+	top: 75vh;
+	left: 82vw;
+	z-index: 1000;
 }

@@ -89,11 +89,10 @@ $('.add-to-cart').click(function (e) {
 $('.change-val').click(function (e) {
 	e.preventDefault();
 
-	// BUG
-	if ($('.change-val').attr('disabled')) return;
-	$('.change-val').attr('disabled', true);
+	if ($('.change-val').hasClass('disabled')) return;
+	$('.change-val').addClass('disabled');
 	setTimeout(function () {
-		$('.change-val').attr('disabled', false);
+		$('.change-val').removeClass('disabled');
 	}, 500);
 
 	const value = $(this).attr('value');
@@ -102,7 +101,17 @@ $('.change-val').click(function (e) {
 	if (parseInt(value) === 0) {
 		const re = confirm('Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?');
 		if (re == false) return false;
-		$(this).parent().parent().css('display', 'none');
+		$(this).parent().parent().addClass('d-none');
+		if ($('#cart tr').not('tr[class="d-none"]').length === 0)
+			$('#cart').parent().parent().parent().html(`
+			<h3>Không có sản phẩm nào trong giỏ hàng!</h3>
+			<h6 class="pt-3">
+				<span
+					><a class="text-success" href="/"
+						>Tiếp tục mua sắm</a
+					></span
+				>
+			</h6>`);
 	}
 
 	let resource = 'Cart';

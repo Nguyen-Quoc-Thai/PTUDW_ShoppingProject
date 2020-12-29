@@ -70,10 +70,9 @@ exports.putUpdateInfo = async (req, res, next) => {
 				user.avatar = ret.url;
 				user.cloudinary_id = ret.id;
 			}
-
-			console.log(ret);
 		}
 
+		if (user.phone === '0987654321') user.phone = req.body.phone;
 		await User.updateOne({ _id: user._id }, { $set: user });
 
 		res.status(200).json({

@@ -24,15 +24,6 @@ module.exports.postCheckout = async (req, res, next) => {
 	const { user, body } = req;
 
 	try {
-		if (!user) {
-			if (req.body.createAcc === 'on') {
-				return await postSignUp(req, res, next);
-			} else {
-				return res.redirect('back');
-			}
-		}
-
-		console.log(123);
 		const cart = await Cart.findOne({ userId: user._id, status: 'waiting' });
 
 		const { userId, _id, status, items, totalQuantity, totalCost } = cart;
@@ -46,7 +37,7 @@ module.exports.postCheckout = async (req, res, next) => {
 			lastName,
 		} = body;
 
-		body.phone = user.phone;
+		if (user.phone !== '0987654321') body.phone = user.phone;
 		body.email = user.email;
 
 		// check if 2 add diff
