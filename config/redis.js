@@ -1,19 +1,23 @@
 const redis = require('redis');
 
-const redis_port_ssl = process.env.REDIS_PORT_SSL;
-const redis_hostname = process.env.REDIS_HOSTNAME;
-const redis_access_key = process.env.REDIS_ACCESS_KEY;
+const REDIS_PORT_SSL = process.env.REDIS_PORT_SSL;
+const REDIS_HOSTNAME = process.env.REDIS_HOSTNAME;
+const REDIS_ACCESS_KEY = process.env.REDIS_ACCESS_KEY;
 
-const RedisClient = redis.createClient(redis_port_ssl, redis_hostname, {
-	auth_pass: redis_access_key,
+// Create client
+const RedisClient = redis.createClient(REDIS_PORT_SSL, REDIS_HOSTNAME, {
+	auth_pass: REDIS_ACCESS_KEY,
 	tls: {
-		servername: redis_hostname,
+		servername: REDIS_HOSTNAME,
 	},
 });
 
+// Ready action
 RedisClient.on('ready', () => {
 	console.log('Redis already!');
 });
+
+// Conect error action
 RedisClient.on('error', (error) => {
 	throw error;
 });

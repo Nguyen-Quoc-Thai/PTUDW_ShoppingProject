@@ -1,7 +1,5 @@
 const bcrypt = require('bcrypt');
 
-const User = require('./../models/user.model');
-
 function randomID(length) {
 	let result = '';
 	const characters =
@@ -12,14 +10,6 @@ function randomID(length) {
 	}
 	return result;
 }
-
-module.exports.findUserByEmail = (email) => {
-	return User.findOne({ email });
-};
-
-module.exports.findUserById = (id) => {
-	return User.findById(id);
-};
 
 module.exports.randomPassword = (length) => {
 	const randID = randomID(length);

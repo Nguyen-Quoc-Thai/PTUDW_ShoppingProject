@@ -1,28 +1,33 @@
+const bcrypt = require('bcrypt');
+
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
 
 const User = require('./../models/user.model');
 
-const baseURL = process.env.BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 
-const clientGoogleID = process.env.GOOGLE_CLIENT_ID;
-const clientGoogleSecret = process.env.GOOGLE_CLIENT_SECRET;
-const callbackGoogleURL = `${baseURL}/user/google/callback`;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_CALLBACK_URL = `${BASE_URL}/user/google/callback`;
 
-const clientFacebookID = process.env.FACEBOOK_CLIENT_ID;
-const clientFacebookSecret = process.env.FACEBOOK_CLIENT_SECRET;
-const callbackFacebookURL = `${baseURL}/user/facebook/callback`;
+const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID;
+const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET;
+const FACEBOOK_CALLBACK_URL = `${BASE_URL}/user/facebook/callback`;
 
 module.exports = function (passport) {
+	/**
+	 * Local strategy sign in
+	 */
 	passport.use(
 		new LocalStrategy(
 			{ usernameField: 'email' },
 			(email = '', password = '', done) => {
 				User.findOne({ email })
 					.then((user) => {
-						// Validator
+						// Validate user info
+
 						if (!user) {
 							return done(null, false, {
 								email: 'Tài khoản chưa đăng kí!',
@@ -47,6 +52,7 @@ module.exports = function (passport) {
 							});
 						}
 
+						// Password compare
 						bcrypt.compare(password, user.password, (error, matched) => {
 							if (error) throw new Error('Bcrypt compare failed!');
 
@@ -64,12 +70,15 @@ module.exports = function (passport) {
 		)
 	);
 
+	/**
+	 * Google strategy OAuth
+	 */
 	passport.use(
 		new GoogleStrategy(
 			{
-				clientID: clientGoogleID,
-				clientSecret: clientGoogleSecret,
-				callbackURL: callbackGoogleURL,
+				clientID: GOOGLE_CLIENT_ID,
+				clientSecret: GOOGLE_CLIENT_SECRET,
+				callbackURL: GOOGLE_CALLBACK_URL,
 			},
 			function (accessToken, refreshToken, profile, done) {
 				console.log(profile);
@@ -126,12 +135,15 @@ module.exports = function (passport) {
 		)
 	);
 
+	/**
+	 * Facebook strategy OAuth
+	 */
 	passport.use(
 		new FacebookStrategy(
 			{
-				clientID: clientFacebookID,
-				clientSecret: clientFacebookSecret,
-				callbackURL: callbackFacebookURL,
+				clientID: FACEBOOK_CLIENT_ID,
+				clientSecret: FACEBOOK_CLIENT_SECRET,
+				callbackURL: FACEBOOK_CALLBACK_URL,
 				profileFields: ['id', 'displayName', 'link', 'name', 'photos', 'email'],
 			},
 			function (accessToken, refreshToken, profile, done) {

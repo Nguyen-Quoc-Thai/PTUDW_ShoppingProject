@@ -1,3 +1,9 @@
+/**
+ * Statistic products on filter
+ * @param {*} Model : Mongoose modal
+ * @param {*} filterFields : Object filter
+ * @param {*} groupBy : Statistics on group by
+ */
 module.exports.statistic = async (Model, filterFields, groupBy) => {
 	try {
 		const statistic = await Model.find(filterFields).distinct(groupBy);
@@ -14,15 +20,25 @@ module.exports.statistic = async (Model, filterFields, groupBy) => {
 
 		return result.sort((a, b) => -a.count + b.count);
 	} catch (error) {
-		console.log(error.message);
+		console.log(error);
 		return [];
 	}
 };
 
+/**
+ * Parse string like number to number
+ * @param {*} strPrice : String price
+ */
 module.exports.parsePrice = (strPrice) => {
 	return parseInt(strPrice.replace(/[\.dđ]/g, ''));
 };
 
+/**
+ * Sync session cart & user cart
+ * @param {*} Model : Mongoose modal
+ * @param {*} userId : User ID
+ * @param {*} sessionCart : Request session cart
+ */
 module.exports.mergeCart = async (Model, userId, sessionCart) => {
 	try {
 		let cart = {};
@@ -42,6 +58,7 @@ module.exports.mergeCart = async (Model, userId, sessionCart) => {
 		} else {
 			cart = userCart;
 
+			// Sync cart
 			const merCartItem = [...userCart.items, ...sessionCart.items];
 			const slugName = Array.from(
 				new Set(merCartItem.map((item) => item.slugName))
@@ -67,7 +84,7 @@ module.exports.mergeCart = async (Model, userId, sessionCart) => {
 
 		return cart;
 	} catch (error) {
-		console.log(error.message);
+		console.log(error);
 		return sessionCart;
 	}
 };

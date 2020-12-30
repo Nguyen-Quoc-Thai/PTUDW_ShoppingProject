@@ -1,5 +1,8 @@
 const Cart = require('./../models/cart.model');
 
+/**
+ * Get cart items
+ */
 module.exports.getCart = async (req, res, next) => {
 	const { user } = req;
 
@@ -17,8 +20,6 @@ module.exports.getCart = async (req, res, next) => {
 				await cart.save();
 			} else cart = userCart;
 		}
-
-		console.log(cart.totalQuantity);
 
 		req.app.locals.cart = cart;
 		return res.render('pages/cart', {

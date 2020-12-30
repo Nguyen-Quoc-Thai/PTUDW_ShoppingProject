@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Utils func
 const { randomPassword } = require('./../utils/passport');
 
 const enumUser = {
