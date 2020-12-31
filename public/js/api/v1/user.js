@@ -1,77 +1,3 @@
-/* ------------------ Utils func ------------------*/
-/* Toast message */
-const toastMessage = (title, status, msg) => {
-	const html = `
-	<div class="toast" data-autohide="false" style="width: 250px;">
-		<div class="toast-header">
-			<strong class="mr-auto text-${status}">${title}</strong>
-			<small class="text-muted">just now</small>
-			<button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
-				&times;
-			</button>
-		</div>
-		<div class="toast-body">${msg}</div>
-	</div>`;
-
-	$('#api-msg').html(html);
-	$('.toast').toast('show');
-	setTimeout(function () {
-		$('.toast').toast('hide');
-	}, 3000);
-};
-
-/* Display animation add to cart/wishlist*/
-const displayCartAnimation = (anchor, img) => {
-	const imgClone = img
-		.clone()
-		.offset({
-			top: img.offset().top + 100,
-			left: img.offset().left + 100,
-		})
-		.css({
-			opacity: '0.8',
-			position: 'absolute',
-			height: '100px',
-			width: '100px',
-			'z-index': '101',
-		})
-		.appendTo($('body'))
-		.animate(
-			{
-				top: anchor.offset().top + 10,
-				left: anchor.offset().left + 10,
-				width: 75,
-				height: 75,
-			},
-			1000,
-			'easeInOutExpo'
-		);
-
-	imgClone.animate(
-		{
-			width: 0,
-			height: 0,
-		},
-		function () {
-			$(this).detach();
-		}
-	);
-};
-
-/* Display wishlist empty */
-const displayWishlistEmpty = () => {
-	$('.table.table-bordered').html(`
-			<h3>Không có sản phẩm yêu thích nào!</h3>
-			<h6 class="pt-3">
-				<span
-					><a class="text-success" href="/"
-						>Tiếp tục mua sắm</a
-					></span
-				>
-			</h6>`);
-	$('.table.table-bordered').removeClass('table table-bordered');
-};
-
 /* ------------------- API -------------------- */
 
 // Post like
@@ -153,14 +79,10 @@ $('.trash-like').click(function (e) {
 $('#change-info').submit(function (e) {
 	e.preventDefault();
 
-	// Loading
-	$('#loading').addClass('loading');
-
-	// If not change avatar
-	if (!$('#thumbnail')[0].files[0]) {
-		setTimeout(function () {
-			$('#loading').removeClass('loading');
-		}, 300);
+	// If change avatar
+	if ($('#thumbnail')[0].files[0]) {
+		// Loading
+		$('#loading').addClass('loading');
 	}
 
 	// Req API
@@ -189,14 +111,13 @@ $('#change-info').submit(function (e) {
 
 	// Req done
 	request.done(function (data, status) {
-		if (status === 'success') {
-			$('#loading').removeClass('loading');
-			toastMessage(
-				'User information',
-				data.msg === 'success' ? 'success' : 'danger',
-				data.user
-			);
-		}
+		$('#loading').removeClass('loading');
+		console.log(123);
+		toastMessage(
+			'User information',
+			data.msg === 'success' ? 'success' : 'danger',
+			data.user
+		);
 	});
 });
 

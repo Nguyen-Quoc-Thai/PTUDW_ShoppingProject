@@ -1,442 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body>
-    <%- include('../partials/header', {query:''}); %>
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<%- include('../partials/header', {query:''}); %>
 
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb-wrap">
-      <div class="container-fluid">
-        <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
-          <li class="breadcrumb-item active">Tài khoản</li>
-        </ul>
-      </div>
-    </div>
-    <!-- Breadcrumb End -->
+		<!-- Breadcrumb Start -->
+		<div class="breadcrumb-wrap">
+			<div class="container-fluid">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+					<li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+					<li class="breadcrumb-item active">Tài khoản</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Breadcrumb End -->
 
-    <!-- My Account Start -->
-    <div class="my-account">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-3">
-            <div
-              class="nav flex-column nav-pills not-scroll"
-              role="tablist"
-              aria-orientation="vertical"
-            >
-              <a
-                class="nav-link active"
-                id="dashboard-nav"
-                data-toggle="pill"
-                href="#dashboard-tab"
-                role="tab"
-                ><i class="fa fa-tachometer-alt"></i>Bảng điều khiển</a
-              >
-              <a
-                class="nav-link"
-                id="orders-nav"
-                data-toggle="pill"
-                href="#orders-tab"
-                role="tab"
-                ><i class="fa fa-shopping-bag"></i>Lịch sử đặt hàng</a
-              >
-              <a
-                class="nav-link"
-                id="payment-nav"
-                data-toggle="pill"
-                href="#payment-tab"
-                role="tab"
-                ><i class="fa fa-credit-card"></i>Phương thức thanh toán</a
-              >
-              <a
-                class="nav-link"
-                id="address-nav"
-                data-toggle="pill"
-                href="#address-tab"
-                role="tab"
-                ><i class="fa fa-map-marker-alt"></i>Địa chỉ</a
-              >
-              <a
-                class="nav-link"
-                id="account-nav"
-                data-toggle="pill"
-                href="#account-tab"
-                role="tab"
-                ><i class="fa fa-user"></i>Tài khoản</a
-              >
-              <form
-                id="logout"
-                method="POST"
-                action="/user/logout"
-                style="background-color: white"
-              >
-                <button type="submit" class="nav-link" style="border: none">
-                  <i class="fa fa-sign-out-alt"></i>Đăng xuất
-                </button>
-              </form>
-            </div>
-          </div>
-          <div class="col-md-9">
-            <div class="tab-content">
-              <div
-                class="tab-pane fade show active"
-                id="dashboard-tab"
-                role="tabpanel"
-                aria-labelledby="dashboard-nav"
-              >
-                <h4>Bảng điều khiển</h4>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  condimentum quam ac mi viverra dictum. In efficitur ipsum
-                  diam, at dignissim lorem tempor in. Vivamus tempor hendrerit
-                  finibus. Nulla tristique viverra nisl, sit amet bibendum ante
-                  suscipit non. Praesent in faucibus tellus, sed gravida lacus.
-                  Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus
-                  scelerisque.
-                </p>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="orders-tab"
-                role="tabpanel"
-                aria-labelledby="orders-nav"
-              >
-                <%if(!checkout.length){%>
-                <h4>Bạn chưa có đơn hàng nào!</h4>
-                <a href="/">
-                  <h6 style="color: cornflowerblue">Tiếp tục mua sắm</h6>
-                </a>
-                <%}else{%>
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="thead-dark">
-                      <tr>
-                        <th>No</th>
-                        <th>Ngày đặt</th>
-                        <th>Địa chỉ nhận hàng</th>
-                        <th>Thanh toán</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <%checkout.reverse().forEach((check, index) => {%>
-                      <tr>
-                        <td><%=(index+1)%></td>
-                        <td>
-                          <%=new Intl.DateTimeFormat(["ban", "id"], { year:
-                          "numeric", month: "numeric", day: "numeric", hour:
-                          "numeric", minute: "numeric", second: "numeric",
-                          hour12: false, timeZone: "America/Los_Angeles",
-                          }).format(check.date)%>
-                        </td>
-                        <td>
-                          <%=check.address%>, <%=check.village%>,
-                          <%=check.district%>, <%=check.city%>
-                        </td>
-                        <td>
-                          <%=check.totalPayment.toLocaleString('vi-VN')%>&nbsp;đ
-                        </td>
-                        <td><%=check.status%></td>
-                        <td>
-                          <button
-                            class="btn view-checkout"
-                            value="<%=check._id%>"
-                          >
-                            Xem
-                          </button>
-                        </td>
-                      </tr>
-                      <%})%>
-                    </tbody>
-                  </table>
-                </div>
-                <%}%>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="payment-tab"
-                role="tabpanel"
-                aria-labelledby="payment-nav"
-              >
-                <h4>Phương thức thanh toán</h4>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  condimentum quam ac mi viverra dictum. In efficitur ipsum
-                  diam, at dignissim lorem tempor in. Vivamus tempor hendrerit
-                  finibus. Nulla tristique viverra nisl, sit amet bibendum ante
-                  suscipit non. Praesent in faucibus tellus, sed gravida lacus.
-                  Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus
-                  scelerisque.
-                </p>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="address-tab"
-                role="tabpanel"
-                aria-labelledby="address-nav"
-              >
-                <h4>Địa chỉ nhận hàng</h4>
-                <div class="row">
-                  <div class="col-md-6">
-                    <h5>Phương thức thanh toán</h5>
-                    <p>
-                      <%=user.address%>, <%=user.village%>, <%=user.district%>,
-                      <%=user.city%>
-                    </p>
-                    <p>Điện thoại: <%=user.phone%></p>
-                  </div>
-                  <div class="col-md-6">
-                    <h5>Địa chỉ nhận hàng</h5>
-                    <p>
-                      <%=user.address%>, <%=user.village%>, <%=user.district%>,
-                      <%=user.city%>
-                    </p>
-                    <p>Điện thoại: <%=user.phone%></p>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="account-tab"
-                role="tabpanel"
-                aria-labelledby="account-nav"
-              >
-                <h4>Tài khoản</h4>
-                <form
-                  enctype="multipart/form-data"
-                  id="change-info"
-                  class="row"
-                  method="POST"
-                  action="/user/api/v1/account/info"
-                >
-                  <div class="col-md-12 d-flex">
-                    <div class="col-md-2">
-                      <div class="avatar-wrapper">
-                        <img class="profile-pic" src="<%=user.avatar%>" />
-                        <div class="upload-button"></div>
-                        <input
-                          id="thumbnail"
-                          class="file-upload"
-                          type="file"
-                          accept="image/*"
-                          name="thumbnail"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-md-9">
-                      <div class="col-md-12 d-flex mt-45">
-                        <div class="col-md-6">
-                          <input
-                            class="form-control"
-                            type="text"
-                            name="firstName"
-                            value="<%=user.firstName%>"
-                          />
-                        </div>
-                        <div class="col-md-6">
-                          <input
-                            class="form-control"
-                            type="text"
-                            name="lastName"
-                            value="<%=user.lastName%>"
-                          />
-                        </div>
-                      </div>
-                      <div class="col-md-12 d-flex">
-                        <div class="col-md-6">
-                          <%if(user.phone !== "0987654321"){%>
-                          <input
-                            class="form-control"
-                            type="text"
-                            name="phone"
-                            value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
-                            readonly
-                          />
-                          <%}else{%>
-                          <input
-                            class="form-control"
-                            type="text"
-                            name="phone"
-                            value="<%=user.phone%>"
-                          />
-                          <%}%>
-                        </div>
-                        <div class="col-md-6">
-                          <input
-                            class="form-control"
-                            type="text"
-                            name="email"
-                            value="<%=user.email%>"
-                            readonly
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+		<!-- My Account Start -->
+		<div class="my-account">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-3">
+						<div
+							class="nav flex-column nav-pills not-scroll"
+							role="tablist"
+							aria-orientation="vertical"
+						>
+							<a
+								class="nav-link active"
+								id="dashboard-nav"
+								data-toggle="pill"
+								href="#dashboard-tab"
+								role="tab"
+								><i class="fa fa-tachometer-alt"></i>Bảng điều khiển</a
+							>
+							<a
+								class="nav-link"
+								id="orders-nav"
+								data-toggle="pill"
+								href="#orders-tab"
+								role="tab"
+								><i class="fa fa-shopping-bag"></i>Lịch sử đặt hàng</a
+							>
+							<a
+								class="nav-link"
+								id="payment-nav"
+								data-toggle="pill"
+								href="#payment-tab"
+								role="tab"
+								><i class="fa fa-credit-card"></i>Phương thức thanh toán</a
+							>
+							<a
+								class="nav-link"
+								id="address-nav"
+								data-toggle="pill"
+								href="#address-tab"
+								role="tab"
+								><i class="fa fa-map-marker-alt"></i>Địa chỉ</a
+							>
+							<a
+								class="nav-link"
+								id="account-nav"
+								data-toggle="pill"
+								href="#account-tab"
+								role="tab"
+								><i class="fa fa-user"></i>Tài khoản</a
+							>
+							<form
+								id="logout"
+								method="POST"
+								action="/user/logout"
+								style="background-color: white"
+							>
+								<button type="submit" class="nav-link" style="border: none">
+									<i class="fa fa-sign-out-alt"></i>Đăng xuất
+								</button>
+							</form>
+						</div>
+					</div>
+					<div class="col-md-9">
+						<div class="tab-content">
+							<div
+								class="tab-pane fade show active"
+								id="dashboard-tab"
+								role="tabpanel"
+								aria-labelledby="dashboard-nav"
+							>
+								<h4>Bảng điều khiển</h4>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+									condimentum quam ac mi viverra dictum. In efficitur ipsum
+									diam, at dignissim lorem tempor in. Vivamus tempor hendrerit
+									finibus. Nulla tristique viverra nisl, sit amet bibendum ante
+									suscipit non. Praesent in faucibus tellus, sed gravida lacus.
+									Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus
+									scelerisque.
+								</p>
+							</div>
+							<div
+								class="tab-pane fade"
+								id="orders-tab"
+								role="tabpanel"
+								aria-labelledby="orders-nav"
+							>
+								<%if(!checkout.length){%>
+								<h4>Bạn chưa có đơn hàng nào!</h4>
+								<a href="/">
+									<h6 style="color: cornflowerblue">Tiếp tục mua sắm</h6>
+								</a>
+								<%}else{%>
+								<div class="table-responsive">
+									<table class="table table-bordered">
+										<thead class="thead-dark">
+											<tr>
+												<th>No</th>
+												<th>Ngày đặt</th>
+												<th>Địa chỉ nhận hàng</th>
+												<th>Thanh toán</th>
+												<th>Trạng thái</th>
+												<th>Hành động</th>
+											</tr>
+										</thead>
+										<tbody>
+											<%checkout.reverse().forEach((check, index) => {%>
+											<tr>
+												<td><%=(index+1)%></td>
+												<td>
+													<%=new Intl.DateTimeFormat(["ban", "id"], { year:
+													"numeric", month: "numeric", day: "numeric", hour:
+													"numeric", minute: "numeric", second: "numeric",
+													hour12: false, timeZone: "America/Los_Angeles",
+													}).format(check.date)%>
+												</td>
+												<td>
+													<%=check.address%>, <%=check.village%>,
+													<%=check.district%>, <%=check.city%>
+												</td>
+												<td>
+													<%=check.totalPayment.toLocaleString('vi-VN')%>&nbsp;đ
+												</td>
+												<td><%=check.status%></td>
+												<td>
+													<button
+														class="btn view-checkout"
+														value="<%=check._id%>"
+													>
+														Xem
+													</button>
+												</td>
+											</tr>
+											<%})%>
+										</tbody>
+									</table>
+								</div>
+								<%}%>
+							</div>
+							<div
+								class="tab-pane fade"
+								id="payment-tab"
+								role="tabpanel"
+								aria-labelledby="payment-nav"
+							>
+								<h4>Phương thức thanh toán</h4>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+									condimentum quam ac mi viverra dictum. In efficitur ipsum
+									diam, at dignissim lorem tempor in. Vivamus tempor hendrerit
+									finibus. Nulla tristique viverra nisl, sit amet bibendum ante
+									suscipit non. Praesent in faucibus tellus, sed gravida lacus.
+									Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus
+									scelerisque.
+								</p>
+							</div>
+							<div
+								class="tab-pane fade"
+								id="address-tab"
+								role="tabpanel"
+								aria-labelledby="address-nav"
+							>
+								<h4>Địa chỉ nhận hàng</h4>
+								<div class="row">
+									<div class="col-md-6">
+										<h5>Phương thức thanh toán</h5>
+										<p>
+											<%=user.address%>, <%=user.village%>, <%=user.district%>,
+											<%=user.city%>
+										</p>
+										<p>Điện thoại: <%=user.phone%></p>
+									</div>
+									<div class="col-md-6">
+										<h5>Địa chỉ nhận hàng</h5>
+										<p>
+											<%=user.address%>, <%=user.village%>, <%=user.district%>,
+											<%=user.city%>
+										</p>
+										<p>Điện thoại: <%=user.phone%></p>
+									</div>
+								</div>
+							</div>
+							<div
+								class="tab-pane fade"
+								id="account-tab"
+								role="tabpanel"
+								aria-labelledby="account-nav"
+							>
+								<h4>Tài khoản</h4>
+								<form
+									enctype="multipart/form-data"
+									id="change-info"
+									class="row"
+									method="POST"
+									action="/user/api/v1/account/info"
+								>
+									<div class="col-md-12 d-flex">
+										<div class="col-md-2">
+											<div class="avatar-wrapper">
+												<img class="profile-pic" src="<%=user.avatar%>" />
+												<div class="upload-button"></div>
+												<input
+													id="thumbnail"
+													class="file-upload"
+													type="file"
+													accept="image/*"
+													name="thumbnail"
+												/>
+											</div>
+										</div>
+										<div class="col-md-9">
+											<div class="col-md-12 d-flex mt-45">
+												<div class="col-md-6">
+													<input
+														class="form-control"
+														type="text"
+														name="firstName"
+														value="<%=user.firstName%>"
+													/>
+												</div>
+												<div class="col-md-6">
+													<input
+														class="form-control"
+														type="text"
+														name="lastName"
+														value="<%=user.lastName%>"
+													/>
+												</div>
+											</div>
+											<div class="col-md-12 d-flex">
+												<div class="col-md-6">
+													<%if(user.phone !== "0987654321"){%>
+													<input
+														class="form-control"
+														type="text"
+														name="phone"
+														value="<%=user.phone[0]%><%=Array(user.phone.length-3).fill('*').join('')%><%=user.phone[user.phone.length-2]%><%=user.phone[user.phone.length-1]%>"
+														readonly
+													/>
+													<%}else{%>
+													<input
+														class="form-control"
+														type="text"
+														name="phone"
+														value="<%=user.phone%>"
+													/>
+													<%}%>
+												</div>
+												<div class="col-md-6">
+													<input
+														class="form-control"
+														type="text"
+														name="email"
+														value="<%=user.email%>"
+														readonly
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
 
-                  <%if(user.address.length){%>
-                  <div class="col-md-6">
-                    <label>Địa chỉ</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="address"
-                      value="<%=user.address%>"
-                    />
-                  </div>
-                  <%}else{%>
-                  <div class="col-md-6">
-                    <label>Địa chỉ</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="address"
-                      placeholder="Address"
-                    />
-                  </div>
-                  <%}%> <%if(user.city){%>
-                  <div class="col-md-6">
-                    <label>Tỉnh - Thành phố</label>
-                    <select class="custom-select" id="province" name="city">
-                      <option value="<%=user.city%>" selected>
-                        <%=user.city%>
-                      </option>
-                      <%provinces.forEach((province) => {%>
-                      <option
-                        name="city"
-                        value="<%=province.name%>"
-                        code="<%=province.code%>"
-                      >
-                        <%=province.name%>
-                      </option>
-                      <%})%>
-                    </select>
-                  </div>
-                  <%}else{%>
-                  <div class="col-md-6">
-                    <label>Tỉnh - Thành phố</label>
-                    <select class="custom-select" id="province" name="city">
-                      <option value="City" selected>City</option>
-                      <%provinces.forEach((province) => {%>
-                      <option
-                        name="city"
-                        value="<%=province.name%>"
-                        code="<%=province.code%>"
-                      >
-                        <%=province.name%>
-                      </option>
-                      <%})%>
-                    </select>
-                  </div>
-                  <%}%> <%if(user.district){%>
-                  <div class="col-md-6">
-                    <label>Quận - Huyện</label>
-                    <select class="custom-select" id="district" name="district">
-                      <option selected value="<%=user.district%>">
-                        <%=user.district%>
-                      </option>
-                    </select>
-                  </div>
-                  <%}else{%>
-                  <div class="col-md-6">
-                    <label>Quận - Huyện</label>
-                    <select class="custom-select" id="district" name="district">
-                      <option selected value="District">District</option>
-                    </select>
-                  </div>
-                  <%}%> <%if(user.village){%>
-                  <div class="col-md-6">
-                    <label>Xã - Phường - Thị trấn</label>
-                    <select class="custom-select" id="village" name="village">
-                      <option selected value="<%=user.village%>">
-                        <%=user.village%>
-                      </option>
-                    </select>
-                  </div>
-                  <%}else{%>
-                  <div class="col-md-6">
-                    <label>Xã - Phường - Thị trấn</label>
-                    <select class="custom-select" id="village" name="village">
-                      <option selected value="Village">Village</option>
-                    </select>
-                  </div>
-                  <%}%>
+									<%if(user.address.length){%>
+									<div class="col-md-6">
+										<label>Địa chỉ</label>
+										<input
+											class="form-control"
+											type="text"
+											name="address"
+											value="<%=user.address%>"
+										/>
+									</div>
+									<%}else{%>
+									<div class="col-md-6">
+										<label>Địa chỉ</label>
+										<input
+											class="form-control"
+											type="text"
+											name="address"
+											placeholder="Address"
+										/>
+									</div>
+									<%}%> <%if(user.city){%>
+									<div class="col-md-6">
+										<label>Tỉnh - Thành phố</label>
+										<select class="custom-select" id="province" name="city">
+											<option value="<%=user.city%>" selected>
+												<%=user.city%>
+											</option>
+											<%provinces.forEach((province) => {%>
+											<option
+												name="city"
+												value="<%=province.name%>"
+												code="<%=province.code%>"
+											>
+												<%=province.name%>
+											</option>
+											<%})%>
+										</select>
+									</div>
+									<%}else{%>
+									<div class="col-md-6">
+										<label>Tỉnh - Thành phố</label>
+										<select class="custom-select" id="province" name="city">
+											<option value="City" selected>City</option>
+											<%provinces.forEach((province) => {%>
+											<option
+												name="city"
+												value="<%=province.name%>"
+												code="<%=province.code%>"
+											>
+												<%=province.name%>
+											</option>
+											<%})%>
+										</select>
+									</div>
+									<%}%> <%if(user.district){%>
+									<div class="col-md-6">
+										<label>Quận - Huyện</label>
+										<select class="custom-select" id="district" name="district">
+											<option selected value="<%=user.district%>">
+												<%=user.district%>
+											</option>
+										</select>
+									</div>
+									<%}else{%>
+									<div class="col-md-6">
+										<label>Quận - Huyện</label>
+										<select class="custom-select" id="district" name="district">
+											<option selected value="District">District</option>
+										</select>
+									</div>
+									<%}%> <%if(user.village){%>
+									<div class="col-md-6">
+										<label>Xã - Phường - Thị trấn</label>
+										<select class="custom-select" id="village" name="village">
+											<option selected value="<%=user.village%>">
+												<%=user.village%>
+											</option>
+										</select>
+									</div>
+									<%}else{%>
+									<div class="col-md-6">
+										<label>Xã - Phường - Thị trấn</label>
+										<select class="custom-select" id="village" name="village">
+											<option selected value="Village">Village</option>
+										</select>
+									</div>
+									<%}%>
 
-                  <div class="col-md-12 change-info">
-                    <button class="btn">Cập nhật</button>
-                    <br /><br />
-                  </div>
-                </form>
-                <%if(!user.google.id && !user.facebook.id) {%>
-                <h4 style="margin-top: 20px">Đổi mật khẩu</h4>
-                <form
-                  id="change-password"
-                  class="row"
-                  method="POST"
-                  action="/user/api/v1/account/password"
-                >
-                  <div class="col-md-12">
-                    <input
-                      class="form-control"
-                      type="password"
-                      placeholder="Mật khẩu hiện tại"
-                      name="oldPassword"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="password"
-                      placeholder="Mật khẩu mới"
-                      name="password"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <input
-                      class="form-control"
-                      type="password"
-                      placeholder="Nhập lại mật khẩu mới"
-                      name="retypePassword"
-                    />
-                  </div>
-                  <div class="col-md-12 change-password">
-                    <button type="submit" class="btn">Thay đổi</button>
-                  </div>
-                </form>
-                <%}%>
-              </div>
-              <!-- Modal -->
-              <button
-                id="show-model"
-                type="button"
-                class="btn btn-primary d-none"
-                data-toggle="modal"
-                data-target="#exampleModalCenter"
-              >
-                Launch demo modal
-              </button>
-              <div
-                class="modal fade"
-                id="exampleModalCenter"
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby="exampleModalCenterTitle"
-                aria-hidden="true"
-              >
-                <!-- ====================================== -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- My Account End -->
+									<div class="col-md-12 change-info">
+										<button class="btn">Cập nhật</button>
+										<br /><br />
+									</div>
+								</form>
+								<%if(!user.google.id && !user.facebook.id) {%>
+								<h4 style="margin-top: 20px">Đổi mật khẩu</h4>
+								<form
+									id="change-password"
+									class="row"
+									method="POST"
+									action="/user/api/v1/account/password"
+								>
+									<div class="col-md-12">
+										<input
+											class="form-control"
+											type="password"
+											placeholder="Mật khẩu hiện tại"
+											name="oldPassword"
+										/>
+									</div>
+									<div class="col-md-6">
+										<input
+											class="form-control"
+											type="password"
+											placeholder="Mật khẩu mới"
+											name="password"
+										/>
+									</div>
+									<div class="col-md-6">
+										<input
+											class="form-control"
+											type="password"
+											placeholder="Nhập lại mật khẩu mới"
+											name="retypePassword"
+										/>
+									</div>
+									<div class="col-md-12 change-password">
+										<button type="submit" class="btn">Thay đổi</button>
+									</div>
+								</form>
+								<%}%>
+							</div>
+							<!-- Modal -->
+							<button
+								id="show-model"
+								type="button"
+								class="btn btn-primary d-none"
+								data-toggle="modal"
+								data-target="#exampleModalCenter"
+							>
+								Launch demo modal
+							</button>
+							<div
+								class="modal fade"
+								id="exampleModalCenter"
+								tabindex="-1"
+								role="dialog"
+								aria-labelledby="exampleModalCenterTitle"
+								aria-hidden="true"
+							>
+								<!-- ====================================== -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- My Account End -->
 
-    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
-  </body>
+		<%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+		<div id="api-msg"></div>
+	</body>
 </html>

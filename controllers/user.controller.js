@@ -103,7 +103,7 @@ module.exports.postSignUp = async (req, res, next) => {
 			const token = jwt.sign({ _id: result._id }, JWT_KEY, {
 				expiresIn: TOKEN_LIFE,
 			});
-			sendMail(req, result.email, token, 'confirmation');
+			sendMail(req, result.email, token, 'confirm');
 
 			res.render('pages/auth', {
 				respond: {
@@ -262,7 +262,7 @@ exports.postForgotPassword = async (req, res, next) => {
 		user.passwordResetToken = token;
 		user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // 5h for token reset expires
 
-		sendMail(req, email, token, 'recovery');
+		sendMail(req, email, token, 'reset');
 
 		await User.updateOne({ _id: user._id }, { $set: user });
 

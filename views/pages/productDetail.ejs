@@ -29,7 +29,11 @@
 								<div class="col-md-5">
 									<div class="product-slider-single normal-slider">
 										<% data.images.forEach(src => { %>
-										<img src="<%= src %>" alt="Product Image" />
+										<img
+											class="img-slider"
+											src="<%= src %>"
+											alt="Product Image"
+										/>
 										<% }) %>
 									</div>
 									<div class="anchor"></div>

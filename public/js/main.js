@@ -1,3 +1,4 @@
+/** Loading animation */
 $(document).ready(function () {
 	$('#loading').removeClass('loading');
 
@@ -19,14 +20,13 @@ $(document).ready(function () {
 });
 
 (function ($) {
+	/** AOS lib */
 	'use strict';
-	document.addEventListener('aos:in', ({ detail }) => {
-		console.log('animated in', detail);
-	});
+	document.addEventListener('aos:in', ({ detail }) => {});
 
-	document.addEventListener('aos:out', ({ detail }) => {
-		console.log('animated out', detail);
-	});
+	document.addEventListener('aos:out', ({ detail }) => {});
+
+	/** Bootstrap slider */
 
 	// Add slideDown animation to Bootstrap dropdown when expanding.
 	$('.dropdown').on('show.bs.dropdown', function () {
@@ -258,33 +258,27 @@ $(document).ready(function () {
 		}
 	});
 
-	// Req checkout
+	/** -------------------------------------------- MY SCRIPT ----------------------------------------- */
+
+	/** ----------------------------------------- Checkout page */
+
+	// Click checkout btn
 	$('.cart-btn button').click(function () {
-		// Loading
+		// Show loading
 		$('#loading').addClass('loading');
 	});
 
-	// Handle submit place order
-
-	// Form focus
-	$('#form-val>div')
-		.children()
-		.children('input')
-		.each(function () {
-			$(this).focus(function () {
-				$('.text-danger-checkout').html('');
-			});
-		});
 	// Payment method choose
 	$('.custom-control.custom-radio').click(function () {
 		$('.text-danger-checkout').html('');
 	});
-	// Payment method choose
+
+	// Change an create account checkbox
 	$('#newaccount').click(function () {
 		$('.text-danger-checkout').html('');
 	});
 
-	// Submit
+	// Post checkout
 	$('.submit-checkout').click(function (e) {
 		e.preventDefault();
 
@@ -340,73 +334,73 @@ $(document).ready(function () {
 		$('#form-val').submit();
 	});
 
+	// Province/City change
+	$('#province').on('change', function () {
+		// Loading
+		$('#loading').addClass('loading');
+		setTimeout(function () {
+			$('#loading').removeClass('loading');
+		}, 300);
+
+		$('#district').html('');
+		const code = $(this).children('option:selected').attr('code');
+		$.get(`/user/api/v1/district/${code}`, function (data, status) {
+			if (data.msg === 'success' && status === 'success') {
+				data.data.forEach(function (district) {
+					$('#district').append(
+						`<option value="${district.name_with_type}" code="${district.code}" parent-code="${district.parent_code}">${district.name_with_type}</option>`
+					);
+				});
+			}
+		});
+	});
+
+	// District change
+	$('#district').on('change', function () {
+		// Loading
+		$('#loading').addClass('loading');
+		setTimeout(function () {
+			$('#loading').removeClass('loading');
+		}, 300);
+
+		$('#village').html('');
+		const code = $(this).children('option:selected').attr('code');
+		$.get(`/user/api/v1/village/${code}`, function (data, status) {
+			if (data.msg === 'success' && status === 'success') {
+				data.data.forEach(function (village) {
+					$('#village').append(
+						`<option value="${village.name_with_type}" code="${village.code}" parent-code="${village.parent_code}">${village.name_with_type}</option>`
+					);
+				});
+			}
+		});
+	});
+
+	// Village change
+	$('#village').on('change', function () {
+		// Loading
+		$('#loading').addClass('loading');
+		setTimeout(function () {
+			$('#loading').removeClass('loading');
+		}, 300);
+	});
+
+	/** ----------------------------------------------- Auth page */
+
+	// Form focus
+	$('#form-val>div')
+		.children()
+		.children('input')
+		.each(function () {
+			$(this).focus(function () {
+				$('.text-danger-checkout').html('');
+			});
+		});
+
 	// Handle logout
 	$('#logout').click(function (e) {
 		e.preventDefault();
 		$('#user-act').submit();
-	});
-
-	// Search on resource
-	$('#search').click(function (e) {
-		e.preventDefault();
-
-		// Loading
-		$('#loading').addClass('loading');
-
-		const search = $('input[name=search]').val();
-		const urlParams = new URLSearchParams(window.location.search);
-
-		if (search === '') urlParams.delete('search');
-		else urlParams.set('search', search);
-
-		urlParams.delete('page');
-		urlParams.delete('q');
-		window.location.assign(
-			`${window.location.href.split(/[?#]/)[0]}?${urlParams}`
-		);
-	});
-
-	// Search sort price
-	$('a[name=sort]').click(function (e) {
-		e.preventDefault();
-
-		// Loading
-		$('#loading').addClass('loading');
-
-		const val = $(this).attr('data');
-
-		const urlParams = new URLSearchParams(window.location.search);
-
-		if (val === 'none') {
-			urlParams.delete('sort');
-		} else {
-			urlParams.set('sort', val);
-		}
-
-		window.location.search = urlParams;
-	});
-
-	// Search filter price
-	$('.filter a').click(function (e) {
-		e.preventDefault();
-
-		// Loading
-		$('#loading').addClass('loading');
-
-		const min = $(this).attr('min');
-		const max = $(this).attr('max');
-
-		const urlParams = new URLSearchParams(window.location.search);
-
-		if (min === '0' && max === '100000000') {
-			urlParams.delete('min');
-			urlParams.delete('max');
-		} else {
-			urlParams.set('min', min);
-			urlParams.set('max', max);
-		}
-
-		window.location.search = urlParams;
 	});
 
 	// Handle click forgot password
@@ -448,36 +442,6 @@ $(document).ready(function () {
 		$('#form-toggle').html(html);
 	});
 
-	// Pagination
-	$('.page-item').click(function (e) {
-		e.preventDefault();
-
-		if ($(this).hasClass('disabled') || $(this).hasClass('active')) return;
-		const val = $(this).attr('value');
-
-		const urlParams = new URLSearchParams(window.location.search);
-		urlParams.set('page', val);
-		window.location.search = urlParams;
-	});
-
-	// Global search
-	$('.btn-search-global').click(function (e) {
-		e.preventDefault();
-
-		// Loading
-		$('#loading').addClass('loading');
-
-		const val = $('.text-search-global').val();
-
-		const urlParams = new URLSearchParams(window.location.search);
-		if (val === '') urlParams.delete('q');
-		else urlParams.set('q', val);
-
-		urlParams.delete('page');
-		urlParams.delete('search');
-		window.location.assign(`/products/search?${urlParams}`);
-	});
-
 	// Upload avatar btn
 	var readURL = function (input) {
 		if (input.files && input.files[0]) {
@@ -504,9 +468,8 @@ $(document).ready(function () {
 		$('#logout').submit();
 	});
 
-	// Validator signup
-	$('body>div.login>div>div>form')
-		.find('input')
+	// Signup animation
+	$('body>div.login>div>div>form input')
 		.not('.name')
 		.click(function () {
 			const curr = $(this);
@@ -515,18 +478,18 @@ $(document).ready(function () {
 			$('#err-sign').addClass('d-none');
 		});
 
-	$('body>div.login>div>div>form')
-		.find('input')
-		.blur(function () {
-			if (!$(this).val()) {
-				$(this).next().removeClass('d-none');
-				$(this).next().addClass('d-block text-danger');
+	$('body>div.login>div>div>form input').blur(function () {
+		if (!$(this).val()) {
+			$(this).next().removeClass('d-none');
+			$(this).next().addClass('d-block text-danger');
 
-				$(this).next().html('Trường này lằ bắt buộc!');
-				$(this).next().css('font-size', '12px');
-				$(this).next().css('margin', '-10px 0 10px');
-			}
-		});
+			$(this).next().html('Trường này lằ bắt buộc!');
+			$(this).next().css('font-size', '12px');
+			$(this).next().css('margin', '-10px 0 10px');
+		}
+	});
+
+	// Retype password check
 	$('input[name=retypePassword]').blur(function (e) {
 		const retype = $('input[name=password]').val();
 		const pass = $(this).val();
@@ -541,6 +504,7 @@ $(document).ready(function () {
 		}
 	});
 
+	// Sign up click
 	$('#sign-up').one('click', function (e) {
 		e.preventDefault();
 		if ($('.d-block.text-danger').length) return;
@@ -559,62 +523,102 @@ $(document).ready(function () {
 		curr.next().removeClass('d-block text-danger');
 	});
 
-	// Select option dependance
-	// Province/City change
-	$('#province').on('change', function () {
+	/** ----------------------------------------------- Product page */
+
+	// Search on resource
+	$('#search').click(function (e) {
+		e.preventDefault();
+
 		// Loading
 		$('#loading').addClass('loading');
-		setTimeout(function () {
-			$('#loading').removeClass('loading');
-		}, 300);
 
-		$('#district').html('');
-		const code = $(this).children('option:selected').attr('code');
-		console.log(code);
-		$.get(`/user/api/v1/district/${code}`, function (data, status) {
-			if (data.msg === 'success' && status === 'success') {
-				console.log(data);
-				data.data.forEach(function (district) {
-					$('#district').append(
-						`<option value="${district.name_with_type}" code="${district.code}" parent-code="${district.parent_code}">${district.name_with_type}</option>`
-					);
-				});
-			}
-		});
+		const search = $('input[name=search]').val();
+		const urlParams = new URLSearchParams(window.location.search);
+
+		if (search === '') urlParams.delete('search');
+		else urlParams.set('search', search);
+
+		urlParams.delete('page');
+		urlParams.delete('q');
+		window.location.assign(
+			`${window.location.href.split(/[?#]/)[0]}?${urlParams}`
+		);
 	});
 
-	// District change
-	$('#district').on('change', function () {
+	// Global search
+	$('.btn-search-global').click(function (e) {
+		e.preventDefault();
+
 		// Loading
 		$('#loading').addClass('loading');
-		setTimeout(function () {
-			$('#loading').removeClass('loading');
-		}, 300);
 
-		$('#village').html('');
-		const code = $(this).children('option:selected').attr('code');
-		console.log(code);
-		$.get(`/user/api/v1/village/${code}`, function (data, status) {
-			if (data.msg === 'success' && status === 'success') {
-				console.log(data);
-				data.data.forEach(function (village) {
-					$('#village').append(
-						`<option value="${village.name_with_type}" code="${village.code}" parent-code="${village.parent_code}">${village.name_with_type}</option>`
-					);
-				});
-			}
-		});
+		const val = $('.text-search-global').val();
+
+		const urlParams = new URLSearchParams(window.location.search);
+		if (val === '') urlParams.delete('q');
+		else urlParams.set('q', val);
+
+		urlParams.delete('page');
+		urlParams.delete('search');
+		window.location.assign(`/products/search?${urlParams}`);
 	});
 
-	// Village change
-	$('#village').on('change', function () {
+	// Change sort value
+	$('a[name=sort]').click(function (e) {
+		e.preventDefault();
+
 		// Loading
 		$('#loading').addClass('loading');
-		setTimeout(function () {
-			$('#loading').removeClass('loading');
-		}, 300);
+
+		const val = $(this).attr('data');
+
+		const urlParams = new URLSearchParams(window.location.search);
+
+		if (val === 'none') {
+			urlParams.delete('sort');
+		} else {
+			urlParams.set('sort', val);
+		}
+
+		window.location.search = urlParams;
 	});
 
+	// Change filter value
+	$('.filter a').click(function (e) {
+		e.preventDefault();
+
+		// Loading
+		$('#loading').addClass('loading');
+
+		const min = $(this).attr('min');
+		const max = $(this).attr('max');
+
+		const urlParams = new URLSearchParams(window.location.search);
+
+		if (min === '0' && max === '100000000') {
+			urlParams.delete('min');
+			urlParams.delete('max');
+		} else {
+			urlParams.set('min', min);
+			urlParams.set('max', max);
+		}
+
+		window.location.search = urlParams;
+	});
+
+	// Change page
+	$('.page-item').click(function (e) {
+		e.preventDefault();
+
+		if ($(this).hasClass('disabled') || $(this).hasClass('active')) return;
+		const val = $(this).attr('value');
+
+		const urlParams = new URLSearchParams(window.location.search);
+		urlParams.set('page', val);
+		window.location.search = urlParams;
+	});
+
+	/**----------------------------------------------- Product details page */
 	// See more details
 	$('.toggle-see-more').click(function () {
 		const val = $(this).text().trim();
@@ -636,10 +640,9 @@ $(document).ready(function () {
 		}
 	});
 
-	// Scroll on change tab
+	// Auto scroll on change tab
 	$('div.row.product-detail-bottom>div>ul>li').click(function () {
 		const offset = $('.anchor').offset();
-		console.log(123);
 		$('html, body').animate(
 			{
 				scrollTop: offset.top,
