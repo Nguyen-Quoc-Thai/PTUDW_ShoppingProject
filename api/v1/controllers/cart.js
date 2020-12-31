@@ -1,8 +1,13 @@
 const Cart = require('./../../../models/cart.model');
 const Product = require('../../../models/product.model');
 
+// Utils func
 const { parsePrice } = require('../../../utils/statistic');
 
+/**
+ * Add to cart
+ * Sync cart: merge userCart & session cart
+ */
 module.exports.addToCart = async (req, res, next) => {
 	const { user } = req;
 	let { cart } = req.session;
@@ -73,7 +78,13 @@ module.exports.addToCart = async (req, res, next) => {
 	}
 };
 
-// AJAX
+/**
+ * Update to cart
+ * Enum: [-1, 0 , 1]
+ * 		-1: Desc quantity of that product in cart
+ * 		0: Delete product in cart
+ * 		1: Inc quantity of that product in cart
+ */
 module.exports.putUpdate = async (req, res, next) => {
 	const enumType = [-1, 1, 0];
 

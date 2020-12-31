@@ -1,10 +1,15 @@
 // const RedisClient = require("./../config/redis");
-const cache_life = process.env.CACHE_LIFE;
+// const CACHE_LIFE = process.env.CACHE_LIFE;
 
 const Product = require('./../models/product.model');
 
+// Utils func
 const { allCategory } = require('./../utils/constant');
 
+/**
+ * Home page
+ * Select default tops of each category or Samples of those
+ */
 module.exports.index = async (req, res, next) => {
 	try {
 		const resultPromise = Promise.all(
@@ -31,8 +36,9 @@ module.exports.index = async (req, res, next) => {
 			data: result || [],
 		});
 
-		// RedisClient.setex("/", cache_life, JSON.stringify(result));
+		// RedisClient.setex("/", CACHE_LIFE, JSON.stringify(result));
 	} catch (error) {
+		console.log(error);
 		res.render('error', {
 			message: error.message,
 			error,

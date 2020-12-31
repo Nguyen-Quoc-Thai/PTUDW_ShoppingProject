@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const Product = require('./../../../models/product.model');
 
+/**
+ * Post a comment on product detail page
+ */
 module.exports.postComment = async (req, res, next) => {
 	const { productSlugName } = req.params;
 	const { name, email, review } = req.body;
@@ -29,8 +32,6 @@ module.exports.postComment = async (req, res, next) => {
 				},
 			}
 		);
-
-		console.log(comment);
 
 		res.status(201).json({
 			msg: 'success',

@@ -6,15 +6,17 @@ const Product = require('./../../../models/product.model');
 const District = require('./../../../models/dist/district.model');
 const Village = require('./../../../models/dist/village.model');
 
+// Cloud uploader
 const cloudinary = require('./../../../config/cloudinary');
 
+/**
+ * Change password
+ */
 exports.putUpdatePassword = async (req, res, next) => {
 	const { user } = req;
-	console.log(req.body);
+	const { oldPassword, password, retypePassword } = req.body;
 
 	try {
-		const { oldPassword, password, retypePassword } = req.body;
-
 		const validOldPassword = await bcrypt.compare(oldPassword, user.password);
 		if (!validOldPassword) {
 			return res.status(200).json({
@@ -30,6 +32,7 @@ exports.putUpdatePassword = async (req, res, next) => {
 			});
 		}
 
+		// Change password
 		const encryptedPassword = await bcrypt.hash(password, 10);
 		const passwordResetToken = crypto.randomBytes(16).toString('hex');
 
@@ -52,9 +55,11 @@ exports.putUpdatePassword = async (req, res, next) => {
 	}
 };
 
+/**
+ * Update user info
+ */
 exports.putUpdateInfo = async (req, res, next) => {
-	const { user } = req;
-	const { body } = req;
+	const { user, body } = req;
 
 	try {
 		for (const fie in body) {
@@ -63,6 +68,7 @@ exports.putUpdateInfo = async (req, res, next) => {
 			}
 		}
 
+		// Avatar upload/change
 		if (req.file) {
 			const ret = await cloudinary.uploadSingleAvatar(req.file.path);
 			if (ret) {
@@ -72,6 +78,7 @@ exports.putUpdateInfo = async (req, res, next) => {
 			}
 		}
 
+		// If user phone number is default value -> only change one time
 		if (user.phone === '0987654321') user.phone = req.body.phone;
 		await User.updateOne({ _id: user._id }, { $set: user });
 
@@ -94,20 +101,22 @@ exports.putUpdateInfo = async (req, res, next) => {
 	}
 };
 
-// AJAX
+/**
+ * Add to wishlist
+ */
 module.exports.postLike = async (req, res, next) => {
 	const { productSlugName } = req.params;
 	const { user } = req;
 
 	try {
-		if (user.likes.map((pro) => pro.slugName).includes(productSlugName)) {
-			return res.status(201).json({
-				msg: 'success2',
-				user: `This product has been added before!`,
+		const product = await Product.findOne({ slugName: productSlugName });
+		if (!product) {
+			return res.status(200).json({
+				msg: 'ValidatorError',
+				user: 'Không tìm thấy sản phẩm!',
 			});
 		}
 
-		const product = await Product.findOne({ slugName: productSlugName });
 		const { name, slugName, price, images } = product;
 
 		const like = {
@@ -141,7 +150,9 @@ module.exports.postLike = async (req, res, next) => {
 	}
 };
 
-// AJAX
+/**
+ * Delete a product from wishlist
+ */
 module.exports.postUnLike = async (req, res, next) => {
 	const { productSlugName } = req.params;
 	let { user } = req;
@@ -150,7 +161,6 @@ module.exports.postUnLike = async (req, res, next) => {
 		user.likes = user.likes.filter((ele) => ele.slugName != productSlugName);
 		await User.updateOne({ _id: user._id }, { $set: user });
 
-		console.log(user.likes.length);
 		req.user = user;
 		res.status(201).json({
 			msg: 'success',
@@ -167,9 +177,11 @@ module.exports.postUnLike = async (req, res, next) => {
 	}
 };
 
-// Validator
+/** -------------------- Validator ----------------------- */
 
-// Signup
+/**
+ * Onblur form signup -> check valid value
+ */
 module.exports.postCheckExist = async (req, res, next) => {
 	const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	const phoneRegex = /(03|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
@@ -190,6 +202,7 @@ module.exports.postCheckExist = async (req, res, next) => {
 				if (!req.body[key].match(emailRegex)) {
 					respond.email = 'Email không hợp lệ!';
 				}
+
 				break;
 			}
 			case 'phone': {
@@ -200,6 +213,7 @@ module.exports.postCheckExist = async (req, res, next) => {
 				if (!req.body[key].match(phoneRegex)) {
 					respond.phone = 'Số điện thoại không hợp lệ!';
 				}
+
 				break;
 			}
 			case 'password': {
@@ -208,10 +222,12 @@ module.exports.postCheckExist = async (req, res, next) => {
 				} else if (req.body[key].length > 20) {
 					respond.password = 'Độ dài mật khẩu tối đa là 20!';
 				}
+
 				break;
 			}
 		}
 
+		// If error found
 		if (Object.keys(respond).length > 1) {
 			respond.msg = 'error';
 		}
@@ -226,8 +242,13 @@ module.exports.postCheckExist = async (req, res, next) => {
 	}
 };
 
+/**
+ * Dynamic select option
+ * On province changes
+ */
 module.exports.getDistrict = async (req, res, next) => {
 	const { code } = req.params;
+
 	try {
 		const districts = await District.find({
 			parent_code: code,
@@ -246,8 +267,13 @@ module.exports.getDistrict = async (req, res, next) => {
 	}
 };
 
+/**
+ * Dynamic select option
+ * On district changes
+ */
 module.exports.getVillage = async (req, res, next) => {
 	const { code } = req.params;
+
 	try {
 		const villages = await Village.find({
 			parent_code: code,

@@ -1,69 +1,22 @@
+/* ------------------------------ API ----------------------------- */
+
 // Add to cart
-$('.add-to-cart').click(function (e) {
+$('.add-to-cart, .buy-now').click(function (e) {
 	e.preventDefault();
 
+	/* Disabled btn 500ms when click add */
 	if ($(this).hasClass('disabled')) return;
 	$('.add-to-cart').addClass('disabled');
 	setTimeout(function () {
 		$('.add-to-cart').removeClass('disabled');
 	}, 500);
 
-	let resource = 'Cart';
-	let textCol = 'success';
-	let msg = 'Thêm thành công vào giỏ hàng!';
+	/* Cart animation */
+	const anchor = $('.btn.cart');
+	const img = $(this).parent().prev().find('img').eq(0);
+	img && displayCartAnimation(anchor, img);
 
-	let html = `
-	<div class="toast" data-autohide="false" style="width: 250px;">
-		<div class="toast-header">
-			<strong class="mr-auto text-${textCol}">${resource}</strong>
-			<small class="text-muted">just now</small>
-			<button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
-				&times;
-			</button>
-		</div>
-		<div class="toast-body">${msg}</div>
-	</div>`;
-
-	const cart = $('.btn.cart');
-	const imgToDrag = $(this).parent().prev().find('img').eq(0);
-
-	if (imgToDrag) {
-		const imgClone = imgToDrag
-			.clone()
-			.offset({
-				top: imgToDrag.offset().top + 100,
-				left: imgToDrag.offset().left + 100,
-			})
-			.css({
-				opacity: '0.8',
-				position: 'absolute',
-				height: '100px',
-				width: '100px',
-				'z-index': '101',
-			})
-			.appendTo($('body'))
-			.animate(
-				{
-					top: cart.offset().top + 10,
-					left: cart.offset().left + 10,
-					width: 75,
-					height: 75,
-				},
-				1000,
-				'easeInOutExpo'
-			);
-
-		imgClone.animate(
-			{
-				width: 0,
-				height: 0,
-			},
-			function () {
-				$(this).detach();
-			}
-		);
-	}
-
+	/* Req API */
 	const slugName = $(this).attr('value');
 
 	$.post(`/cart/api/v1/${slugName}`, {}, function (data, status) {
@@ -76,19 +29,19 @@ $('.add-to-cart').click(function (e) {
 		}
 	});
 
-	setTimeout(function () {
-		$('#api-msg').html(html);
-		$('.toast').toast('show');
-	}, 1000);
-	setTimeout(function () {
-		$('.toast').toast('hide');
-	}, 3000);
+	if ($(this).hasClass('buy-now')) {
+		$('#loading').addClass('loading');
+		window.location.replace('/checkout');
+	} else {
+		toastMessage('Cart', 'success', 'Thêm thành công vào giỏ hàng!');
+	}
 });
 
 // Update cart
 $('.change-val').click(function (e) {
 	e.preventDefault();
 
+	/* Disabled btn 500ms when click add */
 	if ($('.change-val').hasClass('disabled')) return;
 	$('.change-val').addClass('disabled');
 	setTimeout(function () {
@@ -102,34 +55,12 @@ $('.change-val').click(function (e) {
 		const re = confirm('Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?');
 		if (re == false) return false;
 		$(this).parent().parent().addClass('d-none');
-		if ($('#cart tr').not('tr[class="d-none"]').length === 0)
-			$('#cart').parent().parent().parent().html(`
-			<h3>Không có sản phẩm nào trong giỏ hàng!</h3>
-			<h6 class="pt-3">
-				<span
-					><a class="text-success" href="/"
-						>Tiếp tục mua sắm</a
-					></span
-				>
-			</h6>`);
+
+		/* Check cart empty */
+		$('#cart tr').not('tr[class="d-none"]').length === 0 && displayCartEmpty();
 	}
 
-	let resource = 'Cart';
-	let textCol = 'success';
-	let msg = 'Cập nhật giỏ hàng thành công!';
-
-	let html = `
-	<div class="toast" data-autohide="false" style="width: 250px;">
-		<div class="toast-header">
-			<strong class="mr-auto text-${textCol}">${resource}</strong>
-			<small class="text-muted">just now</small>
-			<button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
-				&times;
-			</button>
-		</div>
-		<div class="toast-body">${msg}</div>
-	</div>`;
-
+	/* Req API */
 	const request = $.ajax({
 		url: `/cart/api/v1/${slugName}`,
 		data: JSON.stringify({
@@ -146,8 +77,10 @@ $('.change-val').click(function (e) {
 		},
 	});
 
+	// Req done
 	request.done(function (data, status) {
 		if (data.msg === 'success' && status === 'success') {
+			// Update view
 			data.data.items.forEach((item) => {
 				$(`#${item.itemId}`).html(item.total.toLocaleString('vi-VN'));
 			});
@@ -166,11 +99,7 @@ $('.change-val').click(function (e) {
 				data.data.totalQuantity ? `(${data.data.totalQuantity})` : `(0)`
 			);
 		}
-	});
 
-	$('#api-msg').html(html);
-	$('.toast').toast('show');
-	setTimeout(function () {
-		$('.toast').toast('hide');
-	}, 3000);
+		toastMessage('Cart', 'success', 'Cập nhật giỏ hàng thành công!');
+	});
 });

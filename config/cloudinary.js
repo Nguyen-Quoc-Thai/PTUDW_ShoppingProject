@@ -1,7 +1,9 @@
 var cloudinary = require('cloudinary').v2;
 
+const CLOUDINARY_URL = process.env.CLOUDINARY_URL;
+
 cloudinary.config({
-	CLOUDINARY_URL: process.env.CLOUDINARY_URL,
+	CLOUDINARY_URL,
 });
 
 module.exports.uploadSingleProduct = (file) => {

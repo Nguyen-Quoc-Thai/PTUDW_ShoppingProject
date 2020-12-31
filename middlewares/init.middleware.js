@@ -1,6 +1,11 @@
-const { initCart, allCategory } = require('./../utils/constant');
 const Province = require('./../models/dist/province.model');
 
+// Utils func
+const { initCart, allCategory } = require('./../utils/constant');
+
+/**
+ * Apply to all route for update cart, user info
+ */
 module.exports.init = function (req, res, next) {
 	try {
 		req.app.locals.user = req.user || null;
