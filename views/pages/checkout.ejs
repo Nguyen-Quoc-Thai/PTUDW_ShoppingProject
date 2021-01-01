@@ -1,550 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body>
-    <%- include('../partials/header', {query:''}); %>
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<%- include('../partials/header', {query:''}); %>
 
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb-wrap">
-      <div class="container-fluid">
-        <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
-          <li class="breadcrumb-item active">Thanh toán</li>
-        </ul>
-      </div>
-    </div>
-    <!-- Breadcrumb End -->
+		<!-- Breadcrumb Start -->
+		<div class="breadcrumb-wrap">
+			<div class="container-fluid">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+					<li class="breadcrumb-item"><a href="/">Sản phẩm</a></li>
+					<li class="breadcrumb-item active">Thanh toán</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Breadcrumb End -->
 
-    <!-- Checkout Start -->
-    <div class="checkout">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="checkout-inner">
-              <div class="billing-address">
-                <h2>Thông tin hóa đơn</h2>
-                <%if(user){%>
+		<!-- Checkout Start -->
+		<div class="checkout">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-8">
+						<div class="checkout-inner">
+							<div class="billing-address">
+								<h2>Thông tin hóa đơn</h2>
+								<%if(user){%>
 
-                <form
-                  id="form-val"
-                  method="POST"
-                  action="/checkout?user=<%=user.slugName%>&token=<%=user._id%>"
-                  user-id="<%=user._id%>"
-                >
-                  <div class="row">
-                    <div class="col-md-6">
-                      <label>Họ</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="firstName"
-                        value="<%=user.firstName%>"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Tên</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="lastName"
-                        value="<%=user.lastName%>"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>E-mail</label>
-                      <%if (user.email) {%>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="email"
-                        value="<%=user.email%>"
-                        readonly
-                      />
-                      <%}else{%>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="email"
-                        value="<%=user.email%>"
-                      />
-                      <%}%>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Điện thoại</label>
-                      <%if (user.phone && user.phone !== "0987654321") {%>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="phone"
-                        value="<%=user.phone%>"
-                        readonly
-                      />
-                      <%}else{%>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="phone"
-                        value="<%=user.phone%>"
-                      />
-                      <%}%>
-                    </div>
-                    <%if(!user._id){%>
-                    <div class="col-md-6">
-                      <label>Mật khẩu</label>
-                      <input
-                        class="form-control"
-                        type="password"
-                        name="password"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Nhập lại mật khẩu</label>
-                      <input
-                        class="form-control"
-                        type="password"
-                        name="retypePassword"
-                        value=""
-                      />
-                    </div>
-                    <%}%>
-                    <div class="col-md-12">
-                      <label>Địa chỉ</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="address"
-                        value="<%=user.address%>"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Lãnh thổ</label>
-                      <select class="custom-select">
-                        <option selected>Việt nam</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Tỉnh - Thành phố</label>
-                      <select class="custom-select" id="province" name="city">
-                        <option value="<%=user.city%>" selected>
-                          <%=user.city%>
-                        </option>
-                        <%provinces.forEach((province) => {%>
-                        <option
-                          name="city"
-                          value="<%=province.name%>"
-                          code="<%=province.code%>"
-                        >
-                          <%=province.name%>
-                        </option>
-                        <%})%>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Quận - Huyện</label>
-                      <select
-                        class="custom-select"
-                        id="district"
-                        name="district"
-                      >
-                        <option selected value="<%=user.district%>">
-                          <%=user.district%>
-                        </option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Xã - Phường - Thị trấn</label>
-                      <select class="custom-select" id="village" name="village">
-                        <option selected value="<%=user.village%>">
-                          <%=user.village%>
-                        </option>
-                      </select>
-                    </div>
+								<form
+									id="form-val"
+									method="POST"
+									action="/checkout?user=<%=user.slugName%>&token=<%=user._id%>"
+									user-id="<%=user._id%>"
+								>
+									<div class="row">
+										<div class="col-md-6">
+											<label>Họ</label>
+											<input
+												class="form-control"
+												type="text"
+												name="firstName"
+												value="<%=user.firstName%>"
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Tên</label>
+											<input
+												class="form-control"
+												type="text"
+												name="lastName"
+												value="<%=user.lastName%>"
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>E-mail</label>
+											<%if (user.email) {%>
+											<input
+												class="form-control"
+												type="text"
+												name="email"
+												value="<%=user.email%>"
+												readonly
+											/>
+											<%}else{%>
+											<input
+												class="form-control"
+												type="text"
+												name="email"
+												value="<%=user.email%>"
+											/>
+											<%}%>
+										</div>
+										<div class="col-md-6">
+											<label>Điện thoại</label>
+											<%if (user.phone && user.phone !== "0987654321") {%>
+											<input
+												class="form-control"
+												type="text"
+												name="phone"
+												value="<%=user.phone%>"
+												readonly
+											/>
+											<%}else{%>
+											<input
+												class="form-control"
+												type="text"
+												name="phone"
+												value="<%=user.phone%>"
+											/>
+											<%}%>
+										</div>
+										<%if(!user._id){%>
+										<div class="col-md-6">
+											<label>Mật khẩu</label>
+											<input
+												class="form-control"
+												type="password"
+												name="password"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Nhập lại mật khẩu</label>
+											<input
+												class="form-control"
+												type="password"
+												name="retypePassword"
+												value=""
+											/>
+										</div>
+										<%}%>
+										<div class="col-md-12">
+											<label>Địa chỉ</label>
+											<input
+												class="form-control"
+												type="text"
+												name="address"
+												value="<%=user.address%>"
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Lãnh thổ</label>
+											<select class="custom-select">
+												<option selected>Việt nam</option>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<label>Tỉnh - Thành phố</label>
+											<select class="custom-select" id="province" name="city">
+												<option value="<%=user.city%>" selected>
+													<%=user.city%>
+												</option>
+												<%provinces.forEach((province) => {%>
+												<option
+													name="city"
+													value="<%=province.name%>"
+													code="<%=province.code%>"
+												>
+													<%=province.name%>
+												</option>
+												<%})%>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<label>Quận - Huyện</label>
+											<select
+												class="custom-select"
+												id="district"
+												name="district"
+											>
+												<option selected value="<%=user.district%>">
+													<%=user.district%>
+												</option>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<label>Xã - Phường - Thị trấn</label>
+											<select class="custom-select" id="village" name="village">
+												<option selected value="<%=user.village%>">
+													<%=user.village%>
+												</option>
+											</select>
+										</div>
 
-                    <div class="col-md-12">
-                      <div class="custom-control custom-checkbox">
-                        <input
-                          type="checkbox"
-                          class="custom-control-input"
-                          name="shipDiff"
-                          id="shipto"
-                        />
-                        <label class="custom-control-label" for="shipto"
-                          >Vận chuyển đến địa điểm khác</label
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                <%}else{%>
+										<div class="col-md-12">
+											<div class="custom-control custom-checkbox">
+												<input
+													type="checkbox"
+													class="custom-control-input"
+													name="shipDiff"
+													id="shipto"
+												/>
+												<label class="custom-control-label" for="shipto"
+													>Vận chuyển đến địa điểm khác</label
+												>
+											</div>
+										</div>
+									</div>
+								</form>
+								<%}else{%>
 
-                <form id="form-val" method="POST" action="/checkout" user-id="">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <label>Họ</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="firstName"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Tên</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="lastName"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>E-mail</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="email"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Điện thoại</label>
+								<form id="form-val" method="POST" action="/checkout" user-id="">
+									<div class="row">
+										<div class="col-md-6">
+											<label>Họ</label>
+											<input
+												class="form-control"
+												type="text"
+												name="firstName"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Tên</label>
+											<input
+												class="form-control"
+												type="text"
+												name="lastName"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>E-mail</label>
+											<input
+												class="form-control"
+												type="text"
+												name="email"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Điện thoại</label>
 
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="phone"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Mật khẩu</label>
-                      <input
-                        class="form-control"
-                        type="password"
-                        name="password"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Nhập lại mật khẩu</label>
-                      <input
-                        class="form-control"
-                        type="password"
-                        name="retypePassword"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-12">
-                      <label>Địa chỉ</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        name="address"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label>Lãnh thổ</label>
-                      <select class="custom-select">
-                        <option selected>Việt nam</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Tỉnh - Thành phố</label>
-                      <select class="custom-select" id="province" name="city">
-                        <option value="" selected></option>
-                        <%provinces.forEach((province) => {%>
-                        <option
-                          name="city"
-                          value="<%=province.name%>"
-                          code="<%=province.code%>"
-                        >
-                          <%=province.name%>
-                        </option>
-                        <%})%>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Quận - Huyện</label>
-                      <select
-                        class="custom-select"
-                        id="district"
-                        name="district"
-                      >
-                        <option selected value=""></option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label>Xã - Phường - Thị trấn</label>
-                      <select class="custom-select" id="village" name="village">
-                        <option selected value=""></option>
-                      </select>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="custom-control custom-checkbox">
-                        <input
-                          type="checkbox"
-                          class="custom-control-input"
-                          name="createAcc"
-                          id="newaccount"
-                        />
-                        <label class="custom-control-label" for="newaccount"
-                          >Tạo tài khoản</label
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                <%}%>
-              </div>
+											<input
+												class="form-control"
+												type="text"
+												name="phone"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Mật khẩu</label>
+											<input
+												class="form-control"
+												type="password"
+												name="password"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Nhập lại mật khẩu</label>
+											<input
+												class="form-control"
+												type="password"
+												name="retypePassword"
+												value=""
+											/>
+										</div>
+										<div class="col-md-12">
+											<label>Địa chỉ</label>
+											<input
+												class="form-control"
+												type="text"
+												name="address"
+												value=""
+											/>
+										</div>
+										<div class="col-md-6">
+											<label>Lãnh thổ</label>
+											<select class="custom-select">
+												<option selected>Việt nam</option>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<label>Tỉnh - Thành phố</label>
+											<select class="custom-select" id="province" name="city">
+												<option value="" selected></option>
+												<%provinces.forEach((province) => {%>
+												<option
+													name="city"
+													value="<%=province.name%>"
+													code="<%=province.code%>"
+												>
+													<%=province.name%>
+												</option>
+												<%})%>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<label>Quận - Huyện</label>
+											<select
+												class="custom-select"
+												id="district"
+												name="district"
+											>
+												<option selected value=""></option>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<label>Xã - Phường - Thị trấn</label>
+											<select class="custom-select" id="village" name="village">
+												<option selected value=""></option>
+											</select>
+										</div>
+										<div class="col-md-12">
+											<div class="custom-control custom-checkbox">
+												<input
+													type="checkbox"
+													class="custom-control-input"
+													name="createAcc"
+													id="newaccount"
+												/>
+												<label class="custom-control-label" for="newaccount"
+													>Tạo tài khoản</label
+												>
+											</div>
+										</div>
+									</div>
+								</form>
+								<%}%>
+							</div>
 
-              <%if(user){%>
+							<%if(user){%>
 
-              <div class="shipping-address">
-                <h2>Thông tin hóa đơn</h2>
-                <div class="row">
-                  <div class="col-md-6">
-                    <label>Họ</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.firstName%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>Tên</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.lastName%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>E-mail</label>
-                    <%if (user.email) {%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.email%>"
-                      readonly
-                    />
-                    <%}else{%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.email%>"
-                    />
-                    <%}%>
-                  </div>
-                  <div class="col-md-6">
-                    <label>Điện thoại</label>
-                    <%if (user.phone && user.phone !== "0987654321") {%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.phone%>"
-                      readonly
-                    />
-                    <%}else{%>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.phone%>"
-                    />
-                    <%}%>
-                  </div>
-                  <div class="col-md-12">
-                    <label>Địa chỉ</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      value="<%=user.address%>"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label>Lãnh thổ</label>
-                    <select class="custom-select">
-                      <option selected>Việt nam</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label>Tỉnh - Thành phố</label>
-                    <select class="custom-select" id="province" name="city">
-                      <option value="<%=user.city%>" selected>
-                        <%=user.city%>
-                      </option>
-                      <%provinces.forEach((province) => {%>
-                      <option
-                        value="<%=province.name%>"
-                        code="<%=province.code%>"
-                      >
-                        <%=province.name%>
-                      </option>
-                      <%})%>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label>Quận - Huyện</label>
-                    <select class="custom-select" id="district" name="district">
-                      <option selected value="<%=user.district%>">
-                        <%=user.district%>
-                      </option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label>Xã - Phường - Thị trấn</label>
-                    <select class="custom-select" id="village" name="village">
-                      <option selected value="<%=user.village%>">
-                        <%=user.village%>
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <%}%>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="checkout-inner">
-              <div class="checkout-summary">
-                <h1>Thông tin giỏ hàng</h1>
-                <br />
-                <%cart.items.forEach ((item, index) => {%>
-                <p class="text-wrap">
-                  <strong style="color: #ff6f61"><%=(index+1)%></strong>&nbsp;
-                  <%=item.name%> x <b><%=item.quantity%></b
-                  ><span
-                    style="
-                      border-right: 5px solid #ff6f61;
-                      border-radius: 5px;
-                      margin: 0.3rem 0.5rem;
-                      padding: 0.3rem 0.5rem;
-                    "
-                    ><strong
-                      ><b style="color: coral"
-                        ><%=item.total.toLocaleString('vi-VN')%></b
-                      ></strong
-                    >
-                  </span>
-                </p>
-                <br />
-                <%})%>
-                <hr />
-                <%if (cart.items.length) {%>
-                <p>
-                  Phí ship<span id="shipping-fee"
-                    ><strong><b>25,000</b></strong></span
-                  >
-                </p>
-                <%}else{%>
-                <p>
-                  Phí ship<span id="shipping-fee"
-                    ><strong><b>0</b></strong></span
-                  >
-                </p>
-                <%}%> <%if (cart) {%>
-                <p>
-                  Tổng số lượng<span id="total-quantity"
-                    ><strong><%=cart.totalQuantity%></strong></span
-                  >
-                </p>
-                <%}else{%>
-                <p>
-                  Tổng số lượng<span id="total-quantity"
-                    ><strong>0</strong></span
-                  >
-                </p>
-                <%}%> <%if (cart.items.length) {%>
-                <h2>
-                  Thành tiền<span id="total-payment"
-                    ><strong
-                      ><%=(cart.totalCost + 25000).toLocaleString('vi-VN',
-                      )%></strong
-                    ></span
-                  >
-                </h2>
-                <%}else{%>
-                <h2>
-                  Thành tiền<span><strong>0</strong></span>
-                </h2>
-                <%}%>
-              </div>
+							<div class="shipping-address">
+								<h2>Thông tin hóa đơn</h2>
+								<div class="row">
+									<div class="col-md-6">
+										<label>Họ</label>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.firstName%>"
+										/>
+									</div>
+									<div class="col-md-6">
+										<label>Tên</label>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.lastName%>"
+										/>
+									</div>
+									<div class="col-md-6">
+										<label>E-mail</label>
+										<%if (user.email) {%>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.email%>"
+											readonly
+										/>
+										<%}else{%>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.email%>"
+										/>
+										<%}%>
+									</div>
+									<div class="col-md-6">
+										<label>Điện thoại</label>
+										<%if (user.phone && user.phone !== "0987654321") {%>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.phone%>"
+											readonly
+										/>
+										<%}else{%>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.phone%>"
+										/>
+										<%}%>
+									</div>
+									<div class="col-md-12">
+										<label>Địa chỉ</label>
+										<input
+											class="form-control"
+											type="text"
+											value="<%=user.address%>"
+										/>
+									</div>
+									<div class="col-md-6">
+										<label>Lãnh thổ</label>
+										<select class="custom-select">
+											<option selected>Việt nam</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<label>Tỉnh - Thành phố</label>
+										<select class="custom-select" id="province" name="city">
+											<option value="<%=user.city%>" selected>
+												<%=user.city%>
+											</option>
+											<%provinces.forEach((province) => {%>
+											<option
+												value="<%=province.name%>"
+												code="<%=province.code%>"
+											>
+												<%=province.name%>
+											</option>
+											<%})%>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<label>Quận - Huyện</label>
+										<select class="custom-select" id="district" name="district">
+											<option selected value="<%=user.district%>">
+												<%=user.district%>
+											</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<label>Xã - Phường - Thị trấn</label>
+										<select class="custom-select" id="village" name="village">
+											<option selected value="<%=user.village%>">
+												<%=user.village%>
+											</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<%}%>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="checkout-inner">
+							<div class="checkout-summary">
+								<h1>Thông tin giỏ hàng</h1>
+								<br />
+								<%cart.items.forEach ((item, index) => {%>
+								<p class="text-wrap">
+									<strong style="color: #ff6f61"><%=(index+1)%></strong>&nbsp;
+									<%=item.name%> x <b><%=item.quantity%></b
+									><span
+										style="
+											border-right: 5px solid #ff6f61;
+											border-radius: 5px;
+											margin: 0.3rem 0.5rem;
+											padding: 0.3rem 0.5rem;
+										"
+										><strong
+											><b style="color: coral"
+												><%=item.total.toLocaleString('vi-VN')%></b
+											></strong
+										>
+									</span>
+								</p>
+								<br />
+								<%})%>
+								<hr />
+								<%if (cart.items.length) {%>
+								<p>
+									Phí ship<span id="shipping-fee"
+										><strong><b>25,000</b></strong></span
+									>
+								</p>
+								<%}else{%>
+								<p>
+									Phí ship<span id="shipping-fee"
+										><strong><b>0</b></strong></span
+									>
+								</p>
+								<%}%> <%if (cart) {%>
+								<p>
+									Tổng số lượng<span id="total-quantity"
+										><strong><%=cart.totalQuantity%></strong></span
+									>
+								</p>
+								<%}else{%>
+								<p>
+									Tổng số lượng<span id="total-quantity"
+										><strong>0</strong></span
+									>
+								</p>
+								<%}%> <%if (cart.items.length) {%>
+								<h2>
+									Thành tiền<span id="total-payment"
+										><strong
+											><%=(cart.totalCost + 25000).toLocaleString('vi-VN',
+											)%></strong
+										></span
+									>
+								</h2>
+								<%}else{%>
+								<h2>
+									Thành tiền<span><strong>0</strong></span>
+								</h2>
+								<%}%>
+							</div>
 
-              <div id="checkout-payment" class="checkout-payment">
-                <div class="payment-methods">
-                  <h1>Phương thức thanh toán</h1>
-                  <div class="payment-method">
-                    <div class="custom-control custom-radio">
-                      <input
-                        type="radio"
-                        class="custom-control-input"
-                        id="payment-1"
-                        name="payment"
-                      />
-                      <label class="custom-control-label" for="payment-1"
-                        >COD</label
-                      >
-                    </div>
-                    <div class="payment-content" id="payment-1-show">
-                      <p>
-                        Thanh toán sau khi nhận hàng. Giao hàng tiêu chuẩn toàn
-                        quốc trong 3 ngày
-                      </p>
-                    </div>
-                  </div>
-                  <div class="payment-method">
-                    <div class="custom-control custom-radio">
-                      <input
-                        type="radio"
-                        class="custom-control-input"
-                        id="payment-2"
-                        name="payment"
-                      />
-                      <label class="custom-control-label" for="payment-2"
-                        >Paypal</label
-                      >
-                    </div>
-                    <div class="payment-content" id="payment-2-show">
-                      <p>Thanh toán online qua ví điện tử Paypal</p>
-                    </div>
-                  </div>
-                  <div class="payment-method">
-                    <div class="custom-control custom-radio">
-                      <input
-                        type="radio"
-                        class="custom-control-input"
-                        id="payment-3"
-                        name="payment"
-                      />
-                      <label class="custom-control-label" for="payment-3"
-                        >Direct bank transfer</label
-                      >
-                    </div>
-                    <div class="payment-content" id="payment-3-show">
-                      <p>Chuyển khoản online qua internet banking</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="checkout-btn">
-                  <span
-                    class="text-danger text-danger-checkout"
-                    style="line-height: 3rem"
-                    >Vui lòng chọn phương thức thanh toán</span
-                  >
-                  <button class="submit-checkout">Đặt hàng</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Checkout End -->
+							<div id="checkout-payment" class="checkout-payment">
+								<div class="payment-methods">
+									<h1>Phương thức thanh toán</h1>
+									<div class="payment-method">
+										<div class="custom-control custom-radio">
+											<input
+												type="radio"
+												class="custom-control-input"
+												id="payment-1"
+												name="payment"
+											/>
+											<label class="custom-control-label" for="payment-1"
+												>COD</label
+											>
+										</div>
+										<div class="payment-content" id="payment-1-show">
+											<p>
+												Thanh toán sau khi nhận hàng. Giao hàng tiêu chuẩn toàn
+												quốc trong 3 ngày
+											</p>
+										</div>
+									</div>
+									<div class="payment-method">
+										<div class="custom-control custom-radio">
+											<input
+												type="radio"
+												class="custom-control-input"
+												id="payment-2"
+												name="payment"
+											/>
+											<label class="custom-control-label" for="payment-2"
+												>Paypal</label
+											>
+										</div>
+										<div class="payment-content" id="payment-2-show">
+											<p>Thanh toán online qua ví điện tử Paypal</p>
+										</div>
+									</div>
+									<div class="payment-method">
+										<div class="custom-control custom-radio">
+											<input
+												type="radio"
+												class="custom-control-input"
+												id="payment-3"
+												name="payment"
+											/>
+											<label class="custom-control-label" for="payment-3"
+												>Direct bank transfer</label
+											>
+										</div>
+										<div class="payment-content" id="payment-3-show">
+											<p>Chuyển khoản online qua internet banking</p>
+										</div>
+									</div>
+								</div>
+								<div class="checkout-btn">
+									<button class="submit-checkout">Đặt hàng</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Checkout End -->
 
-    <%- include('../partials/footer'); %> <%- include('../partials/script'); %>
-  </body>
+		<%- include('../partials/footer'); %> <%- include('../partials/script'); %>
+		<div id="api-msg"></div>
+	</body>
 </html>
