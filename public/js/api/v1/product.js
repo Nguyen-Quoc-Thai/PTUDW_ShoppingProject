@@ -20,12 +20,21 @@ $('#comment').submit(function (e) {
 	// Get data of form
 	let data = {};
 
+	data.url =
+		window.location.protocol +
+		'//' +
+		window.location.host +
+		window.location.pathname +
+		window.location.search;
+
+	data.date = new Date();
+
 	const url = $(this).attr('action');
-	$('#comment :input').each(function () {
+	$('#comment input, #comment textarea').each(function () {
 		data[$(this).attr('name')] = $(this).val();
 	});
 
-	if (!data.name || !data.email || !data.review) {
+	if (!data.name || !data.email || !data.review || !data.url) {
 		toastMessage(
 			'Product comment',
 			'danger',
@@ -34,13 +43,27 @@ $('#comment').submit(function (e) {
 		return;
 	}
 
-	$.post(url, { ...data }, function (data, status) {
-		if (data.msg === 'success' && status === 'success') {
+	$.post(url, { ...data }, function (resData, status) {
+		if (resData.msg === 'success' && status === 'success') {
 			const time = Intl.DateTimeFormat(['ban', 'id'], options).format(
-				new Date(data.data.date)
+				new Date(resData.data.date)
 			);
 
-			displayComment(data, time);
+			// Update count comment
+			const commentEle = $('a[href="#reviews"]');
+			const countComment = parseInt(
+				commentEle
+					.html()
+					.split(/[\(\)]/)
+					.reverse()[1]
+			);
+			commentEle.html(`Các bài đánh giá (${countComment + 1})`);
+
+			// Emit socket
+			sendMessage(data);
+
+			// View update
+			displayComment(resData, time);
 			toastMessage(
 				'Product comment',
 				'success',

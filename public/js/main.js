@@ -325,6 +325,13 @@ $(document).ready(function () {
 		// Loading
 		$('#loading').addClass('loading');
 		$('#form-val').submit();
+		// setTimeout(function(){
+		// 	toastMessage(
+		// 		'Checkout',
+		// 		'success',
+		// 		'Đặt hàng thành công, đơn hàng đang được xét duyệt!'
+		// 	);
+		// }, 1200)
 	});
 
 	// Province/City change

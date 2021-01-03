@@ -31,7 +31,9 @@ $('.add-to-cart, .buy-now').click(function (e) {
 
 	if ($(this).hasClass('buy-now')) {
 		$('#loading').addClass('loading');
-		window.location.replace('/checkout');
+		setTimeout(function () {
+			window.location.replace('/checkout');
+		}, 1200);
 	} else {
 		toastMessage('Cart', 'success', 'Thêm thành công vào giỏ hàng!');
 	}
