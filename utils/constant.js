@@ -71,7 +71,7 @@ module.exports.emailTemplate = (type, receiver, token_or_link) => {
 
 	const bodyReset = `
 	<p style="margin:0;margin-top:20px;line-height:0;"></p>
-	<p style="margin:0;color:#585858;font-size:14px;font-weight:400;line-height:170%;">Please copy that token to reset your account <b>${receiver}</b> <span style='color: #00bc87;'><br/><br/>${token_or_link}</span></p>
+	<p style="margin:0;color:#585858;font-size:14px;font-weight:400;line-height:170%;">Please click the link below to reset your account <b>${receiver}</b> <span style='color: #00bc87;'><br/><br/>${token_or_link}</span></p>
 	`;
 
 	return `

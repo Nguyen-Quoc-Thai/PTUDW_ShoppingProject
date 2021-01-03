@@ -83,8 +83,9 @@ const displayCartEmpty = () => {
 /** --------------- Checkout API -------------- */
 /* Utils func */
 const modalCheckout = (data) => {
-	const bodyModal = data.data.items.map((item, index) => {
-		return `
+	const bodyModal = data.data.items
+		.map(
+			(item, index) => `
       <tr>
         <td>
           ${index + 1}
@@ -104,9 +105,9 @@ const modalCheckout = (data) => {
           ${item.quantity}
         </td>
         <td>${item.total.toLocaleString('vi-VN')} đ</td>
-      </tr>
-    `;
-	});
+      </tr>`
+		)
+		.join('');
 
 	return `
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -131,7 +132,7 @@ const modalCheckout = (data) => {
             <strong>&nbsp;${data.data.paymentMethod.toUpperCase()}
             </strong></span>
           </div>
-          <div class="table-responsive">
+					<div class="table-responsive">
             <table class="table table-bordered">
               <thead class="thead-dark">
                 <tr>
@@ -143,7 +144,7 @@ const modalCheckout = (data) => {
                 </tr>
               </thead>
               <tbody class="align-middle" id="cart">
-              ${bodyModal}
+              	${bodyModal}
                 <tr>
                   <td>
                     Sum
@@ -159,7 +160,6 @@ const modalCheckout = (data) => {
                 </tr>
               </tbody>
             </table>
-            </div>
             <div class="modal-footer">
               <button
                 type="button"

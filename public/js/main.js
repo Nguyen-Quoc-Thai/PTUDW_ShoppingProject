@@ -282,9 +282,6 @@ $(document).ready(function () {
 	$('.submit-checkout').click(function (e) {
 		e.preventDefault();
 
-		// Loading
-		$('#loading').addClass('loading');
-
 		let invalid = false;
 
 		$('#form-val>div')
@@ -297,10 +294,7 @@ $(document).ready(function () {
 			});
 
 		if (invalid) {
-			$('.text-danger-checkout').html('Bạn phải điền đầy đủ thông tin!');
-			setTimeout(function () {
-				$('#loading').removeClass('loading');
-			}, 300);
+			toastMessage('Checkout', 'danger', 'Bạn phải điền đầy đủ thông tin!');
 			return;
 		}
 
@@ -308,30 +302,36 @@ $(document).ready(function () {
 			$('input[name=createAcc]').length &&
 			!$('input[name=createAcc]:checked').length
 		) {
-			$('.text-danger-checkout').html(
+			toastMessage(
+				'Checkout',
+				'danger',
 				'Bạn chưa có tài khoản. Vui lòng chọn tạo tài khoản!'
 			);
-			setTimeout(function () {
-				$('#loading').removeClass('loading');
-			}, 300);
 			return;
 		}
 		if (!$('#checkout-payment input').is(':checked')) {
-			$('.text-danger-checkout').html('Vui lòng chọn phương thức thanh toán!');
-			setTimeout(function () {
-				$('#loading').removeClass('loading');
-			}, 300);
+			toastMessage(
+				'Checkout',
+				'danger',
+				'Vui lòng chọn phương thức thanh toán!'
+			);
 			return;
 		}
 		if ($('#total-quantity>strong').html() == 0) {
-			$('.text-danger-checkout').html('Không có vật phẩm trong giỏ hàng!');
-			setTimeout(function () {
-				$('#loading').removeClass('loading');
-			}, 300);
+			toastMessage('Checkout', 'danger', 'Không có vật phẩm trong giỏ hàng!');
 			return;
 		}
 
+		// Loading
+		$('#loading').addClass('loading');
 		$('#form-val').submit();
+		// setTimeout(function(){
+		// 	toastMessage(
+		// 		'Checkout',
+		// 		'success',
+		// 		'Đặt hàng thành công, đơn hàng đang được xét duyệt!'
+		// 	);
+		// }, 1200)
 	});
 
 	// Province/City change
@@ -505,9 +505,26 @@ $(document).ready(function () {
 	});
 
 	// Sign up click
-	$('#sign-up').one('click', function (e) {
+	$('#sign-up').on('click', function (e) {
 		e.preventDefault();
-		if ($('.d-block.text-danger').length) return;
+
+		let len = 0;
+
+		const inputs = $('.register-form input');
+
+		for (let i = 0; i < inputs.length; i++) {
+			$(inputs[i]).val() !== '' && len++;
+		}
+
+		if (len < inputs.length || $('.d-block.text-danger').length) {
+			toastMessage(
+				'Sign up',
+				'danger',
+				'Vui lòng đảm bảo đầy đủ thông tin và hợp lệ!'
+			);
+			return;
+		}
+
 		$(this).click();
 	});
 
@@ -521,6 +538,33 @@ $(document).ready(function () {
 		const curr = $(this);
 		curr.next().addClass('d-none');
 		curr.next().removeClass('d-block text-danger');
+	});
+
+	// Login click
+	$('.sign-in').on('click', function (e) {
+		e.preventDefault();
+
+		let len = 0;
+
+		const inputs = $(
+			'.login-form input[name="email"],.login-form input[name="password"]'
+		);
+
+		for (let i = 0; i < 2; i++) {
+			$(inputs[i]).val() !== '' && len++;
+		}
+
+		if (len < 2 || $('.d-block.text-danger').length) {
+			toastMessage(
+				'Sign up',
+				'danger',
+				'Vui lòng đảm bảo đầy đủ thông tin và hợp lệ!'
+			);
+			return;
+		}
+
+		$('#loading').addClass('loading');
+		$('.login-form').submit();
 	});
 
 	/** ----------------------------------------------- Product page */
