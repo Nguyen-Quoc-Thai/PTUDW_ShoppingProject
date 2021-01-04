@@ -21,6 +21,10 @@ const REMEMBER_LIFE = process.env.REMEMBER_LIFE;
  * Get auth page
  */
 module.exports.getAuth = async (req, res, next) => {
+	const refererEndPointSign = req.headers.referer.split('/').reverse()[0];
+	if (refererEndPointSign != 'auth' && refererEndPointSign != 'login')
+		req.session.historyUrl = req.headers.referer || '/';
+
 	res.render('pages/auth', {
 		msg: 'success',
 		respond: '',
@@ -124,7 +128,6 @@ module.exports.postSignUp = async (req, res, next) => {
 				ret.respond.err = error.errors[Object.keys(error.errors)[0]].message;
 			}
 
-			console.log(ret);
 			res.render('pages/auth', {
 				...ret,
 			});
@@ -173,7 +176,8 @@ module.exports.postSignIn = async (req, res, next) => {
 				if (req.body.remember && req.session.cookie) {
 					req.session.cookie.maxAge = +REMEMBER_LIFE; // 7 days
 				}
-				res.redirect('/');
+
+				res.redirect(req.session.historyUrl || '/');
 			});
 		} else {
 			res.redirect('/user/auth');
@@ -190,7 +194,7 @@ module.exports.postSignOut = (req, res, next) => {
 	req.session.cart = null;
 	req.user = null;
 
-	res.redirect('/');
+	res.redirect(req.headers.referer || '/');
 };
 
 /**
@@ -412,7 +416,7 @@ exports.getGoogleCallback = (req, res, next) => {
 			const cart = await mergeCart(Cart, user._id, req.session.cart);
 			req.session.cart = cart;
 
-			return res.redirect('/');
+			return res.redirect(req.session.historyUrl || '/');
 		});
 	})(req, res, next);
 };
@@ -437,7 +441,7 @@ exports.getFacebookCallback = (req, res, next) => {
 			const cart = await mergeCart(Cart, user._id, req.session.cart);
 			req.session.cart = cart;
 
-			return res.redirect('/');
+			return res.redirect(req.session.historyUrl || '/');
 		});
 	})(req, res, next);
 };

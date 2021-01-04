@@ -8,12 +8,15 @@ const { initCart, allCategory } = require('./../utils/constant');
  */
 module.exports.init = function (req, res, next) {
 	try {
+		// Sessions
 		req.app.locals.user = req.user || null;
 		req.app.locals.cart = req.session.cart || initCart;
 		!req.session.cart ? (req.session.cart = initCart) : '';
 
+		// Navbar items
 		req.app.locals.categories = allCategory;
 
+		// Dynamic select options
 		Province.find()
 			.sort({ name_with_type: 'asc' })
 			.then((provinces) => {
