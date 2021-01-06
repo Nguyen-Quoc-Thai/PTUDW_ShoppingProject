@@ -5,9 +5,11 @@ const slug = require('slug');
 const passport = require('passport');
 
 // Model
-const User = require('./../models/user.model');
 const Cart = require('./../models/cart.model');
-const Checkout = require('./../models/checkout.model');
+
+// Services
+const CheckoutServices = require('./../services/checkout.service');
+const UserServices = require('./../services/user.service');
 
 // Utils func
 const { sendMail } = require('./../config/nodemailer');
@@ -21,7 +23,10 @@ const REMEMBER_LIFE = process.env.REMEMBER_LIFE;
  * Get auth page
  */
 module.exports.getAuth = async (req, res, next) => {
-	const refererEndPointSign = req.headers.referer.split('/').reverse()[0];
+	const refererEndPointSign = req.headers.referer
+		? req.headers.referer.split('/').reverse()[0]
+		: '/';
+
 	if (refererEndPointSign != 'auth' && refererEndPointSign != 'login')
 		req.session.historyUrl = req.headers.referer || '/';
 
@@ -100,7 +105,7 @@ module.exports.postSignUp = async (req, res, next) => {
 				village,
 			};
 
-			const user = new User(userObj);
+			const user = UserServices.new(userObj);
 			const result = await user.save();
 
 			// Send email verify account
@@ -204,7 +209,7 @@ exports.getDashboard = async (req, res, next) => {
 	const { user } = req;
 
 	try {
-		const checkout = await Checkout.find({ userId: user._id });
+		const checkout = await CheckoutServices.find({ userId: user._id });
 
 		res.render('pages/dashboard', {
 			checkout,
@@ -228,10 +233,10 @@ module.exports.getConfirm = async (req, res, next) => {
 		const decoded = jwt.verify(token, JWT_KEY);
 		const { _id } = decoded;
 
-		const user = await User.findById(_id);
+		const user = await UserServices.findById(_id);
 
 		user.isVerified = true;
-		await User.updateOne({ _id }, { $set: user });
+		await UserServices.updateOne({ _id }, { $set: user });
 
 		res.render('pages/auth', {
 			data: {},
@@ -256,7 +261,7 @@ exports.postForgotPassword = async (req, res, next) => {
 	const { email } = req.body;
 
 	try {
-		const user = await User.findOne({ email });
+		const user = await UserServices.findOne({ email });
 		if (!user) throw new Error('Không tìm thấy tài khoản nào với email này!');
 
 		// Send email
@@ -268,7 +273,7 @@ exports.postForgotPassword = async (req, res, next) => {
 
 		sendMail(req, email, token, 'reset');
 
-		await User.updateOne({ _id: user._id }, { $set: user });
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
 
 		res.render('pages/email', {
 			msg: 'success',
@@ -293,7 +298,7 @@ exports.getResetPassword = async (req, res, next) => {
 		const decoded = jwt.verify(token, JWT_KEY);
 		const { _id } = decoded;
 
-		const user = await User.findOne({
+		const user = await UserServices.findOne({
 			_id,
 			passwordResetToken: token,
 			passwordResetExpires: {
@@ -330,7 +335,7 @@ exports.postResetPassword = async (req, res, next) => {
 		const decoded = jwt.verify(token, JWT_KEY);
 		const { _id } = decoded;
 
-		const user = await User.findById(_id);
+		const user = await UserServices.findById(_id);
 
 		if (!user) throw new Error('User not found!');
 
@@ -369,7 +374,7 @@ exports.postResetPassword = async (req, res, next) => {
 		// Update user password
 		const encryptedPassword = await bcrypt.hash(password, 10);
 		user.password = encryptedPassword;
-		await User.updateOne({ _id: user._id }, { $set: user });
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
 
 		res.render('pages/auth', {
 			data: {},

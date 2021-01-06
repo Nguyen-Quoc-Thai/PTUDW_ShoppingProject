@@ -1,6 +1,7 @@
-const User = require('./../models/user.model');
-const Cart = require('./../models/cart.model');
-const Checkout = require('./../models/checkout.model');
+// Services
+const CartServices = require('./../services/cart.service');
+const CheckoutServices = require('./../services/checkout.service');
+const UserServices = require('./../services/user.service');
 
 // Utils func
 const { initCart } = require('./../utils/constant');
@@ -31,7 +32,10 @@ module.exports.postCheckout = async (req, res, next) => {
 	const SHIPPING_FEE = 25000;
 
 	try {
-		const cart = await Cart.findOne({ userId: user._id, status: 'waiting' });
+		const cart = await CartServices.findOne({
+			userId: user._id,
+			status: 'waiting',
+		});
 
 		// Destructuring info for add to checkout
 		const { userId, _id, status, items, totalQuantity, totalCost } = cart;
@@ -64,7 +68,7 @@ module.exports.postCheckout = async (req, res, next) => {
 		};
 
 		// Create checkout
-		const checkout = new Checkout(checkoutObj);
+		const checkout = CheckoutServices.new(checkoutObj);
 
 		// If user phone number is default value -> only change one time
 		if (user.phone !== '0987654321') body.phone = user.phone;
@@ -76,7 +80,7 @@ module.exports.postCheckout = async (req, res, next) => {
 		await Promise.all([
 			checkout.save(),
 			cart.save(),
-			User.updateOne({ _id: user._id }, { $set: body }),
+			UserServices.updateOne({ _id: user._id }, { $set: body }),
 		]);
 
 		// Reset cart

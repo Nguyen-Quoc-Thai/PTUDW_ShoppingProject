@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const Product = require('./../../../models/product.model');
+// Services
+const ProductServices = require('./../../../services/product.service');
 
 /**
  * Post a comment on product detail page
@@ -24,7 +25,7 @@ module.exports.postComment = async (req, res, next) => {
 			comment.userId = user._id;
 		}
 
-		await Product.updateOne(
+		await ProductServices.updateOne(
 			{ slugName: productSlugName },
 			{
 				$push: {

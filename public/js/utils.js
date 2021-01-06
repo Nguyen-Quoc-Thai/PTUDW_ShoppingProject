@@ -112,7 +112,7 @@ const modalCheckout = (data) => {
 	return `
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
-        <div class="modal-header" style="background-color: honeydew;">
+        <div class="modal-header" style="background-color: #ce204e; color: white;">
           <h5 class="modal-title" id="exampleModalLongTitle">
             Thông tin mua hàng
           </h5>

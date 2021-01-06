@@ -1,5 +1,8 @@
-const Cart = require('./../../../models/cart.model');
 const Product = require('../../../models/product.model');
+
+// Services
+const CartServices = require('./../../../services/cart.service');
+const ProductServices = require('./../../../services/product.service');
 
 // Utils func
 const { parsePrice } = require('../../../utils/statistic');
@@ -17,17 +20,17 @@ module.exports.addToCart = async (req, res, next) => {
 
 	try {
 		if (user) {
-			const userCart = await Cart.findOne({
+			const userCart = await CartServices.findOne({
 				userId: user._id,
 				status: 'waiting',
 			});
 
 			if (!userCart) {
-				cart = new Cart({ userId: user._id });
+				cart = CartServices.new({ userId: user._id });
 			} else cart = userCart;
 		}
 
-		const product = await Product.findOne({
+		const product = await ProductServices.findOne({
 			slugName,
 		});
 		if (!product) throw new Error('Không tìm thấy sản phẩm!');
@@ -95,13 +98,13 @@ module.exports.putUpdate = async (req, res, next) => {
 
 	try {
 		if (user) {
-			const userCart = await Cart.findOne({
+			const userCart = await CartServices.findOne({
 				userId: user._id,
 				status: 'waiting',
 			});
 
 			if (!userCart) {
-				cart = new Cart({ userId: user._id });
+				cart = CartServices.new({ userId: user._id });
 			} else cart = userCart;
 		}
 

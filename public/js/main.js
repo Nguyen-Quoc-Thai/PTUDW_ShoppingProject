@@ -525,7 +525,7 @@ $(document).ready(function () {
 			return;
 		}
 
-		$(this).click();
+		$('form[action="/user/register"]').submit();
 	});
 
 	$('input[name=retypePassword]').click(function () {
