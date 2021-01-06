@@ -1,10 +1,19 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
-const User = require('./../../../models/user.model');
-const Product = require('./../../../models/product.model');
-const District = require('./../../../models/dist/district.model');
-const Village = require('./../../../models/dist/village.model');
+// Services
+const UserServices = require('./../../../services/user.service');
+
+// Services
+const ProductServices = require('./../../../services/product.service');
+
+// Service
+const {
+	getAllDistrictsOfProvince,
+} = require('./../../../services/decentralization/district.service');
+const {
+	getAllVillagesOfDistrict,
+} = require('./../../../services/decentralization/village.service');
 
 // Cloud uploader
 const cloudinary = require('./../../../config/cloudinary');
@@ -39,7 +48,7 @@ exports.putUpdatePassword = async (req, res, next) => {
 		user.password = encryptedPassword;
 		user.passwordResetToken = passwordResetToken;
 
-		await User.updateOne({ _id: user._id }, { $set: user });
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
 
 		res.status(200).json({
 			msg: 'success',
@@ -80,7 +89,7 @@ exports.putUpdateInfo = async (req, res, next) => {
 
 		// If user phone number is default value -> only change one time
 		if (user.phone === '0987654321') user.phone = req.body.phone;
-		await User.updateOne({ _id: user._id }, { $set: user });
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
 
 		res.status(200).json({
 			msg: 'success',
@@ -109,7 +118,9 @@ module.exports.postLike = async (req, res, next) => {
 	const { user } = req;
 
 	try {
-		const product = await Product.findOne({ slugName: productSlugName });
+		const product = await ProductServices.findOne({
+			slugName: productSlugName,
+		});
 		if (!product) {
 			return res.status(200).json({
 				msg: 'ValidatorError',
@@ -128,7 +139,7 @@ module.exports.postLike = async (req, res, next) => {
 		};
 
 		user.likes.push(like);
-		await User.updateOne(
+		await UserServices.updateOne(
 			{ _id: user._id },
 			{
 				$set: user,
@@ -159,7 +170,7 @@ module.exports.postUnLike = async (req, res, next) => {
 
 	try {
 		user.likes = user.likes.filter((ele) => ele.slugName != productSlugName);
-		await User.updateOne({ _id: user._id }, { $set: user });
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
 
 		req.user = user;
 		res.status(201).json({
@@ -195,7 +206,9 @@ module.exports.postCheckExist = async (req, res, next) => {
 
 		switch (key) {
 			case 'email': {
-				const userWithEmail = await User.findOne({ email: req.body[key] });
+				const userWithEmail = await UserServices.findOne({
+					email: req.body[key],
+				});
 				if (userWithEmail) {
 					respond.email = 'Địa chỉ email đã có người sử dụng!';
 				}
@@ -206,7 +219,9 @@ module.exports.postCheckExist = async (req, res, next) => {
 				break;
 			}
 			case 'phone': {
-				const userWithPhone = await User.findOne({ phone: req.body[key] });
+				const userWithPhone = await UserServices.findOne({
+					phone: req.body[key],
+				});
 				if (userWithPhone) {
 					respond.phone = 'Số điện thoại đã có người sử dụng!';
 				}
@@ -250,9 +265,7 @@ module.exports.getDistrict = async (req, res, next) => {
 	const { code } = req.params;
 
 	try {
-		const districts = await District.find({
-			parent_code: code,
-		}).sort({ name_with_type: 'asc' });
+		const districts = await getAllDistrictsOfProvince(code);
 
 		res.status(200).json({
 			msg: 'success',
@@ -275,9 +288,7 @@ module.exports.getVillage = async (req, res, next) => {
 	const { code } = req.params;
 
 	try {
-		const villages = await Village.find({
-			parent_code: code,
-		}).sort({ name_with_type: 'asc' });
+		const villages = await getAllVillagesOfDistrict(code);
 
 		res.status(200).json({
 			msg: 'success',

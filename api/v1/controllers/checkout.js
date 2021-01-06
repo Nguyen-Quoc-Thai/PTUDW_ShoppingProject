@@ -1,5 +1,8 @@
 const Checkout = require('../../../models/checkout.model');
 
+// Services
+const CheckoutServices = require('./../../../services/checkout.service');
+
 /**
  * Get checkout history
  */
@@ -7,7 +10,7 @@ module.exports.getCheckoutHistory = async (req, res, next) => {
 	const { id } = req.params;
 
 	try {
-		const checkout = await Checkout.findById(id);
+		const checkout = await CheckoutServices.findById(id);
 
 		res.status(200).json({
 			msg: 'success',

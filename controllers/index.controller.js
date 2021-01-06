@@ -1,7 +1,8 @@
 // const RedisClient = require("./../config/redis");
 // const CACHE_LIFE = process.env.CACHE_LIFE;
 
-const Product = require('./../models/product.model');
+// Services
+const ProductServices = require('./../services/product.service');
 
 // Utils func
 const { allCategory } = require('./../utils/constant');
@@ -15,7 +16,7 @@ module.exports.index = async (req, res, next) => {
 		const resultPromise = Promise.all(
 			allCategory.map(async (cate) => {
 				// Tops of product collection
-				const ret = await Product.find({
+				const ret = await ProductServices.find({
 					type: cate.name,
 				}).limit(10);
 

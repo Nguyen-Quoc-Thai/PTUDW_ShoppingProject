@@ -3,7 +3,11 @@
 
 const slug = require('slug');
 
-const Product = require('../models/product.model');
+// Models
+const Product = require('./../models/product.model');
+
+// Services
+const ProductServices = require('./../services/product.service');
 
 // Utils func
 const { allCategory } = require('./../utils/constant');
@@ -28,7 +32,7 @@ module.exports.getSearch = async (req, res, next) => {
 		const searchSlug = slug(q);
 		const regex = new RegExp(searchSlug, 'i');
 
-		let result = await Product.find({ slugName: regex });
+		let result = await ProductServices.find({ slugName: regex });
 
 		// Filter price
 		result = result.filter(
@@ -159,7 +163,7 @@ module.exports.getResourceProducts = async (req, res, next) => {
 			objQuery['producer'] = producer;
 		}
 
-		let result = await Product.find(objQuery);
+		let result = await ProductServices.find(objQuery);
 
 		// Filter price
 		result = result.filter(
@@ -268,13 +272,13 @@ module.exports.getProductDetails = async (req, res, next) => {
 	const { productSlugName } = req.params;
 
 	try {
-		const product = await Product.findOne({
+		const product = await ProductServices.findOne({
 			slugName: productSlugName,
 		});
 
 		// Get relative products
 		const { type, producer } = product;
-		const relativeProducts = await Product.find({
+		const relativeProducts = await ProductServices.find({
 			type,
 			producer,
 		}).limit(8);

@@ -1,4 +1,5 @@
-const Cart = require('./../models/cart.model');
+// Services
+const CartServices = require('./../services/cart.service');
 
 /**
  * Get cart items
@@ -10,13 +11,13 @@ module.exports.getCart = async (req, res, next) => {
 		let { cart } = req.session;
 
 		if (user) {
-			const userCart = await Cart.findOne({
+			const userCart = await CartServices.findOne({
 				userId: user._id,
 				status: 'waiting',
 			});
 
 			if (!userCart) {
-				cart = new Cart({ userId: user._id });
+				cart = CartServices.new({ userId: user._id });
 				await cart.save();
 			} else cart = userCart;
 		}
