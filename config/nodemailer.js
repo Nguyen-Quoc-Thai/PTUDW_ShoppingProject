@@ -39,7 +39,7 @@ exports.sendMail = (req, receiver, token, type) => {
 		to: receiver, // list of receivers
 		subject: 'Recovery password', // Subject line
 		text: '',
-		html: emailTemplate('confirm', receiver, urlRecovery),
+		html: emailTemplate('forgot', receiver, urlRecovery),
 	};
 
 	// Send mail with defined transport object

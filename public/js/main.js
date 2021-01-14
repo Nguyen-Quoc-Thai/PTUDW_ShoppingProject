@@ -516,7 +516,7 @@ $(document).ready(function () {
 			$(inputs[i]).val() !== '' && len++;
 		}
 
-		if (len < inputs.length || $('.d-block.text-danger').length) {
+		if (len < inputs.length || $('#sign-up .d-block.text-danger').length) {
 			toastMessage(
 				'Sign up',
 				'danger',
@@ -554,9 +554,9 @@ $(document).ready(function () {
 			$(inputs[i]).val() !== '' && len++;
 		}
 
-		if (len < 2 || $('.d-block.text-danger').length) {
+		if (len < 2 || $('.sign-in .d-block.text-danger').length) {
 			toastMessage(
-				'Sign up',
+				'Sign in',
 				'danger',
 				'Vui lòng đảm bảo đầy đủ thông tin và hợp lệ!'
 			);
