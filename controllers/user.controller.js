@@ -1,431 +1,452 @@
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const jwt = require("jsonwebtoken");
-const slug = require("slug");
-const passport = require("passport");
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const slug = require('slug');
+const passport = require('passport');
 
-const User = require("./../models/user.model");
-const Cart = require("./../models/cart.model");
+// Model
+const Cart = require('./../models/cart.model');
 
-const { sendMail } = require("./../config/nodemailer");
-const { mergeCart } = require("./../utils/statistic");
+// Services
+const CheckoutServices = require('./../services/checkout.service');
+const UserServices = require('./../services/user.service');
 
-const tokenLife = process.env.TOKEN_LIFE;
-const jwtKey = process.env.JWT_KEY;
+// Utils func
+const { sendMail } = require('./../config/nodemailer');
+const { mergeCart } = require('./../utils/statistic');
 
-// module.exports.getDashboard = (req, res) => {
-//   res.render("pages/dashboard");
-// };
+const TOKEN_LIFE = process.env.TOKEN_LIFE;
+const JWT_KEY = process.env.JWT_KEY;
+const REMEMBER_LIFE = process.env.REMEMBER_LIFE;
 
-// module.exports.getWishlist = (req, res) => {
-//   res.render("pages/wishlist");
-// };
+/**
+ * Get auth page
+ */
+module.exports.getAuth = async (req, res, next) => {
+	const refererEndPointSign = req.headers.referer
+		? req.headers.referer.split('/').reverse()[0]
+		: '/';
 
-// module.exports.getCheckout = (req, res) => {
-//   res.render("pages/checkout");
-// };
+	if (refererEndPointSign != 'auth' && refererEndPointSign != 'login')
+		req.session.historyUrl = req.headers.referer || '/';
 
-// module.exports.getAuth = (req, res) => {
-//   res.render("pages/auth");
-// };
-
-module.exports.getAuth = (req, res, next) => {
-  console.log(req.app.locals.cart);
-  res.render("pages/auth", {
-    msg: "success",
-    respond: "",
-    data: "",
-  });
+	res.render('pages/auth', {
+		msg: 'success',
+		respond: '',
+		data: '',
+	});
 };
 
+/**
+ * Sign up an account
+ */
 module.exports.postSignUp = async (req, res, next) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    phone,
-    password,
-    retypePassword,
-  } = req.body;
+	const { body } = req;
 
-  console.log(req.body);
+	try {
+		// Destructuring sign up info
+		const {
+			firstName,
+			lastName,
+			email,
+			phone,
+			password,
+			retypePassword,
+			address = '',
+			city = '',
+			district = '',
+			village = '',
+		} = body;
 
-  try {
-    if (password !== retypePassword)
-      return res.render("pages/auth", {
-        data: req.body,
-        respond: {
-          msg: "ValidatorError",
-          retypePassword: "Password retype does not match!",
-        },
-      });
+		// Validate info
+		if (password.length < 6)
+			return res.render('pages/auth', {
+				data: req.body,
+				respond: {
+					msg: 'ValidatorError',
+					err: 'Chiều dài mật khẩu tối thiểu là 6!',
+				},
+			});
 
-    if (password.length < 6)
-      return res.render("pages/auth", {
-        data: req.body,
-        respond: {
-          msg: "ValidatorError",
-          password: "Password length must be greater than 6!",
-        },
-      });
+		if (password.length > 20)
+			return res.render('pages/auth', {
+				data: req.body,
+				respond: {
+					msg: 'ValidatorError',
+					err: 'Chiều dài mật khẩu tối đa là 20!',
+				},
+			});
 
-    if (password.length > 20)
-      return res.render("pages/auth", {
-        data: req.body,
-        respond: {
-          msg: "ValidatorError",
-          password: "Password length must be lesser than 20!",
-        },
-      });
+		if (password !== retypePassword)
+			return res.render('pages/auth', {
+				data: req.body,
+				respond: {
+					msg: 'ValidatorError',
+					retypePassword: 'Nhập lại mật khẩu không khớp!',
+				},
+			});
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    const passwordResetToken = crypto.randomBytes(16).toString("hex");
+		try {
+			const encryptedPassword = await bcrypt.hash(password, 10);
+			const passwordResetToken = crypto.randomBytes(16).toString('hex');
 
-    const userObj = {
-      firstName,
-      lastName,
-      email,
-      phone,
-      slugName: slug(firstName + " " + lastName),
-      password: encryptedPassword,
-      passwordResetToken,
-    };
+			// Create user account
+			const userObj = {
+				firstName,
+				lastName,
+				email,
+				phone,
+				slugName: slug(firstName + ' ' + lastName),
+				password: encryptedPassword,
+				passwordResetToken,
+				address,
+				city,
+				district,
+				village,
+			};
 
-    const user = new User(userObj);
-    const result = await user.save();
+			const user = UserServices.new(userObj);
+			const result = await user.save();
 
-    const token = jwt.sign({ _id: result._id }, jwtKey, {
-      expiresIn: tokenLife,
-    });
-    sendMail(req, result.email, token, "confirmation");
+			// Send email verify account
+			const token = jwt.sign({ _id: result._id }, JWT_KEY, {
+				expiresIn: TOKEN_LIFE,
+			});
+			sendMail(req, result.email, token, 'confirm');
 
-    res.render("pages/auth", {
-      respond: {
-        msg: "success",
-        success: "Sign up successful!",
-      },
-      data: "",
-    });
-  } catch (error) {
-    let respond = { msg: "ValidatorError" };
-    error.errors &&
-      Object.keys(error.errors).forEach(
-        (err) => (respond[err] = error.errors[err].message)
-      );
+			res.render('pages/auth', {
+				respond: {
+					msg: 'success',
+					success: 'Đăng kí tài khoản thành công!',
+				},
+				data: '',
+			});
+		} catch (error) {
+			console.log(error.message);
+			let ret = {
+				data: req.body,
+				respond: {
+					msg: 'ValidatorError',
+				},
+			};
+			if (error.errors) {
+				ret.respond.err = error.errors[Object.keys(error.errors)[0]].message;
+			}
 
-    res.render("pages/auth", { respond, data: req.body });
-  }
+			res.render('pages/auth', {
+				...ret,
+			});
+		}
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
+/**
+ * User sign in: local strategy
+ */
 module.exports.postSignIn = async (req, res, next) => {
-  passport.authenticate("local", function (err, user, info) {
-    if (err) {
-      return next(err);
-    }
+	passport.authenticate('local', function (err, user, info) {
+		if (err) {
+			return next(err);
+		}
 
-    if (!user) {
-      const respond = {
-        msg: "ValidatorError2",
-        [Object.keys(info)[0]]: info[Object.keys(info)[0]],
-      };
+		if (!user) {
+			const respond = {
+				msg: 'ValidatorError2',
+				err: info[Object.keys(info)[0]],
+			};
 
-      return res.render("pages/auth", {
-        respond,
-        data: JSON.parse(JSON.stringify(req.body)),
-      });
-    }
+			return res.render('pages/auth', {
+				respond,
+				data: JSON.parse(JSON.stringify(req.body)),
+			});
+		}
 
-    if (!user.isVerified) {
-      return res.render("pages/auth", {
-        // render page co nut resend email confirm acc
-        respond: {
-          msg: "ValidatorError2",
-          user: "Your account has not been verified!",
-        },
-        data: req.body,
-      });
-    }
+		if (user.status) {
+			req.logIn(user, async function (err) {
+				if (err) {
+					return next(err);
+				}
 
-    if (user.status) {
-      req.logIn(user, async function (err) {
-        if (err) {
-          return next(err);
-        }
+				// Sync cart
+				const cart = await mergeCart(Cart, req.user._id, req.session.cart);
+				req.session.cart = cart;
 
-        const cart = await mergeCart(Cart, req.user._id, req.session.cart);
-        req.session.cart = cart;
-        res.redirect("back");
-      });
-    } else {
-      res.render("pages/auth", {
-        respond: {
-          msg: "ValidatorError2",
-          user: "Your account has been blocked!",
-        },
-        data: req.body,
-      });
-    }
-  })(req, res, next);
+				// Remember me
+				if (req.body.remember && req.session.cookie) {
+					req.session.cookie.maxAge = +REMEMBER_LIFE; // 7 days
+				}
+
+				res.redirect(req.session.historyUrl || '/');
+			});
+		} else {
+			res.redirect('/user/auth');
+		}
+	})(req, res, next);
 };
 
+/**
+ * User sign out
+ */
 module.exports.postSignOut = (req, res, next) => {
-  req.logout();
-  req.session.cart = null;
-  req.user = null;
-  res.redirect("back");
+	req.logOut();
+
+	req.session.cart = null;
+	req.user = null;
+
+	res.redirect(req.headers.referer || '/');
 };
 
-module.exports.getConfirm = async (req, res, next) => {
-  const { token } = req.params;
-
-  try {
-    const decoded = jwt.verify(token, jwtKey);
-    const { _id } = decoded;
-
-    const user = await User.findById(_id);
-
-    user.isVerified = true;
-    await User.updateOne({ _id }, { $set: user });
-
-    res.render("pages/auth", {
-      data: {},
-      respond: {
-        success2: "Your account has been verified!",
-        msg: "success",
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.render("error", {
-      message: "Token has been expires!",
-      error,
-    });
-  }
-};
-
+/**
+ * Get user dashboard
+ */
 exports.getDashboard = async (req, res, next) => {
-  res.render("pages/dashboard");
+	const { user } = req;
+
+	try {
+		const checkout = await CheckoutServices.find({ userId: user._id });
+
+		res.render('pages/dashboard', {
+			checkout,
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
-exports.putUpdatePassword = async (req, res, next) => {
-  const { user } = req;
-  console.log(req.body);
+/**
+ * Handle click confirm link on email
+ */
+module.exports.getConfirm = async (req, res, next) => {
+	const { token } = req.params;
 
-  try {
-    const { oldPassword, password, retypePassword } = req.body;
+	try {
+		const decoded = jwt.verify(token, JWT_KEY);
+		const { _id } = decoded;
 
-    const validOldPassword = await bcrypt.compare(oldPassword, user.password);
-    if (!validOldPassword) {
-      return res.status(200).json({
-        msg: "ValidatorError",
-        user: "Old password invalid!",
-      });
-    }
+		const user = await UserServices.findById(_id);
 
-    if (password !== retypePassword) {
-      return res.status(200).json({
-        msg: "ValidatorError",
-        user: "Password and retype password does not match!",
-      });
-    }
+		user.isVerified = true;
+		await UserServices.updateOne({ _id }, { $set: user });
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    const passwordResetToken = crypto.randomBytes(16).toString("hex");
-
-    user.password = encryptedPassword;
-    user.passwordResetToken = passwordResetToken;
-
-    await User.updateOne({ _id: user._id }, { $set: user });
-
-    res.status(200).json({
-      msg: "success",
-      user: "Your password has been updated!",
-      data: user,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: error.message,
-      error,
-    });
-  }
+		res.render('pages/auth', {
+			data: {},
+			respond: {
+				success2: 'Xác thực tài khoản thành công!',
+				msg: 'success',
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: 'Token has been expires!',
+			error,
+		});
+	}
 };
 
-exports.putUpdateInfo = async (req, res, next) => {
-  const { user } = req;
-  const { body } = req;
+/**
+ * Post request to the server for forgot password
+ */
+exports.postForgotPassword = async (req, res, next) => {
+	const { email } = req.body;
 
-  try {
-    for (const fie in body) {
-      if (fie !== "undefined") {
-        user[fie] = body[fie];
-      }
-    }
-    await User.updateOne({ _id: user._id }, { $set: body });
+	try {
+		const user = await UserServices.findOne({ email });
+		if (!user) throw new Error('Không tìm thấy tài khoản nào với email này!');
 
-    res.status(200).json({
-      msg: "success",
-      user: "Your information has been updated!",
-      data: user,
-    });
-  } catch (error) {
-    let respond = {};
-    error.errors &&
-      Object.keys(error.errors).forEach(
-        (err) => (respond[err] = error.errors[err].message)
-      );
+		// Send email
+		const token = jwt.sign({ _id: user._id }, JWT_KEY, {
+			expiresIn: TOKEN_LIFE,
+		});
+		user.passwordResetToken = token;
+		user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // 5h for token reset expires
 
-    res.status(200).json({
-      msg: "ValidatorError",
-      errors: respond,
-    });
-  }
+		sendMail(req, email, token, 'reset');
+
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
+
+		res.render('pages/email', {
+			msg: 'success',
+			email,
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
-//
+/**
+ * Handle click forgot link on email
+ */
+exports.getResetPassword = async (req, res, next) => {
+	const { token } = req.params;
 
-module.exports.getAll = (req, res, next) => {
-  const { user } = req;
+	try {
+		const decoded = jwt.verify(token, JWT_KEY);
+		const { _id } = decoded;
 
-  if (user.role != "admin") {
-    return res.render("pages/admin", {
-      msg: "ValidatorError",
-      user: `You don't have the permission!`,
-      data: user,
-    });
-  }
+		const user = await UserServices.findOne({
+			_id,
+			passwordResetToken: token,
+			passwordResetExpires: {
+				$gt: Date.now(),
+			},
+		});
 
-  const page = parseInt(req.query.page) || 1;
-  const items_per_page = parseInt(req.query.limit) || 100;
+		if (!user) throw new Error('User not found!');
 
-  if (page < 1) page = 1;
-
-  User.find({})
-    .skip((page - 1) * items_per_page)
-    .limit(items_per_page)
-    .then(async (users) => {
-      const request = {};
-      const len = await User.find({}).count();
-
-      request.currentPage = page;
-      request.totalPages = Math.ceil(len / items_per_page);
-
-      if (page > 1) {
-        request.previous = {
-          page: page - 1,
-          limit: items_per_page,
-        };
-      }
-
-      if (page * items_per_page < len) {
-        request.next = {
-          page: page + 1,
-          limit: items_per_page,
-        };
-      }
-
-      const respond = {
-        msg: "success",
-        user: "Fetch successful!",
-        data: users,
-      };
-
-      res.render("pages/auth", respond);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/auth", {
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
+		res.render('pages/forgot', {
+			respond: {
+				msg: 'success',
+				success: 'Nhập mật khẩu mới!',
+				token,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
-module.exports.getOne = (req, res, next) => {
-  const _id = req.params.userId;
+/**
+ * User send the new update password
+ */
+exports.postResetPassword = async (req, res, next) => {
+	const { token } = req.query;
+	const { password, retypePassword } = req.body;
 
-  let selectStr = "";
+	try {
+		const decoded = jwt.verify(token, JWT_KEY);
+		const { _id } = decoded;
 
-  if (_id === req.user._id)
-    selectStr =
-      "firstName lastName email phone avatar isVerified like address password";
-  else selectStr = "firstName lastName email phone avatar";
+		const user = await UserServices.findById(_id);
 
-  User.findById(_id)
-    .select(selectStr)
-    .then((user) => {
-      if (!user) {
-        res.render("pages/auth", {
-          msg: "ValidatorError",
-          user: `User not found!`,
-        });
-      } else {
-        res.render("pages/info", {
-          msg: "success",
-          user: `Fetch successful!`,
-          data: user,
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.render("pages/auth", {
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
+		if (!user) throw new Error('User not found!');
+
+		// Validate
+		if (password.length < 6)
+			return res.render('pages/forgot', {
+				data: req.body,
+				respond: {
+					msg: 'ValidatorError',
+					passVal: password,
+					password: 'Chiều dài mật khẩu tối thiểu là 6!',
+					token,
+				},
+			});
+
+		if (password.length > 20)
+			return res.render('pages/forgot', {
+				respond: {
+					msg: 'ValidatorError',
+					passVal: password,
+					password: 'Chiều dài mật khẩu tối đa là 20!',
+					token,
+				},
+			});
+
+		if (password !== retypePassword)
+			return res.render('pages/forgot', {
+				respond: {
+					msg: 'ValidatorError',
+					passVal: password,
+					retypePassword: 'Nhập lại mật khẩu không khớp!',
+					token,
+				},
+			});
+
+		// Update user password
+		const encryptedPassword = await bcrypt.hash(password, 10);
+		user.password = encryptedPassword;
+		await UserServices.updateOne({ _id: user._id }, { $set: user });
+
+		res.render('pages/auth', {
+			data: {},
+			respond: {
+				success2: 'Reset mật khẩu thành công!',
+				msg: 'success',
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
-// AJAX
-module.exports.deleteOne = async (req, res, next) => {
-  const { id: _id } = req.params;
-  const { user } = req;
-
-  try {
-    if (user.role !== "admin")
-      throw new Error(`You don't have the permission!`);
-
-    const result = await User.deleteOne({ _id });
-    const respond = await User.find();
-
-    res.status(200).json({
-      msg: "success",
-      user: "Delete user successful!",
-      data: respond,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
+/**
+ * Get user wishlist
+ */
+exports.getWishlist = async (req, res, next) => {
+	res.render('pages/wishlist', { user: req.user });
 };
 
-// AJAX
-module.exports.postToggleBlock = async (req, res, next) => {
-  const { userId } = req.body;
+/*-------------------------- OAuth -------------------------*/
 
-  try {
-    const user = await User.findById(userId);
+/**
+ * Google OAuth
+ */
+exports.getGoogleCallback = (req, res, next) => {
+	passport.authenticate('google', function (err, user, info) {
+		if (err) {
+			return next(err);
+		}
+		if (!user) {
+			return res.redirect('/user/auth');
+		}
+		req.logIn(user, async function (err) {
+			if (err) {
+				return next(err);
+			}
 
-    if (!user) throw new Error("User not found!");
-    if (user.role != "admin") throw new Error(`You don't have the permission!`);
-    if (req.user._id === userId)
-      throw new Error(`Unable to active/disable self account!`);
+			// Sync cart
+			const cart = await mergeCart(Cart, user._id, req.session.cart);
+			req.session.cart = cart;
 
-    user.status = !user.status;
-    await User.updateOne({ _id: userId }, { $set: user });
+			return res.redirect(req.session.historyUrl || '/');
+		});
+	})(req, res, next);
+};
 
-    res.render("pages/admin", {
-      msg: "success",
-      user: `Update success: ${user.status}!`,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
+/**
+ * Facebook OAuth
+ */
+exports.getFacebookCallback = (req, res, next) => {
+	passport.authenticate('facebook', function (err, user, info) {
+		if (err) {
+			return next(err);
+		}
+		if (!user) {
+			return res.redirect('/user/auth');
+		}
+		req.logIn(user, async function (err) {
+			if (err) {
+				return next(err);
+			}
+
+			// Sync cart
+			const cart = await mergeCart(Cart, user._id, req.session.cart);
+			req.session.cart = cart;
+
+			return res.redirect(req.session.historyUrl || '/');
+		});
+	})(req, res, next);
 };

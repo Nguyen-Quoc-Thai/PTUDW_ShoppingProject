@@ -1,108 +1,97 @@
-const Cart = require("./../models/cart.model");
-const Checkout = require("./../models/checkout.model");
+// Services
+const CartServices = require('./../services/cart.service');
+const CheckoutServices = require('./../services/checkout.service');
+const UserServices = require('./../services/user.service');
 
-const { postSignUp } = require("./user.controller");
+// Utils func
+const { initCart } = require('./../utils/constant');
 
+/**
+ * Get cart checkout
+ */
 module.exports.getCheckout = async (req, res, next) => {
-  const { user } = req;
-
-  res.render("pages/checkout", {
-    msg: "success",
-    user: "Page checkout loaded!",
-    user: user || {},
-  });
+	try {
+		res.render('pages/checkout', {
+			msg: 'success',
+		});
+	} catch (error) {
+		console.log(error.message);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
+/**
+ * Checkout cart
+ */
 module.exports.postCheckout = async (req, res, next) => {
-  const { user } = req;
+	const { user, body } = req;
 
-  try {
-    if (!user) {
-      await postSignUp(req, res, next);
-    }
+	const SHIPPING_FEE = 25000;
 
-    console.log(req.body);
+	try {
+		const cart = await CartServices.findOne({
+			userId: user._id,
+			status: 'waiting',
+		});
 
-    const cart = await Cart.findOne({ userId: user._id, status: "waiting" });
+		// Destructuring info for add to checkout
+		const { userId, _id, status, items, totalQuantity, totalCost } = cart;
+		const {
+			address,
+			city,
+			district,
+			village,
+			phone,
+			firstName,
+			lastName,
+		} = body;
 
-    const { userId, _id, status, items, totalQuantity, totalCost } = cart;
-    const { address, city, district, phone, firstName, lastName } = user;
+		const checkoutObj = {
+			userId,
+			cartId: _id,
+			status,
+			items,
+			totalQuantity,
+			totalCost,
+			address,
+			city,
+			district,
+			village,
+			phone,
+			receiver: firstName + ' ' + lastName,
+			shippingFee: SHIPPING_FEE,
+			paymentMethod: 'cod',
+			totalPayment: parseInt(totalCost) + SHIPPING_FEE,
+		};
 
-    // check if 2 add diff
+		// Create checkout
+		const checkout = CheckoutServices.new(checkoutObj);
 
-    const shippingFee = 25000;
+		// If user phone number is default value -> only change one time
+		if (user.phone !== '0987654321') body.phone = user.phone;
+		body.email = user.email;
 
-    const checkoutObj = {
-      userId,
-      cartId: _id,
-      status,
-      items,
-      totalQuantity,
-      totalCost,
-      address,
-      city,
-      district,
-      phone,
-      receiver: firstName + " " + lastName,
-      shippingFee,
-      paymentMethod: "cod",
-      totalPayment: parseInt(totalCost) + shippingFee,
-    };
+		// Update status of cart
+		cart.status = 'staging';
 
-    const checkout = new Checkout(checkoutObj);
-    cart.status = "staging";
-    await Promise.all([checkout.save(), cart.save()]);
+		await Promise.all([
+			checkout.save(),
+			cart.save(),
+			UserServices.updateOne({ _id: user._id }, { $set: body }),
+		]);
 
-    console.log(checkout);
-    req.session.checkout = checkout;
+		// Reset cart
+		req.session.cart = initCart;
 
-    res.render("pages/wishlist", {
-      // render page thong tin dat hang
-      msg: "success",
-      user: "Cart checkout successful!",
-      data: checkout,
-    });
-  } catch (error) {
-    console.log(error);
-    res.render("pages/auth", {
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
-};
-
-// AJAX
-module.exports.patchUpdate = async (req, res, next) => {
-  const checkoutStatus = [
-    "waiting",
-    "confirmed",
-    "transferring",
-    "delivered",
-    "canceled",
-  ];
-  const { checkoutId } = req.params;
-  const { status } = req.body;
-
-  try {
-    if (!checkoutStatus.includes(status))
-      throw new Error(
-        `Invalid status! Status must be 'waiting', 'confirmed', 'transferring', 'delivered' or 'canceled'! `
-      );
-
-    const checkout = await Checkout.findById(checkoutId);
-    if (!checkout) throw new Error("Cart checkout not found!");
-    checkout.status = status;
-    await checkout.save();
-
-    res.status(200).json({
-      msg: "success",
-      user: "Update status successful!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
+		res.redirect('/user/account/dashboard');
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			msg: error.message,
+			error,
+		});
+	}
 };

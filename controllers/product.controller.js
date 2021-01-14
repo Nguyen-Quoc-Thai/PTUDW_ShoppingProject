@@ -1,445 +1,307 @@
-const mongoose = require("mongoose");
-const slug = require("slug");
+// const RedisClient = require("./../config/redis");
+// const CACHE_LIFE = process.env.CACHE_LIFE;
 
-const User = require("../models/user.model");
-const Product = require("../models/product.model");
+const slug = require('slug');
 
-const { allCategory } = require("./../utils/constant");
-const { statistic, parsePrice } = require("./../utils/statistic");
+// Models
+const Product = require('./../models/product.model');
 
+// Services
+const ProductServices = require('./../services/product.service');
+
+// Utils func
+const { allCategory } = require('./../utils/constant');
+const { statistic, parsePrice } = require('./../utils/statistic');
+
+/**
+ * Global search on all categories
+ * Query string: q, sort, min, max
+ * Pagination: page, item_per_page
+ */
+module.exports.getSearch = async (req, res, next) => {
+	// Page
+	const page = parseInt(req.query.page) || 1;
+
+	// Query string
+	const { q = '' } = req.query;
+	const item_per_page = parseInt(req.query.item_per_page) || 12;
+	const { sort, min = 0, max = 100000000 } = req.query;
+
+	try {
+		// Search on slug
+		const searchSlug = slug(q);
+		const regex = new RegExp(searchSlug, 'i');
+
+		let result = await ProductServices.find({ slugName: regex });
+
+		// Filter price
+		result = result.filter(
+			(product) =>
+				parsePrice(product.price) >= min && parsePrice(product.price) < max
+		);
+
+		// Sort option
+		if (sort && sort === 'asc') {
+			result = result.sort((a, b) => {
+				return parsePrice(a.price) - parsePrice(b.price);
+			});
+		} else if (sort && sort === 'desc') {
+			result = result.sort((a, b) => {
+				return -parsePrice(a.price) + parsePrice(b.price);
+			});
+		}
+
+		// Pagination
+		if (page < 1) page = 1;
+
+		const len = result.length;
+
+		// Page split
+		result = result.slice(
+			(page - 1) * item_per_page,
+			item_per_page + (page - 1) * item_per_page
+		);
+
+		const request = {};
+		request.currentPage = page;
+		request.totalPages = Math.ceil(len / item_per_page);
+
+		// Previous page
+		if (page > 1) {
+			request.previous = {
+				page: page - 1,
+				limit: item_per_page,
+			};
+		}
+
+		// Next page
+		if (page * item_per_page < len) {
+			request.next = {
+				page: page + 1,
+				limit: item_per_page,
+			};
+		}
+
+		const respond = {
+			type: 'global',
+			msg: 'success',
+			request,
+		};
+
+		// Our brands: statistic products on producer
+		const statisticPerType = await statistic(Product, { type: '' }, 'producer');
+		if (statisticPerType.length > 9) statisticPerType.length = 9;
+
+		res.locals.sort = sort || '';
+		res.locals.query = q || '';
+		res.locals.min = min || 0;
+		res.locals.max = max || 100000000;
+		res.locals.ourBrands = statisticPerType || null;
+
+		res.render('pages/products', {
+			msg: 'success',
+			data: result || null,
+			respond,
+		});
+
+		// Caching
+		// const key = q + page + item_per_page + sort + min + max;
+		// RedisClient.setex(
+		//   key,
+		//   CACHE_LIFE,
+		//   JSON.stringify({
+		//     data: result || null,
+		//     ourBrands: statisticPerType || null,
+		//     respond,
+		//   })
+		// );
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
+};
+
+/**
+ * Get products of 1 category
+ * Query string: producer, search, sort, min, max
+ * Pagination: page, item_per_page
+ */
 module.exports.getResourceProducts = async (req, res, next) => {
-  const { resourceSlugName } = req.params;
-  const { producer } = req.query;
+	// Category type
+	const { resourceSlugName } = req.params;
 
-  // Filter and sort
-  const { search = "", sort = "asc", min = 0, max = 100000000 } = req.query;
+	// Query string
+	const { producer } = req.query;
+	const { search = '', sort, min = 0, max = 100000000 } = req.query;
+	const page = parseInt(req.query.page) || 1;
+	const item_per_page = parseInt(req.query.item_per_page) || 12;
 
-  const validResourceSlugName = allCategory.map((cate) => cate.slugName);
+	const validResourceSlugName = allCategory.map((cate) => cate.slugName);
 
-  try {
-    if (!validResourceSlugName.includes(resourceSlugName)) {
-      throw new Error("Invalid url!");
-    }
+	try {
+		if (!validResourceSlugName.includes(resourceSlugName)) {
+			throw new Error('Invalid url!');
+		}
 
-    let mapValue = allCategory.find(
-      (cate) => cate.slugName === resourceSlugName
-    );
+		let mapValue = allCategory.find(
+			(cate) => cate.slugName === resourceSlugName
+		);
 
-    const objQuery = {
-      type: mapValue.name,
-    };
+		// Search
+		const objQuery = {
+			type: mapValue.name,
+		};
 
-    const query = {};
-    query.search = search || "";
+		const searchSlug = slug(search);
+		const regex = new RegExp(searchSlug, 'i');
+		objQuery.slugName = regex;
 
-    // Query
-    const searchSlug = slug(search);
-    const regex = new RegExp(searchSlug, "i");
-    objQuery.slugName = regex;
+		if (producer) {
+			objQuery['producer'] = producer;
+		}
 
-    if (producer) {
-      objQuery["producer"] = producer;
-    }
+		let result = await ProductServices.find(objQuery);
 
-    let result = await Product.find(objQuery).limit(12);
+		// Filter price
+		result = result.filter(
+			(product) =>
+				parsePrice(product.price) >= min && parsePrice(product.price) < max
+		);
 
-    // Sort
-    if (sort === "asc") {
-      result = result.sort((a, b) => {
-        return parsePrice(a.price) - parsePrice(b.price);
-      });
-    } else {
-      result = result.sort((a, b) => {
-        return -parsePrice(a.price) + parsePrice(b.price);
-      });
-    }
+		// Sort
+		if (sort && sort === 'asc') {
+			result = result.sort((a, b) => {
+				return parsePrice(a.price) - parsePrice(b.price);
+			});
+		} else if (sort && sort === 'desc') {
+			result = result.sort((a, b) => {
+				return -parsePrice(a.price) + parsePrice(b.price);
+			});
+		}
 
-    // Filter
+		// Pagination
+		if (page < 1) page = 1;
 
-    const statisticPerType = await statistic(
-      Product,
-      { type: mapValue.name },
-      "producer"
-    );
+		const len = result.length;
 
-    if (statisticPerType.length > 9) statisticPerType.length = 9;
+		result = result.slice(
+			(page - 1) * item_per_page,
+			item_per_page + (page - 1) * item_per_page
+		);
 
-    res.render("pages/products", {
-      msg: "success",
-      data: result || null,
-      query: query,
-      ourBrands: statisticPerType || null,
-    });
-  } catch (error) {
-    res.render("error", {
-      message: error.message,
-      error,
-    });
-  }
+		const request = {};
+		request.currentPage = page;
+		request.totalPages = Math.ceil(len / item_per_page);
+
+		// Previous page
+		if (page > 1) {
+			request.previous = {
+				page: page - 1,
+				limit: item_per_page,
+			};
+		}
+
+		// Next page
+		if (page * item_per_page < len) {
+			request.next = {
+				page: page + 1,
+				limit: item_per_page,
+			};
+		}
+
+		const respond = {
+			msg: 'success',
+			request,
+		};
+
+		// Statistic products of the category on producer
+		const statisticPerType = await statistic(
+			Product,
+			{ type: mapValue.name },
+			'producer'
+		);
+		if (statisticPerType.length > 9) statisticPerType.length = 9;
+
+		res.locals.sort = sort || '';
+		res.locals.query = search || '';
+		res.locals.min = min || 0;
+		res.locals.max = max || 100000000;
+		res.locals.ourBrands = statisticPerType || null;
+
+		res.render('pages/products', {
+			msg: 'success',
+			data: result || null,
+			respond,
+		});
+
+		// Caching
+		// const key =
+		// 	resourceSlugName +
+		// 	producer +
+		// 	page +
+		// 	item_per_page +
+		// 	search +
+		// 	sort +
+		// 	min +
+		// 	max;
+		// RedisClient.setex(
+		//   key,
+		//   CACHE_LIFE,
+		//   JSON.stringify({
+		//     data: result || null,
+		//     ourBrands: statisticPerType || null,
+		//     respond,
+		//   })
+		// );
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };
 
-// AJAX
-module.exports.getStatisticProducer = async (req, res, next) => {
-  const validType = ["computer", "laptop", "mobile"];
-  const { type } = req.params;
+/**
+ * View product info
+ */
+module.exports.getProductDetails = async (req, res, next) => {
+	const { productSlugName } = req.params;
 
-  try {
-    if (!validType.includes(type))
-      throw new Error("Invalid value of param type!");
+	try {
+		const product = await ProductServices.findOne({
+			slugName: productSlugName,
+		});
 
-    const result = await Product.find({ type });
-    if (!result) throw new Error("No item found for this resource!");
+		// Get relative products
+		const { type, producer } = product;
+		const relativeProducts = await ProductServices.find({
+			type,
+			producer,
+		}).limit(8);
 
-    const producer = result.map((product) => {
-      product.producer;
-    });
+		const statisticPerType = await statistic(Product, { type }, 'producer');
+		if (statisticPerType.length > 9) statisticPerType.length = 9;
 
-    const statisticProducer = Array.from(new Set(producer)).map((pro) => ({
-      pro: producer.filter((pro2) => pro2 === pro).length,
-    }));
-    console.log(statisticProducer);
+		res.locals.ourBrands = statisticPerType || null;
 
-    res.status(200).json({
-      msg: "success",
-      user: "Fetch statistic producers base on type successful!",
-      data: statisticProducer,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
-};
+		// Update view count
+		product.countView++;
+		await product.save();
 
-// AJAX
-module.exports.postCreate = async (req, res, next) => {
-  const {
-    name,
-    price,
-    type,
-    quantity,
-    details,
-    description,
-    producer,
-  } = req.body;
-
-  let arrThumbnail = req.files.length ? req.files : [];
-  arrThumbnail = arrThumbnail.map((thumbnail) => {
-    req.hostname + "/" + thumbnail.path.replace(/\\/g, "/").replace("..", "");
-  });
-
-  try {
-    const product = new Product({
-      name,
-      price,
-      type,
-      quantity,
-      details,
-      description,
-      producer,
-      thumbnail: arrThumbnail,
-    });
-
-    const result = await product.save();
-
-    res.status(201).json({
-      msg: "success",
-      user: "Create a new product successful!",
-      data: result,
-    });
-  } catch (error) {
-    // let respond = { msg: "ValidatorError" };
-    // error.errors &&
-    //   Object.keys(error.errors).forEach(
-    //     (err) => (respond[err] = error.errors[err].message)
-    //   );
-
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
-};
-
-// AJAX
-module.exports.patchUpdate = async (req, res, next) => {
-  const acceptUserFields = [
-    "name",
-    "price",
-    "type",
-    "quantity",
-    "details",
-    "descriptions",
-    "producer",
-    "tags",
-    "video",
-  ];
-
-  const { id } = req.params;
-  const { user } = req;
-  const keys = Object.keys(req.body);
-  let hasPrice = false;
-  let newProduct = {};
-
-  try {
-    if (user.role !== "admin")
-      throw new Error(`You don't have the permission!`);
-
-    for (const ops of keys) {
-      if (acceptUserFields.includes(ops)) {
-        newProduct[ops] = req.body.ops;
-      } else {
-        throw new Error(
-          "You are only allowed to change the {name}, {price}, {type}, {quantity}, {details}, {descriptions}, {producer}, {tags}, {video}!"
-        );
-      }
-
-      if (ops === "price") {
-        hasPrice = true;
-      }
-    }
-
-    if (hasPrice) {
-      const product = await Product.findById(id);
-      newProduct.oldPrice = product.price;
-    }
-
-    const result = await Product.updateOne(
-      { _id: id },
-      { $set: newProduct },
-      { runValidators: true }
-    );
-
-    res.status(200).json({
-      msg: "success",
-      user: "Product updated!",
-      data: result,
-    });
-  } catch (error) {
-    console.log(error),
-      res.status(205).json({
-        msg: "ValidatorError",
-        user: error.message,
-      });
-  }
-};
-
-// AJAX
-module.exports.deleteOne = async (req, res, next) => {
-  const _id = req.params.id;
-
-  try {
-    await Product.deleteOne({ _id });
-
-    res.status(200).json({
-      msg: "success",
-      user: "Delete product successful!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
-};
-
-// AJAX
-module.exports.getRelative = async (req, res, next) => {
-  const { id } = req.params;
-
-  try {
-    const product = await Product.findById(id);
-    const { type, tags, producer } = product;
-
-    const result = await Product.find({
-      $or: [
-        {
-          type: {
-            $in: type,
-          },
-        },
-        {
-          producer: {
-            $in: producer,
-          },
-        },
-        {
-          tags: {
-            $in: tags,
-          },
-        },
-      ],
-    });
-
-    res.status(200).json({
-      msg: "success",
-      user: `Get relative product successful!`,
-      data: result,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
-};
-
-// AJAX
-module.exports.getAllComment = async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const items_per_page = parseInt(req.query.limit) || 100;
-
-  if (page < 1) page = 1;
-
-  await Product.find({})
-    .sort(sortObj)
-    .skip((page - 1) * items_per_page)
-    .limit(items_per_page)
-    .then(async (products) => {
-      const request = {};
-      const len = await Product.find({}).count();
-
-      request.currentPage = page;
-      request.totalPages = Math.ceil(len / items_per_page);
-
-      if (page > 1) {
-        request.previous = {
-          page: page - 1,
-          limit: items_per_page,
-        };
-      }
-
-      if (page * items_per_page < len) {
-        request.next = {
-          page: page + 1,
-          limit: items_per_page,
-        };
-      }
-
-      res.status(200).json({
-        msg: "success",
-        user: "Fetch comments successful!",
-        data: products.comments,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(205).json({
-        msg: "ValidatorError",
-        user: error.message,
-      });
-    });
-};
-
-// AJAX
-module.exports.postComment = async (req, res, next) => {
-  const { productSlugName } = req.params;
-  const { name, email, review } = req.body;
-  const { user } = req;
-
-  try {
-    const comment = {
-      name,
-      email,
-      review,
-      date: new Date(),
-    };
-
-    if (!user) {
-      comment.userId = mongoose.Types.ObjectId();
-    } else {
-      comment.userId = user._id;
-    }
-
-    await Product.updateOne(
-      { slugName: productSlugName },
-      {
-        $push: {
-          comments: comment,
-        },
-      }
-    );
-
-    console.log(comment);
-
-    res.status(201).json({
-      msg: "success",
-      user: `Your comment has been public!`,
-      data: comment,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
-};
-
-// AJAX
-module.exports.postLike = async (req, res, next) => {
-  const { id } = req.params;
-  const { user } = req;
-
-  try {
-    const product = await Product.findById(id);
-    const { name, price, thumbnail } = product;
-
-    if (!user) {
-      req.session.like.push({
-        productId: id,
-        name: name,
-        price: price,
-        thumbnail: thumbnail,
-      });
-
-      return res.status(200).json({
-        msg: "success",
-        user: "Add to like resources successful!",
-      });
-    }
-
-    const { _id } = user;
-
-    // Bug: check 2 likes ???
-    product.countLike++;
-
-    await Promise.all([
-      Product.updateOne(
-        { _id: id },
-        {
-          $set: product,
-        }
-      ),
-      User.updateOne(
-        { _id },
-        {
-          $push: {
-            likes: {
-              productId: id,
-              name: name,
-              price: price,
-              thumbnail: thumbnail,
-            },
-          },
-        }
-      ),
-    ]);
-
-    res.status(200).json({
-      msg: "success",
-      user: "Like product successful!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(205).json({
-      msg: "ValidatorError",
-      user: error.message,
-    });
-  }
+		res.render('pages/productDetail', {
+			msg: 'success',
+			data: product || null,
+			relatedProducts: relativeProducts || null,
+		});
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };

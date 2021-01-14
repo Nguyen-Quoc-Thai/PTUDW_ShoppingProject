@@ -1,14 +1,28 @@
+<!-- Modify scroll bar
+<div id="wrapper">
+  <div class="scrollbar" id="style-3">
+    <div class="force-overflow"></div>
+  </div>
+</div> -->
+
+<!-- Loading -->
+<div id="loading" class="loading"></div>
+
 <!-- Top bar Start -->
 <div class="top-bar">
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-6">
         <i class="fa fa-envelope"></i>
-        r2wteam@email.com
+        <a href="mailto:r2wteam@email.com" style="color: #ff6f61;">
+          r2wteam@email.com
+        </a>
       </div>
       <div class="col-sm-6">
         <i class="fa fa-phone-alt"></i>
-        +012-345-6789
+        <a href="tel:+012-345-6789" style="color: #ff6f61;">
+          +012-345-6789
+        </a>
       </div>
     </div>
   </div>
@@ -19,54 +33,65 @@
 <div id="navbar" class="nav">
   <div class="container-fluid">
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-      <a href="#" class="navbar-brand">MENU</a>
-      <button
-        type="button"
-        class="navbar-toggler"
-        data-toggle="collapse"
-        data-target="#navbarCollapse"
-      >
+      <a href="#" class="navbar-brand">Danh mục</a>
+      <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div
-        class="collapse navbar-collapse justify-content-between"
-        id="navbarCollapse"
-      >
+      <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
         <div class="navbar-nav mr-auto">
-          <a href="/" class="nav-item nav-link">Home</a>
+          <a href="/" class="nav-item nav-link">Trang chủ</a>
           <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
-              >Products</a
-            >
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Phân loại</a>
             <div class="dropdown-menu">
-              <%categories.forEach((cate) => {%>
-              <a href="/products/resource/<%=cate.slugName%>" class="dropdown-item"
-                ><%=cate.name%></a
-              >
+              <%categories.forEach((cate)=> {%>
+                <a href="/products/resource/<%=cate.slugName%>" class="dropdown-item">
+                  <%=cate.name%>
+                </a>
                 <%})%>
             </div>
           </div>
-          <a href="/cart" class="nav-item nav-link">Cart</a>
-          <a href="/checkout" class="nav-item nav-link">Checkout</a>
-          <a href="/contact" class="nav-item nav-link">Contact Us</a>
+          <a href="/cart" class="nav-item nav-link">Giỏ hàng</a>
+          <a href="/checkout" class="nav-item nav-link">Thanh toán</a>
+          <a href="/contact" class="nav-item nav-link">Liên hệ</a>
         </div>
         <div class="navbar-nav ml-auto">
-          <%if(user){%>
-          <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
-              ><%=user.firstName%> <%=user.lastName%></a
-            >
-            <form class="dropdown-menu" id="user-act" method="POST" action="/user/logout">
-              <a href="/user/account/dashboard" class="dropdown-item">Dashboard</a>
-              <a href="/user/account/wishlist" class="dropdown-item">Wishlist</a>
-              <a href="/user/logout" class="dropdown-item post" id="logout">Logout</a>
-            </form>
+          <div>
+            <div class="user">
+              <a href="/user/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <%if(user && user.likes){%>
+                  <span class="cart-count-like">(<%=user.likes.length%>)</span>
+                  <%}else{%>
+                    <span class="cart-count-like">(0)</span>
+                    <%}%>
+              </a>
+              <a href="/cart" class="btn cart" style="margin-right: 25px;">
+                <i class="fa fa-shopping-cart"></i>
+                <%if (cart.totalQuantity) {%>
+                  <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
+                  <%}else{%>
+                    <span class="cart-count-add">(0)</span>
+                    <%}%>
+              </a>
+            </div>
           </div>
-          <a href="/user/auth" class="nav-item nav-link"><i class="fas fa-lock"></i></a>
-          <%}else{%>
-            <a href="/user/auth" class="nav-item nav-link">Resister & Login</i></a>
-          <%}%>
+          <%if(user){%>
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                <%=user.firstName%>
+                  <%=user.lastName%>
+              </a>
+              <form class="dropdown-menu" id="user-act" method="POST" action="/user/logout">
+                <a href="/user/account/dashboard" class="dropdown-item">Bảng điều khiển</a>
+                <a href="/user/wishlist" class="dropdown-item">Yêu thích</a>
+                <a href="/user/logout" class="dropdown-item post" id="logout">Đăng xuất</a>
+              </form>
+            </div>
+            <a href="/user/auth" class="nav-item nav-link"><i class="fas fa-lock"></i></a>
+            <%}else{%>
+              <a href="/user/auth" class="nav-item nav-link">Đăng kí & Đăng nhập</i></a>
+              <%}%>
 
         </div>
       </div>
@@ -89,24 +114,8 @@
       </div>
       <div class="col-md-6">
         <div class="search">
-          <input type="text" placeholder="Search" />
-          <button><i class="fa fa-search"></i></button>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="user">
-          <a href="/user/wishlist" class="btn wishlist">
-            <i class="fa fa-heart"></i>
-            <span class="cart-count-like">(0)</span>
-          </a>
-          <a href="/cart" class="btn cart">
-            <i class="fa fa-shopping-cart"></i>
-            <%if (cart.totalQuantity) {%>
-              <span class="cart-count-add">(<%=cart.totalQuantity%>)</span>
-              <%}else{%>
-                <span class="cart-count-add">(0)</span>
-              <%}%>
-            </a>
+          <input type="text" placeholder="Search" class='text-search-global' value="<%=query%>" />
+          <button action="/search?q=" type="submit" class="btn-search-global"><i class="fa fa-search"></i></button>
         </div>
       </div>
     </div>

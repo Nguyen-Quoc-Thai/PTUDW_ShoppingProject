@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <%- include('../partials/head'); %>
+  </head>
+  <body>
+    <%- include('../partials/header', {query:''}); %>
+
+    <div id="container">
+      <%if(msg === 'success'){%>
+      <form method="POST" action="/user/forgot">
+        <div class="d-flex justify-content-center">
+          <img
+            style="width: 120px"
+            src="/img/ezgif.com-gif-maker.gif"
+            alt="gif-success"
+          />
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+          <span style="padding: 15px"
+            >Gửi thành công email reset mật khẩu đến:
+            <input
+              class="text-info"
+              type="text"
+              name="email"
+              value="<%=email%>"
+              style="
+                border: none;
+                background-color: transparent;
+                text-overflow: ellipsis;
+              "
+            />
+          </span>
+          <button
+            style="line-height: 12px; height: 100%"
+            type="submit"
+            class="btn"
+          >
+            <i class="fab fa-rev"></i>
+            Gửi lại
+          </button>
+        </div>
+      </form>
+      <%}else{%>
+      <div>
+        <div>
+          <button class="button-box">
+            <h1 class="btn">Gửi email thất bại. Thử lại sau</h1>
+          </button>
+        </div>
+      </div>
+    </div>
+    <%}%> <%- include('../partials/footer'); %> <%-
+    include('../partials/script'); %>
+  </body>
+</html>

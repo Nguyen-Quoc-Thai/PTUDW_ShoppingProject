@@ -1,502 +1,416 @@
+/** Loading animation */
+$(document).ready(function () {
+	$('#loading').removeClass('loading');
+
+	$(".navbar-nav a, .product-action a, nav-item a, ul li a[href*='?producer=']")
+		.not('a[href="#"]')
+		.click(function () {
+			$('#loading').addClass('loading');
+		});
+
+	$('.wishlist, .cart').click(function () {
+		$('#loading').addClass('loading');
+	});
+
+	$('.pagination > .page-item')
+		.not('.disabled, .active')
+		.click(function () {
+			$('#loading').addClass('loading');
+		});
+});
+
 (function ($) {
-  "use strict";
+	/** AOS lib */
+	'use strict';
+	document.addEventListener('aos:in', ({ detail }) => {});
 
-  // Dropdown on mouse hover
-  $(document).ready(function () {
-    function toggleNavbarMethod() {
-      if ($(window).width() > 768) {
-        $(".navbar .dropdown")
-          .on("mouseover", function () {
-            $(".dropdown-toggle", this).trigger("click");
-          })
-          .on("mouseout", function () {
-            $(".dropdown-toggle", this).trigger("click").blur();
-          });
-      } else {
-        $(".navbar .dropdown").off("mouseover").off("mouseout");
-      }
-    }
-    toggleNavbarMethod();
-    $(window).resize(toggleNavbarMethod);
-  });
+	document.addEventListener('aos:out', ({ detail }) => {});
 
-  // Back to top button
-  $(window).scroll(function () {
-    if ($(this).scrollTop() > 100) {
-      $(".back-to-top").fadeIn("slow");
-      $(".nav").addClass("nav-scroll");
-    } else {
-      $(".nav").removeClass("nav-scroll");
-      $(".back-to-top").fadeOut("slow");
-    }
-  });
-  $(".back-to-top").click(function () {
-    $("html, body").animate({ scrollTop: 0 }, 500);
-    return false;
-  });
+	/** Bootstrap slider */
 
-  // Header slider
-  $(".header-slider").slick({
-    autoplay: true,
-    dots: true,
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  });
+	// Add slideDown animation to Bootstrap dropdown when expanding.
+	$('.dropdown').on('show.bs.dropdown', function () {
+		$(this).find('.dropdown-menu').first().stop(true, true).slideDown();
+	});
 
-  // Product Slider 4 Column
-  $(".product-slider-4").slick({
-    autoplay: true,
-    infinite: true,
-    dots: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1200,
-        settings: {
-          slidesToShow: 4,
-        },
-      },
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  });
+	// Add slideUp animation to Bootstrap dropdown when collapsing.
+	$('.dropdown').on('hide.bs.dropdown', function () {
+		$(this).find('.dropdown-menu').first().stop(true, true).slideUp();
+	});
 
-  // Product Slider 3 Column
-  $(".product-slider-3").slick({
-    autoplay: true,
-    infinite: true,
-    dots: false,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  });
+	// Back to top button
+	$(window).scroll(function () {
+		if ($(this).scrollTop() > 100) {
+			$('.back-to-top').fadeIn('slow');
+			$('.nav').not('.not-scroll').addClass('nav-scroll');
+		} else {
+			$('.nav').not('.not-scroll').removeClass('nav-scroll');
+			$('.back-to-top').fadeOut('slow');
+		}
+	});
+	$('.back-to-top').click(function () {
+		// Loading
+		$('#loading').addClass('loading');
 
-  // Product Detail Slider
-  $(".product-slider-single").slick({
-    infinite: true,
-    autoplay: true,
-    dots: false,
-    fade: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    asNavFor: ".product-slider-single-nav",
-  });
-  $(".product-slider-single-nav").slick({
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    dots: false,
-    centerMode: true,
-    focusOnSelect: true,
-    asNavFor: ".product-slider-single",
-  });
+		$('html, body').animate({ scrollTop: 0 }, 700, function () {
+			setTimeout(function () {
+				$('#loading').removeClass('loading');
+			}, 1200);
+		});
+		return false;
+	});
 
-  // Brand Slider
-  $(".brand-slider").slick({
-    speed: 5000,
-    autoplay: true,
-    autoplaySpeed: 0,
-    cssEase: "linear",
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    infinite: true,
-    swipeToSlide: true,
-    centerMode: true,
-    focusOnSelect: false,
-    arrows: false,
-    dots: false,
-    responsive: [
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: 4,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 300,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  });
+	// Header slider
+	$('.header-slider').slick({
+		autoplay: true,
+		dots: true,
+		infinite: true,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+	});
 
-  // Review slider
-  $(".review-slider").slick({
-    autoplay: true,
-    dots: false,
-    infinite: true,
-    slidesToShow: 2,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  });
+	// Product Slider 4 Column
+	$('.product-slider-4').slick({
+		autoplay: true,
+		infinite: true,
+		dots: false,
+		slidesToShow: 4,
+		slidesToScroll: 1,
+		responsive: [
+			{
+				breakpoint: 1200,
+				settings: {
+					slidesToShow: 4,
+				},
+			},
+			{
+				breakpoint: 992,
+				settings: {
+					slidesToShow: 3,
+				},
+			},
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 2,
+				},
+			},
+			{
+				breakpoint: 576,
+				settings: {
+					slidesToShow: 1,
+				},
+			},
+		],
+	});
 
-  // Widget slider
-  $(".sidebar-slider").slick({
-    autoplay: true,
-    dots: false,
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  });
+	// Product Slider 3 Column
+	$('.product-slider-3').slick({
+		autoplay: true,
+		infinite: true,
+		dots: false,
+		slidesToShow: 3,
+		slidesToScroll: 1,
+		responsive: [
+			{
+				breakpoint: 992,
+				settings: {
+					slidesToShow: 3,
+				},
+			},
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 2,
+				},
+			},
+			{
+				breakpoint: 576,
+				settings: {
+					slidesToShow: 1,
+				},
+			},
+		],
+	});
 
-  // Quantity
-  $(".qty button").on("click", function () {
-    var $button = $(this);
-    var oldValue = $button.parent().find("input").val();
-    if ($button.hasClass("btn-plus")) {
-      var newVal = parseFloat(oldValue) + 1;
-      $(".qty button.btn-minus").attr("disabled", false);
-    } else {
-      if (oldValue > 1) {
-        var newVal = parseFloat(oldValue) - 1;
-        newVal == 1 ? $button.attr("disabled", true) : "";
-      } else {
-        newVal = 1;
-        $button.attr("disabled", true);
-      }
-    }
-    $button.parent().find("input").val(newVal);
-  });
+	// Product Detail Slider
+	$('.product-slider-single').slick({
+		infinite: true,
+		autoplay: true,
+		dots: false,
+		fade: true,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		asNavFor: '.product-slider-single-nav',
+	});
+	$('.product-slider-single-nav').slick({
+		slidesToShow: 3,
+		slidesToScroll: 1,
+		dots: false,
+		centerMode: true,
+		focusOnSelect: true,
+		asNavFor: '.product-slider-single',
+	});
 
-  // Shipping address show hide
-  $(".checkout #shipto").change(function () {
-    if ($(this).is(":checked")) {
-      $(".checkout .shipping-address").slideDown();
-    } else {
-      $(".checkout .shipping-address").slideUp();
-    }
-  });
+	// Brand Slider
+	$('.brand-slider').slick({
+		speed: 5000,
+		autoplay: true,
+		autoplaySpeed: 0,
+		cssEase: 'linear',
+		slidesToShow: 5,
+		slidesToScroll: 1,
+		infinite: true,
+		swipeToSlide: true,
+		centerMode: true,
+		focusOnSelect: false,
+		arrows: false,
+		dots: false,
+		responsive: [
+			{
+				breakpoint: 992,
+				settings: {
+					slidesToShow: 4,
+				},
+			},
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 3,
+				},
+			},
+			{
+				breakpoint: 576,
+				settings: {
+					slidesToShow: 2,
+				},
+			},
+			{
+				breakpoint: 300,
+				settings: {
+					slidesToShow: 1,
+				},
+			},
+		],
+	});
 
-  // Payment methods show hide
-  $(".checkout .payment-method .custom-control-input").change(function () {
-    if ($(this).prop("checked")) {
-      var checkbox_id = $(this).attr("id");
-      $(".checkout .payment-method .payment-content").slideUp();
-      $("#" + checkbox_id + "-show").slideDown();
-      $(".payment-info").css("display", "none");
-    }
-  });
+	// Review slider
+	$('.review-slider').slick({
+		autoplay: true,
+		dots: false,
+		infinite: true,
+		slidesToShow: 2,
+		slidesToScroll: 1,
+		responsive: [
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 1,
+				},
+			},
+		],
+	});
 
-  // Add to cart
-  $(".add-to-cart").click(function (e) {
-    e.preventDefault();
-    const slugName = $(this).attr("value");
+	// Widget slider
+	$('.sidebar-slider').slick({
+		autoplay: true,
+		dots: false,
+		infinite: true,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+	});
 
-    $.post(`/cart/${slugName}`, {}, function (data, status) {
-      if (data.msg === "success" && status === "success") {
-        const curCount = parseInt(
-          $(".cart-count-add").html().replace(/[()]/g, "")
-        );
+	// Quantity
+	$('.qty button').on('click', function () {
+		var $button = $(this);
+		var oldValue = $button.parent().find('input').val();
+		if ($button.hasClass('btn-plus')) {
+			var newVal = parseFloat(oldValue) + 1;
+			$('.qty button.btn-minus').attr('disabled', false);
+		} else {
+			if (oldValue > 1) {
+				var newVal = parseFloat(oldValue) - 1;
+				newVal == 1 ? $button.attr('disabled', true) : '';
+			} else {
+				newVal = 1;
+				$button.attr('disabled', true);
+			}
+		}
+		$button.parent().find('input').val(newVal);
+	});
 
-        $(".cart-count-add").html(`(${curCount + 1})`);
-      }
-    });
-  });
+	// Shipping address show hide
+	$('.checkout #shipto').change(function () {
+		if ($(this).is(':checked')) {
+			$('.checkout .shipping-address').slideDown();
+		} else {
+			$('.checkout .shipping-address').slideUp();
+		}
+	});
 
-  // Update cart
-  $(".change-val").click(function (e) {
-    e.preventDefault();
+	// Payment methods show hide
+	$('.checkout .payment-method .custom-control-input').change(function () {
+		if ($(this).prop('checked')) {
+			var checkbox_id = $(this).attr('id');
+			$('.checkout .payment-method .payment-content').slideUp();
+			$('#' + checkbox_id + '-show').slideDown();
+			$('.payment-info').css('display', 'none');
+		}
+	});
 
-    const value = $(this).attr("value");
-    const slugName = $(this).attr("name");
+	/** -------------------------------------------- MY SCRIPT ----------------------------------------- */
 
-    if (parseInt(value) === 0) {
-      const re = confirm("Bạn chắc chắn muốn xóa vật phẩm khỏi giỏ hàng ?");
-      if (re == false) return false;
-      $(this).parent().parent().css("display", "none");
-    }
+	/** ----------------------------------------- Checkout page */
 
-    const request = $.ajax({
-      url: `/cart/${slugName}`,
-      data: JSON.stringify({
-        bias: parseInt(value),
-      }),
-      type: "PUT",
-      contentType: "application/json",
-      processData: false,
-      xhr: function () {
-        return window.XMLHttpRequest == null ||
-          new window.XMLHttpRequest().addEventListener == null
-          ? new window.ActiveXObject("Microsoft.XMLHTTP")
-          : $.ajaxSettings.xhr();
-      },
-    });
+	// Click checkout btn
+	$('.cart-btn button').click(function () {
+		// Show loading
+		$('#loading').addClass('loading');
+	});
 
-    request.done(function (data, status) {
-      if (data.msg === "success" && status === "success") {
-        data.data.items.forEach((item) => {
-          $(`#${item.itemId}`).html(item.total.toLocaleString("vi-VN"));
-        });
+	// Payment method choose
+	$('.custom-control.custom-radio').click(function () {
+		$('.text-danger-checkout').html('');
+	});
 
-        $("#total-cost").html(data.data.totalCost.toLocaleString("vi-VN"));
-        $("#total-quantity").html(
-          data.data.totalQuantity.toLocaleString("vi-VN")
-        );
-        $("#shipping-fee").html(data.data.totalQuantity ? "25.000" : "0");
-        $("#total-payment").html(
-          data.data.totalQuantity
-            ? (data.data.totalCost + 25000).toLocaleString("vi-VN")
-            : 0
-        );
-        $(".cart-count-add").html(
-          data.data.totalQuantity ? `(${data.data.totalQuantity})` : `(0)`
-        );
-      }
-    });
-  });
+	// Change an create account checkbox
+	$('#newaccount').click(function () {
+		$('.text-danger-checkout').html('');
+	});
 
-  // Handle submit place order
-  $(".submit-checkout").click(function (e) {
-    e.preventDefault();
+	// Post checkout
+	$('.submit-checkout').click(function (e) {
+		e.preventDefault();
 
-    if ($(".payment-info").css("display") === "block") {
-      return;
-    }
+		let invalid = false;
 
-    if (!$("#checkout-payment input").is(":checked")) {
-      $(".payment-methods")
-        .last()
-        .after(
-          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Vui lòng chọn phương thức thanh toán</span>'
-        );
-      return;
-    }
-    if ($("#total-quantity strong").val() == 0) {
-      $(".payment-methods")
-        .last()
-        .after(
-          '<span class="text-warning payment-info" style="line-height: 3rem; display: block;">Không có vật phẩm nào trong giỏ hàng</span>'
-        );
-      return;
-    }
+		$('#form-val>div')
+			.children()
+			.children('input')
+			.each(function () {
+				if ($(this).val() === '') {
+					invalid = true;
+				}
+			});
 
-    $("#form-val").submit();
-  });
+		if (invalid) {
+			toastMessage('Checkout', 'danger', 'Bạn phải điền đầy đủ thông tin!');
+			return;
+		}
 
-  // Handle comment
-  // $("#comment :input").each(function () {
-  //   $(this).focus(function () {
-  //     $(".comment-warning").remove(this);
-  //   });
-  // });
-  $("#comment").submit(function (e) {
-    e.preventDefault();
+		if (
+			$('input[name=createAcc]').length &&
+			!$('input[name=createAcc]:checked').length
+		) {
+			toastMessage(
+				'Checkout',
+				'danger',
+				'Bạn chưa có tài khoản. Vui lòng chọn tạo tài khoản!'
+			);
+			return;
+		}
+		if (!$('#checkout-payment input').is(':checked')) {
+			toastMessage(
+				'Checkout',
+				'danger',
+				'Vui lòng chọn phương thức thanh toán!'
+			);
+			return;
+		}
+		if ($('#total-quantity>strong').html() == 0) {
+			toastMessage('Checkout', 'danger', 'Không có vật phẩm trong giỏ hàng!');
+			return;
+		}
 
-    const url = $(this).attr("action");
-    let data = {};
-    $("#comment :input").each(function () {
-      data[$(this).attr("name")] = $(this).val();
-    });
+		// Loading
+		$('#loading').addClass('loading');
+		$('#form-val').submit();
+		// setTimeout(function(){
+		// 	toastMessage(
+		// 		'Checkout',
+		// 		'success',
+		// 		'Đặt hàng thành công, đơn hàng đang được xét duyệt!'
+		// 	);
+		// }, 1200)
+	});
 
-    if (!data.name || !data.email || !data.review) {
-      console.log($("span.comment-warning span").val());
-      if ($("span.comment-warning span").val()) return;
-      const warning = `<div style="padding: 0 0 10px 0px;" class="comment-warning"><span class="text-warning">Bạn phải điền đây đủ thông tin</span></div>`;
-      $(".leave-comment").prepend(warning);
-      return;
-    }
+	// Province/City change
+	$('#province').on('change', function () {
+		// Loading
+		$('#loading').addClass('loading');
+		setTimeout(function () {
+			$('#loading').removeClass('loading');
+		}, 300);
 
-    $.post(url, { ...data }, function (data, status) {
-      console.log(data);
-      if (data.msg === "success" && status === "success") {
-        const html = `<div class="reviews-submitted" user-id="${data.data.userId}">
-        <div class="reviewer">
-          ${data.data.name}&nbsp;&nbsp;&nbsp; <span>${data.data.date}</span>
-        </div>
-        <div class="ratting">
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-          <i class="fa fa-star"></i>
-        </div>
-        <p>${data.data.review}</p>
-      </div>`;
-        $(".reviews-submit").before(html);
-        $("textarea[name='review']").val("");
-      }
-    });
-  });
+		$('#district').html('');
+		const code = $(this).children('option:selected').attr('code');
+		$.get(`/user/api/v1/district/${code}`, function (data, status) {
+			if (data.msg === 'success' && status === 'success') {
+				data.data.forEach(function (district) {
+					$('#district').append(
+						`<option value="${district.name_with_type}" code="${district.code}" parent-code="${district.parent_code}">${district.name_with_type}</option>`
+					);
+				});
+			}
+		});
+	});
 
-  // Handle logout
-  $("#logout").click(function (e) {
-    e.preventDefault();
-    $("#user-act").submit();
-  });
+	// District change
+	$('#district').on('change', function () {
+		// Loading
+		$('#loading').addClass('loading');
+		setTimeout(function () {
+			$('#loading').removeClass('loading');
+		}, 300);
 
-  // Handle change password
-  $("#change-password").submit(function (e) {
-    e.preventDefault();
+		$('#village').html('');
+		const code = $(this).children('option:selected').attr('code');
+		$.get(`/user/api/v1/village/${code}`, function (data, status) {
+			if (data.msg === 'success' && status === 'success') {
+				data.data.forEach(function (village) {
+					$('#village').append(
+						`<option value="${village.name_with_type}" code="${village.code}" parent-code="${village.parent_code}">${village.name_with_type}</option>`
+					);
+				});
+			}
+		});
+	});
 
-    const url = $(this).attr("action");
-    let data = {};
-    $("#change-password :input").each(function () {
-      data[$(this).attr("name")] = $(this).val();
-    });
+	// Village change
+	$('#village').on('change', function () {
+		// Loading
+		$('#loading').addClass('loading');
+		setTimeout(function () {
+			$('#loading').removeClass('loading');
+		}, 300);
+	});
 
-    const request = $.ajax({
-      url,
-      data: JSON.stringify({ ...data }),
-      type: "PUT",
-      contentType: "application/json",
-      processData: false,
-      xhr: function () {
-        return window.XMLHttpRequest == null ||
-          new window.XMLHttpRequest().addEventListener == null
-          ? new window.ActiveXObject("Microsoft.XMLHTTP")
-          : $.ajaxSettings.xhr();
-      },
-    });
+	/** ----------------------------------------------- Auth page */
 
-    request.done(function (data, status) {
-      if (status === "success") {
-        let className = "";
+	// Form focus
+	$('#form-val>div')
+		.children()
+		.children('input')
+		.each(function () {
+			$(this).focus(function () {
+				$('.text-danger-checkout').html('');
+			});
+		});
 
-        if (data.msg !== "success") {
-          className = "text-warning";
-        } else className = "text-success";
-        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
-        $(".change-password").prepend(result);
-      }
-    });
-  });
+	// Handle logout
+	$('#logout').click(function (e) {
+		e.preventDefault();
+		$('#user-act').submit();
+	});
 
-  // Handle change info
-  $("#change-info").submit(function (e) {
-    e.preventDefault();
+	// Handle click forgot password
+	$('.action-toggle').click(function (e) {
+		e.preventDefault();
 
-    const url = $(this).attr("action");
-    let data = {};
-    $("#change-info :input").each(function () {
-      data[$(this).attr("name")] = $(this).val();
-    });
-
-    const request = $.ajax({
-      url,
-      data: JSON.stringify({ ...data }),
-      type: "PUT",
-      contentType: "application/json",
-      processData: false,
-      xhr: function () {
-        return window.XMLHttpRequest == null ||
-          new window.XMLHttpRequest().addEventListener == null
-          ? new window.ActiveXObject("Microsoft.XMLHTTP")
-          : $.ajaxSettings.xhr();
-      },
-    });
-
-    request.done(function (data, status) {
-      if (status === "success") {
-        let className = "";
-
-        if (data.msg !== "success") {
-          className = "text-warning";
-        } else className = "text-success";
-        const result = `<div style="padding: 0 0 5px;"><span class="${className}">${data.user}</span></div>`;
-        $(".change-info").prepend(result);
-      }
-    });
-  });
-
-  // Search on resource
-  $(".search").click(function (e) {
-    e.preventDefault();
-
-    const search = $("input[name=search]").val();
-
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("search", search);
-    window.location.search = urlParams;
-  });
-
-  // Search sort price
-  $("a[name=sort]").click(function (e) {
-    e.preventDefault();
-
-    const val = $(this).attr("data");
-
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("sort", val);
-    window.location.search = urlParams;
-  });
-
-  // Search filter price
-  $(".filter a").click(function (e) {
-    e.preventDefault();
-
-    const min = $(this).attr("min");
-    const max = $(this).attr("max");
-
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("min", min);
-    urlParams.set("max", max);
-    window.location.search = urlParams;
-  });
-
-  // Handle click forgot password
-  $(".action-toggle").click(function (e) {
-    e.preventDefault();
-
-    const html = `<form class="forgot-form" method="POST" action="/user/forgot">
+		const html = `<form class="forgot-form" method="POST" action="/user/forgot">
     <div class="row">
       <div class="col-md-6 user-login">
-        <label>E-mail / Username</label>
+        <label>E-mail / Tên người dùng</label>
         <input
           class="form-control"
           type="text"
@@ -512,10 +426,10 @@
             id="newaccount"
           />
           <label class="custom-control-label" for="newaccount"
-            >Keep me signed in.</label
+            >Giữ đăng nhập.</label
           >
           <a href="/user/auth" style="display: inline-block"
-            >&nbsp; Sign in?</a
+            >&nbsp;Đã có tài khoản?</a
           >
         </div>
       </div>
@@ -525,6 +439,260 @@
     </div>
   </form>`;
 
-    $("#form-toggle").html(html);
-  });
+		$('#form-toggle').html(html);
+	});
+
+	// Upload avatar btn
+	var readURL = function (input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				$('.profile-pic').attr('src', e.target.result);
+			};
+
+			reader.readAsDataURL(input.files[0]);
+		}
+	};
+
+	$('.file-upload').on('change', function () {
+		readURL(this);
+	});
+
+	$('.upload-button').on('click', function () {
+		$('.file-upload').click();
+	});
+
+	// Dashboard logout
+	$('#logout>a').click(function (e) {
+		$('#logout').submit();
+	});
+
+	// Signup animation
+	$('body>div.login>div>div>form input')
+		.not('.name')
+		.click(function () {
+			const curr = $(this);
+			curr.next().addClass('d-none');
+			curr.next().removeClass('d-block text-danger');
+			$('#err-sign').addClass('d-none');
+		});
+
+	$('body>div.login>div>div>form input').blur(function () {
+		if (!$(this).val()) {
+			$(this).next().removeClass('d-none');
+			$(this).next().addClass('d-block text-danger');
+
+			$(this).next().html('Trường này lằ bắt buộc!');
+			$(this).next().css('font-size', '12px');
+			$(this).next().css('margin', '-10px 0 10px');
+		}
+	});
+
+	// Retype password check
+	$('input[name=retypePassword]').blur(function (e) {
+		const retype = $('input[name=password]').val();
+		const pass = $(this).val();
+
+		if (retype !== pass) {
+			$(this).next().removeClass('d-none');
+			$(this).next().addClass('d-block text-danger');
+
+			$(this).next().html('Nhập lại mật khẩu không chính xác!');
+			$(this).next().css('font-size', '12px');
+			$(this).next().css('margin', '-10px 0 10px');
+		}
+	});
+
+	// Sign up click
+	$('#sign-up').on('click', function (e) {
+		e.preventDefault();
+
+		let len = 0;
+
+		const inputs = $('.register-form input');
+
+		for (let i = 0; i < inputs.length; i++) {
+			$(inputs[i]).val() !== '' && len++;
+		}
+
+		if (len < inputs.length || $('.d-block.text-danger').length) {
+			toastMessage(
+				'Sign up',
+				'danger',
+				'Vui lòng đảm bảo đầy đủ thông tin và hợp lệ!'
+			);
+			return;
+		}
+
+		$('form[action="/user/register"]').submit();
+	});
+
+	$('input[name=retypePassword]').click(function () {
+		const curr = $(this);
+		curr.next().addClass('d-none');
+		curr.next().removeClass('d-block text-danger');
+	});
+
+	$('#form-toggle>form>div>div:nth-child(1)>input').click(function () {
+		const curr = $(this);
+		curr.next().addClass('d-none');
+		curr.next().removeClass('d-block text-danger');
+	});
+
+	// Login click
+	$('.sign-in').on('click', function (e) {
+		e.preventDefault();
+
+		let len = 0;
+
+		const inputs = $(
+			'.login-form input[name="email"],.login-form input[name="password"]'
+		);
+
+		for (let i = 0; i < 2; i++) {
+			$(inputs[i]).val() !== '' && len++;
+		}
+
+		if (len < 2 || $('.d-block.text-danger').length) {
+			toastMessage(
+				'Sign up',
+				'danger',
+				'Vui lòng đảm bảo đầy đủ thông tin và hợp lệ!'
+			);
+			return;
+		}
+
+		$('#loading').addClass('loading');
+		$('.login-form').submit();
+	});
+
+	/** ----------------------------------------------- Product page */
+
+	// Search on resource
+	$('#search').click(function (e) {
+		e.preventDefault();
+
+		// Loading
+		$('#loading').addClass('loading');
+
+		const search = $('input[name=search]').val();
+		const urlParams = new URLSearchParams(window.location.search);
+
+		if (search === '') urlParams.delete('search');
+		else urlParams.set('search', search);
+
+		urlParams.delete('page');
+		urlParams.delete('q');
+		window.location.assign(
+			`${window.location.href.split(/[?#]/)[0]}?${urlParams}`
+		);
+	});
+
+	// Global search
+	$('.btn-search-global').click(function (e) {
+		e.preventDefault();
+
+		// Loading
+		$('#loading').addClass('loading');
+
+		const val = $('.text-search-global').val();
+
+		const urlParams = new URLSearchParams(window.location.search);
+		if (val === '') urlParams.delete('q');
+		else urlParams.set('q', val);
+
+		urlParams.delete('page');
+		urlParams.delete('search');
+		window.location.assign(`/products/search?${urlParams}`);
+	});
+
+	// Change sort value
+	$('a[name=sort]').click(function (e) {
+		e.preventDefault();
+
+		// Loading
+		$('#loading').addClass('loading');
+
+		const val = $(this).attr('data');
+
+		const urlParams = new URLSearchParams(window.location.search);
+
+		if (val === 'none') {
+			urlParams.delete('sort');
+		} else {
+			urlParams.set('sort', val);
+		}
+
+		window.location.search = urlParams;
+	});
+
+	// Change filter value
+	$('.filter a').click(function (e) {
+		e.preventDefault();
+
+		// Loading
+		$('#loading').addClass('loading');
+
+		const min = $(this).attr('min');
+		const max = $(this).attr('max');
+
+		const urlParams = new URLSearchParams(window.location.search);
+
+		if (min === '0' && max === '100000000') {
+			urlParams.delete('min');
+			urlParams.delete('max');
+		} else {
+			urlParams.set('min', min);
+			urlParams.set('max', max);
+		}
+
+		window.location.search = urlParams;
+	});
+
+	// Change page
+	$('.page-item').click(function (e) {
+		e.preventDefault();
+
+		if ($(this).hasClass('disabled') || $(this).hasClass('active')) return;
+		const val = $(this).attr('value');
+
+		const urlParams = new URLSearchParams(window.location.search);
+		urlParams.set('page', val);
+		window.location.search = urlParams;
+	});
+
+	/**----------------------------------------------- Product details page */
+	// See more details
+	$('.toggle-see-more').click(function () {
+		const val = $(this).text().trim();
+		const offset = $('.anchor').offset();
+
+		if (val === 'See more') {
+			$(this).html("See less &nbsp;<i class='fas fa-arrow-up'></i>");
+			$('.hidden-row').removeClass('d-none');
+		} else {
+			$(this).html("See more &nbsp;<i class='fas fa-arrow-down'></i>");
+			$('.hidden-row').addClass('d-none');
+			$('html, body').animate(
+				{
+					scrollTop: offset.top,
+					scrollLeft: offset.left,
+				},
+				100
+			);
+		}
+	});
+
+	// Auto scroll on change tab
+	$('div.row.product-detail-bottom>div>ul>li').click(function () {
+		const offset = $('.anchor').offset();
+		$('html, body').animate(
+			{
+				scrollTop: offset.top,
+				scrollLeft: offset.left,
+			},
+			100
+		);
+	});
 })(jQuery);

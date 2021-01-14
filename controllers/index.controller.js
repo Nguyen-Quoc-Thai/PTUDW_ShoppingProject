@@ -1,32 +1,48 @@
-const products = require("../models/products.model");
-const Product = require("./../models/product.model");
+// const RedisClient = require("./../config/redis");
+// const CACHE_LIFE = process.env.CACHE_LIFE;
 
-const { allCategory } = require("./../utils/constant");
+// Services
+const ProductServices = require('./../services/product.service');
 
+// Utils func
+const { allCategory } = require('./../utils/constant');
+
+/**
+ * Home page
+ * Select default tops of each category or Samples of those
+ */
 module.exports.index = async (req, res, next) => {
-  console.log("req user", req.user);
-  console.log(req.session);
-  try {
-    const resultPromise = Promise.all(
-      allCategory.map(async (cate) => {
-        const ret = await Product.find({
-          type: cate.name,
-        }).limit(10);
+	try {
+		const resultPromise = Promise.all(
+			allCategory.map(async (cate) => {
+				// Tops of product collection
+				const ret = await ProductServices.find({
+					type: cate.name,
+				}).limit(10);
 
-        return ret;
-      })
-    );
+				// Samples product collection
+				// const ret = await Product.aggregate([
+				//   { $match: { type: cate.name } },
+				//   { $sample: { size: 10 } },
+				// ]);
 
-    const result = await resultPromise;
+				return ret;
+			})
+		);
 
-    res.render("pages/index", {
-      msg: "success",
-      data: result || [],
-    });
-  } catch (error) {
-    res.render("error", {
-      message: error.message,
-      error,
-    });
-  }
+		const result = await resultPromise;
+
+		res.render('pages/index', {
+			msg: 'success',
+			data: result || [],
+		});
+
+		// RedisClient.setex("/", CACHE_LIFE, JSON.stringify(result));
+	} catch (error) {
+		console.log(error);
+		res.render('error', {
+			message: error.message,
+			error,
+		});
+	}
 };

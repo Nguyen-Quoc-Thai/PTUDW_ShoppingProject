@@ -1,18 +1,32 @@
-var express = require("express");
-var router = express.Router();
-const productController = require("../controllers/product.controller");
+const express = require('express');
+const router = express.Router();
 
-/* GET users listing. */
+const productController = require('../controllers/product.controller');
+const productApiController = require('../api/v1/controllers/product');
+
+// const {
+//   searchCache,
+//   resourceCache,
+// } = require("./../middlewares/redis.middleware");
+
+/*-------------- Routes ---------------*/
+/* Get global search page */
+router.get('/search', productController.getSearch);
+
+/* Get 1 category page */
 router.get(
-  "/resource/:resourceSlugName",
-  productController.getResourceProducts
+	'/resource/:resourceSlugName',
+	productController.getResourceProducts
 );
 
-router.post("/comment/:productSlugName", productController.postComment);
+/* Get product info page */
+router.get('/:productSlugName', productController.getProductDetails);
 
-// router.get("/filter", productController.filterProducts);
-// router.get("/:id", productController.getProductDetails);
-// router.post('/', productController.create);
-// router.patch('/:id', productController.patchUpdate);
+/*------------- API routes ------------*/
+/* Post a comment */
+router.post(
+	'/api/v1/comment/:productSlugName',
+	productApiController.postComment
+);
 
 module.exports = router;
