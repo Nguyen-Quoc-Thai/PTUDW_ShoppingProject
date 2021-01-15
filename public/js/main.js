@@ -416,7 +416,9 @@ $(document).ready(function () {
           type="text"
           name="email"
           value=""
-        />
+		/>
+		<span class="d-block text-danger" style="font-size: 12px; margin: -10px 0px 10px;">Trường này lằ bắt buộc!</span>
+
       </div>
       <div class="col-md-12">
         <div class="custom-control custom-checkbox">
@@ -440,6 +442,59 @@ $(document).ready(function () {
   </form>`;
 
 		$('#form-toggle').html(html);
+		$('.forgot-form')
+			.find('input[name="email"]')
+			.keyup(function () {
+				const curr = $(this);
+ 
+				// Req API
+				const key = curr.attr('name');
+				const val = curr.val();
+				if (!val) return;
+ 
+				const url = '/user/api/v1/exist';
+				$.post({
+					url,
+					data: JSON.stringify({ [key]: val }),
+					contentType: 'application/json',
+					dataType: 'json',
+					success: function (data) {
+						const msg =
+							data.msg === 'success'
+								? 'Không tìm thấy địa chỉ email!'
+								: data[key];
+ 
+						if (msg === 'Địa chỉ email đã có người sử dụng!') {
+							curr.next().addClass('d-none');
+							curr.next().removeClass('d-block text-danger');
+						} else {
+							curr.next().removeClass('d-none');
+							curr.next().addClass('d-block text-danger');
+ 
+							curr.next().html(msg);
+							curr.next().css('font-size', '12px');
+							curr.next().css('margin', '-10px 0 10px');
+						}
+					},
+				});
+			});
+ 
+		$('.forgot-form button').on('click', function (e) {
+			e.preventDefault();
+ 
+			const hasError = $('.forgot-form .d-block.text-danger').length;
+			if (hasError) {
+				toastMessage(
+					'Forgot password',
+					'danger',
+					'Vui lòng đảm bảo đầy đủ thông tin và hợp lệ!'
+				);
+ 
+				return;
+			}
+ 
+			$('.forgot-form').submit();
+		});
 	});
 
 	// Upload avatar btn
