@@ -1,5 +1,7 @@
 ### E-Store (shopping cart)
 
+### Demo: [https://www.youtube.com/watch?v=Vnq1mcV9i9o](https://www.youtube.com/watch?v=Vnq1mcV9i9o)
+
 ### Cài đặt local: 
 1. Install dependancies:
 
