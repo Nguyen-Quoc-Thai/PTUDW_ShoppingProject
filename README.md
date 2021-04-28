@@ -12,7 +12,7 @@
    
       `npm run start-prod`
       
-### Team infomation
+### Team information
 STT | Name | Roles | Github
 --- | ---- | ----- | ------
 1 | Võ Minh Tân|Hybrid | [@.:watermelon:](https://github.com/mingtandev)
